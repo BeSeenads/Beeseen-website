@@ -2170,7 +2170,7 @@ function setText(id,value){ const el=document.getElementById(id); if(el) el.text
 async function loadMyAnalytics(){
   if(!supabase || !window.__beseenAuthToken) return;
   try{
-    const res=await fetch('/api/my-analytics',{headers:{'authorization':`Bearer ${window.__beseenAuthToken}`}});
+    const res=await fetch('/api/analytics?scope=user',{headers:{'authorization':`Bearer ${window.__beseenAuthToken}`}});
     const data=await res.json().catch(()=>({})); if(!res.ok) return;
     const m=data.metrics||{};
     setText('portalQrScans',m.qr_scan??0); setText('portalLandingVisits',m.landing_visit??0);
@@ -2186,7 +2186,7 @@ async function loadMyAnalytics(){
 async function loadOwnerMetrics(){
   if(!['owner','admin'].includes(currentRole)) return;
   try{
-    const data=await ownerApi('/api/admin-metrics'); const m=data.metrics||{};
+    const data=await ownerApi('/api/analytics?scope=admin'); const m=data.metrics||{};
     setText('bsccMrr',new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((m.mrr_cents||0)/100));
     setText('bsccActiveSubscriptions',m.active_subscriptions??0); setText('bsccLiveCampaigns',m.live_campaigns??0);
     setText('bsccQrScans',m.qr_scans??0); setText('bsccLiveLocations',`${m.live_locations??0} public`);

@@ -118,8 +118,8 @@ These are stored as `future + platinum`, so the names are not returned by the pu
 The schema now includes `campaigns` and `tracking_events`.
 - `/api/qr?c=TRACKING_CODE` records a real QR scan and redirects to that campaign's configured landing URL.
 - `/api/track-event` records supported first-party campaign actions such as landing visits, phone clicks, forms, directions, and listing views.
-- `/api/my-analytics` returns real metrics for the signed-in advertiser's campaigns.
-- `/api/admin-metrics` returns real staff totals and Stripe monthly recurring revenue when Stripe is connected.
+- `/api/analytics?scope=user` returns real metrics for the signed-in advertiser's campaigns.
+- `/api/analytics?scope=admin` returns real staff totals and Stripe monthly recurring revenue when Stripe is connected.
 - No sample analytics rows are inserted into Supabase.
 
 A campaign still needs a real `campaigns` record/tracking code before events can be attributed to it.
@@ -127,3 +127,7 @@ A campaign still needs a real `campaigns` record/tracking code before events can
 ## Location photo uploads
 Owner/Admin can upload a location photo directly from Location Manager.
 The image is stored in the public `location-images` Supabase Storage bucket through the authenticated `/api/upload-location-image` server route.
+
+
+## Vercel Hobby compatibility
+This build uses exactly 12 serverless API functions so it fits the Vercel Hobby plan limit. Advertiser analytics and owner/admin metrics are combined in `/api/analytics` to avoid exceeding that limit.

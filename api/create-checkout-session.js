@@ -191,7 +191,7 @@ export async function POST(request) {
       ...(discounts.length ? { discounts } : {}),
       success_url: `${origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancelled`,
-      allow_promotion_codes: discounts.length === 0,
+      ...(discounts.length === 0 ? { allow_promotion_codes: true } : {}),
       metadata,
       subscription_data: { metadata }
     });

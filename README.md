@@ -193,3 +193,5 @@ When deploying this version over an existing Supabase project, run the latest `s
 
 ## Owner advertiser → location QR workflow
 The Owner Control Center Campaigns + QR Library now groups paid QR campaigns by advertiser, then by BeSeen location. Click an advertiser to expand their subscribed locations; click a location to open that placement's tracked QR code, destination URL, and download/copy actions. This uses existing campaigns/location data and does not require a new database table.
+
+Stripe test branch

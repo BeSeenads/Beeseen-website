@@ -194,7 +194,7 @@ if (loc.slug === 'exclusive') {
       client_reference_id: user.id,
       line_items: lineItems,
       ...(discounts.length ? { discounts } : {}),
-      success_url: `${origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancelled`,
       ...(discounts.length === 0 ? { allow_promotion_codes: true } : {}),
       metadata,

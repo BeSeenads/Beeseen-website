@@ -135,10 +135,15 @@ export async function POST(request) {
 
     const lineItems = [];
     for (const loc of orderedLocations) {
-      let priceId = loc[priceColumn] || null;
-      if (!priceId && loc.slug === 'exclusive') {
-        priceId = { gold: process.env.STRIPE_PRICE_GOLD, premium: process.env.STRIPE_PRICE_PREMIUM, platinum: process.env.STRIPE_PRICE_PLATINUM }[plan];
-      }
+     let priceId = loc[priceColumn] || null;
+
+if (loc.slug === 'exclusive') {
+  priceId = {
+    gold: process.env.STRIPE_PRICE_GOLD,
+    premium: process.env.STRIPE_PRICE_PREMIUM,
+    platinum: process.env.STRIPE_PRICE_PLATINUM
+  }[plan] || priceId;
+}
       if (!priceId) return json({ error: `Stripe pricing for ${loc.name} is not configured yet.` }, 400);
       lineItems.push({ price: priceId, quantity: 1 });
     }

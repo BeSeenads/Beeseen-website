@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Payment Successful | BeSeen</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #183a78 0%, #081b3f 48%, #041127 100%);
+      color: white;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .glow {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: rgba(62,110,255,.18);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      width: min(560px, 100%);
+      padding: 48px 34px 38px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 28px;
+      background: rgba(6,23,53,.86);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
+      backdrop-filter: blur(18px);
+      animation: cardIn .6s ease both;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 30px;
+    }
+
+    .brand span {
+      color: #ff395d;
+    }
+
+    .check-wrap {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #315ff8, #1dc77b);
+      box-shadow:
+        0 0 0 12px rgba(66,116,255,.10),
+        0 18px 42px rgba(23,197,123,.24);
+      animation: pop .6s .18s cubic-bezier(.2,.9,.2,1.25) both;
+    }
+
+    .check {
+      width: 54px;
+      height: 30px;
+      border-left: 8px solid white;
+      border-bottom: 8px solid white;
+      transform: rotate(-45deg) translate(3px,-4px);
+      border-radius: 3px;
+      animation: checkIn .38s .48s ease both;
+    }
+
+    h1 {
+      font-size: clamp(31px, 5vw, 46px);
+      margin: 0 0 14px;
+      font-weight: 850;
+    }
+
+    p {
+      margin: 0 auto;
+      color: #c8d4ec;
+      max-width: 440px;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 30px;
+      min-width: 220px;
+      padding: 15px 24px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff2f57, #ff496e);
+      box-shadow: 0 14px 28px rgba(255,47,87,.25);
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .small {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #8394b3;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.98);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(.45);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes checkIn {
+      from {
+        opacity: 0;
+        transform: rotate(-45deg) translate(3px,-4px) scale(.45);
+      }
+      to {
+        opacity: 1;
+        transform: rotate(-45deg) translate(3px,-4px) scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glow"></div>
+
+  <main class="card">
+    <div class="brand">Be<span>Seen</span></div>
+
+    <div class="check-wrap">
+      <div class="check"></div>
+    </div>
+
+    <h1>Payment Successful!</h1>
+
+    <p>
+      Welcome to BeSeen. Your subscription is active and your campaign is being prepared.
+    </p>
+
+    <a class="btn" href="/beseen-payment-success.html#portal-analytics">
+      Go to My Account
+    </a>
+
+    <div class="small">
+      You can safely close this page at any time.
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeSeen Payment Success Preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#071631;color:#fff;min-height:100vh}.mock-site{min-height:100vh;background:radial-gradient(circle at 20% 10%,rgba(35,92,255,.26),transparent 34%),radial-gradient(circle at 80% 85%,rgba(226,30,58,.2),transparent 28%),linear-gradient(180deg,#071631,#091d43);padding:28px}.mock-nav{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between}.mock-logo{font-weight:950;font-size:25px;letter-spacing:-.05em}.mock-logo span:first-child{color:#2f63ff}.mock-logo span:last-child{color:#ed2d4b}.mock-pill{font-size:11px;padding:9px 14px;border:1px solid rgba(255,255,255,.13);border-radius:999px;color:#b7c4dc}.mock-copy{max-width:1180px;margin:110px auto 0;opacity:.18}.mock-copy h1{font-size:72px;line-height:.9;margin:0}.mock-copy p{font-size:18px;max-width:520px;line-height:1.6}.bs-payment-success-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,12,31,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.bs-payment-success-card{position:relative;width:min(520px,100%);overflow:hidden;border-radius:30px;background:linear-gradient(180deg,#fff 0%,#f7f9ff 100%);box-shadow:0 35px 110px rgba(0,0,0,.42);padding:42px 36px 34px;text-align:center;color:#071631;animation:cardIn .4s cubic-bezier(.2,.85,.25,1.08)}.bs-payment-success-card:before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#235cff 0 52%,#e21e3a 52% 100%)}.glow{position:absolute;width:230px;height:230px;border-radius:50%;filter:blur(48px);opacity:.15}.glow.blue{background:#235cff;top:-100px;left:-100px}.glow.red{background:#e21e3a;right:-110px;bottom:-110px}.icon{width:92px;height:92px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#eef3ff,#fff);box-shadow:inset 0 0 0 1px rgba(40,92,255,.12),0 14px 34px rgba(35,92,255,.14);position:relative}.icon:after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(35,92,255,.14);animation:pulse 1.7s ease-out infinite}.icon svg{width:54px;height:54px;overflow:visible}.circle{fill:none;stroke:#235cff;stroke-width:3.2;stroke-dasharray:166;stroke-dashoffset:166;animation:circle .7s .08s ease-out forwards}.check{fill:none;stroke:#e21e3a;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:check .46s .58s ease-out forwards}.kicker{font-size:11px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#235cff;margin-bottom:8px}.bs-payment-success-card h2{margin:0;font-size:42px;line-height:1.02;letter-spacing:-.045em}.bs-payment-success-card h3{margin:9px 0 0;font-size:21px;color:#263b68}.bs-payment-success-card p{margin:16px auto 0;max-width:420px;font-size:15px;line-height:1.65;color:#66748d}.status{display:flex;align-items:center;justify-content:center;gap:8px;margin:22px auto 0;padding:10px 13px;border:1px solid #e2e8f4;border-radius:999px;background:#fff;color:#536580;font-size:11px;font-weight:850;width:max-content;max-width:100%}.dot{width:8px;height:8px;border-radius:50%;background:#18b96d;box-shadow:0 0 0 5px rgba(24,185,109,.11)}button{width:100%;margin-top:24px;border:0;border-radius:999px;padding:15px 20px;background:linear-gradient(135deg,#235cff,#183b9c 58%,#e21e3a 145%);color:#fff;font-size:14px;font-weight:950;cursor:pointer;box-shadow:0 14px 32px rgba(35,92,255,.24)}.note{margin-top:13px;font-size:10px;line-height:1.45;color:#95a0b4}@keyframes cardIn{from{transform:translateY(18px) scale(.97);opacity:0}to{transform:none;opacity:1}}@keyframes circle{to{stroke-dashoffset:0}}@keyframes check{to{stroke-dashoffset:0}}@keyframes pulse{0%{transform:scale(.92);opacity:.55}70%,100%{transform:scale(1.25);opacity:0}}@media(max-width:600px){.bs-payment-success-card{padding:36px 22px 28px;border-radius:24px}.bs-payment-success-card h2{font-size:35px}.bs-payment-success-card h3{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="mock-site"><div class="mock-nav"><div class="mock-logo"><span>Be</span><span>Seen</span></div><div class="mock-pill">STRIPE-TEST PREVIEW</div></div><div class="mock-copy"><h1>BeSeen<br>Advertising.</h1><p>Local digital advertising built to get businesses noticed.</p></div></div>
+<div class="bs-payment-success-overlay">
+  <div class="bs-payment-success-card">
+    <div class="glow blue"></div><div class="glow red"></div>
+    <div class="icon"><svg viewBox="0 0 64 64"><circle class="circle" cx="32" cy="32" r="26"></circle><path class="check" d="M19 33.5 28.2 42 46 23"></path></svg></div>
+    <div class="kicker">Payment confirmed</div>
+    <h2>Payment Successful!</h2>
+    <h3>Welcome to BeSeen.</h3>
+    <p>Your subscription is active and your campaign is being prepared.</p>
+    <div class="status"><span class="dot"></span><span>Stripe payment received • Access updating automatically</span></div>
+    <button type="button" onclick="this.textContent='My Account opens here ✓'">Go to My Account →</button>
+    <div class="note">Your campaign and QR tools will appear in your BeSeen account as soon as the subscription sync completes.</div>
+  </div>
+</div>
+</body>
+</html>

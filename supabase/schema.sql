@@ -254,6 +254,48 @@ set name=excluded.name,
     updated_at=now();
 
 -- ============================================================
+-- Multi-location subscriptions
+-- First location is billed at its normal plan price. Every additional
+-- live location receives a permanent $50/month discount.
+-- ============================================================
+create table if not exists public.subscription_locations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  stripe_customer_id text,
+  stripe_subscription_id text not null,
+  location_id uuid references public.locations(id) on delete set null,
+  location_slug text not null,
+  plan text not null check (plan in ('gold','premium','platinum')),
+  status text not null default 'active',
+  list_price_cents integer not null default 0 check (list_price_cents >= 0),
+  billed_price_cents integer not null default 0 check (billed_price_cents >= 0),
+  discount_cents integer not null default 0 check (discount_cents >= 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (stripe_subscription_id, location_slug)
+);
+
+create index if not exists subscription_locations_user_idx
+on public.subscription_locations (user_id);
+
+create index if not exists subscription_locations_customer_idx
+on public.subscription_locations (stripe_customer_id);
+
+alter table public.subscription_locations enable row level security;
+
+drop policy if exists "read own subscription locations" on public.subscription_locations;
+create policy "read own subscription locations"
+on public.subscription_locations for select
+to authenticated
+using (user_id = auth.uid());
+
+drop policy if exists "staff read subscription locations" on public.subscription_locations;
+create policy "staff read subscription locations"
+on public.subscription_locations for select
+to authenticated
+using (public.is_beseen_staff());
+
+-- ============================================================
 -- Real campaign analytics foundation
 -- No fake dashboard totals are seeded. All metrics start empty/zero
 -- and are created only by actual tracked campaign events.
@@ -301,3 +343,67 @@ using (advertiser_id = auth.uid() or public.is_beseen_staff());
 insert into storage.buckets (id, name, public)
 values ('location-images','location-images',true)
 on conflict (id) do update set public=true;
+
+-- ============================================================
+-- Subscription campaign intake + advertiser creative uploads
+-- Captures real business/campaign information before Stripe checkout.
+-- ============================================================
+create table if not exists public.subscription_intakes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  business_name text not null,
+  business_type text not null,
+  website_or_social text,
+  contact_phone text,
+  campaign_details text not null,
+  qr_destination_url text,
+  creative_choice text not null check (creative_choice in ('own_ad','beseen_create')),
+  ad_asset_path text,
+  plan text not null check (plan in ('gold','premium','platinum')),
+  location_slugs text[] not null default '{}'::text[],
+  status text not null default 'checkout_started' check (status in ('checkout_started','paid','subscription_canceled')),
+  stripe_checkout_session_id text,
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Migration-safe additions for automatic QR campaign setup.
+alter table public.subscription_intakes
+  add column if not exists qr_destination_url text;
+
+alter table public.campaigns
+  add column if not exists subscription_intake_id uuid references public.subscription_intakes(id) on delete set null,
+  add column if not exists stripe_subscription_id text;
+
+create unique index if not exists campaigns_intake_location_unique
+on public.campaigns (subscription_intake_id, location_id);
+
+create index if not exists campaigns_subscription_idx
+on public.campaigns (stripe_subscription_id);
+
+create index if not exists subscription_intakes_user_idx
+on public.subscription_intakes (user_id, created_at desc);
+
+create index if not exists subscription_intakes_subscription_idx
+on public.subscription_intakes (stripe_subscription_id);
+
+alter table public.subscription_intakes enable row level security;
+
+drop policy if exists "read own subscription intakes" on public.subscription_intakes;
+create policy "read own subscription intakes"
+on public.subscription_intakes for select
+to authenticated
+using (user_id = auth.uid());
+
+drop policy if exists "staff read subscription intakes" on public.subscription_intakes;
+create policy "staff read subscription intakes"
+on public.subscription_intakes for select
+to authenticated
+using (public.is_beseen_staff());
+
+-- Ad uploads stay private until BeSeen reviews/uses them.
+insert into storage.buckets (id, name, public)
+values ('advertiser-assets','advertiser-assets',false)
+on conflict (id) do update set public=false;

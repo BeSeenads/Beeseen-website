@@ -84,6 +84,22 @@ Never put `SUPABASE_SECRET_KEY`, `STRIPE_SECRET_KEY`, or `STRIPE_WEBHOOK_SECRET`
 - The primary Owner cannot be demoted from the Control Center.
 - Subscription tier/status are read-only in the role manager because Stripe is the billing source of truth.
 
+
+## Multi-location savings
+BeSeen now supports multi-location subscriptions directly from the location pricing flow.
+- The first location uses the normal monthly package price.
+- Every additional live public location receives **$50 off per month**.
+- Example totals when locations use the standard package prices:
+  - Gold: 1 location $200/mo; 2 locations $350/mo; 3 locations $500/mo.
+  - Premium: 1 location $250/mo; 2 locations $450/mo; 3 locations $650/mo.
+  - Platinum: 1 location $300/mo; 2 locations $550/mo; 3 locations $800/mo.
+- The website's multi-location builder loads live locations from Supabase automatically, so new live locations appear without editing `index.html`.
+- Stripe Checkout receives one recurring line item per selected location and a permanent $50/month discount for each additional location.
+- `public.subscription_locations` records the real location, plan, list price, billed price, discount, Stripe subscription, and status for each purchased location.
+- Existing active BeSeen locations count toward the discount, so an advertiser adding another location later receives the $50/month additional-location rate automatically.
+
+After deploying this version, rerun `supabase/schema.sql` once so the `subscription_locations` table and RLS policies are created.
+
 ## No-code Location Manager
 - The Owner/Admin Control Center now has a **Location Manager**.
 - New locations are stored in Supabase `public.locations`; no `index.html` edit is needed when BeSeen expands.
@@ -131,3 +147,49 @@ The image is stored in the public `location-images` Supabase Storage bucket thro
 
 ## Vercel Hobby compatibility
 This build uses exactly 12 serverless API functions so it fits the Vercel Hobby plan limit. Advertiser analytics and owner/admin metrics are combined in `/api/analytics` to avoid exceeding that limit.
+
+
+## Multi-location add button
+Subscription sections show a small **+ Add Location** button. Clicking it opens the full multi-location savings builder, where every additional live location is $50 off per month.
+
+## Remember me
+The sign-in and create-account screens include an optional **Remember me** control. When enabled, Supabase session data is persisted on that device so the user stays signed in; BeSeen does not store the user's plaintext password. When disabled, the auth session uses browser session storage.
+
+## Subscription business + ad intake
+This version adds a campaign setup step before Stripe Checkout. Signed-in advertisers provide business information and choose either **Upload my own ad** or **Have BeSeen create my ad**. Finished ad uploads are stored privately in the Supabase `advertiser-assets` bucket, and campaign intake records are saved in `public.subscription_intakes` before checkout. Rerun `supabase/schema.sql` once when deploying this version.
+
+## Owner subscriber visibility
+The Owner/Admin Advertisers page now loads real paid subscriber data from Supabase. It shows the signed-in subscriber name/email, business name/type captured during campaign intake, Stripe-synced plan/status, subscribed locations, and whether the advertiser uploaded their own ad or asked BeSeen to create it. No sample subscriber rows are seeded.
+
+## Additional-location CTA
+Subscription sections use a compact `+ Add Another Location — $50 Off/mo` button that opens the full multi-location selection modal.
+
+## Advertiser analytics access
+- Gold and above can see their own account-scoped campaign totals and performance by subscribed BeSeen location.
+- Platinum additionally unlocks deeper analytics such as unique/repeat scanner estimates (where session IDs are present), lead conversion rate, strongest location, and strongest tracked scan hour.
+- Advertiser analytics are fetched server-side from `/api/analytics?scope=user` and are restricted to campaigns owned by the authenticated advertiser. Owner/Admin staff can access network-wide metrics separately.
+
+## Automatic QR campaign setup
+
+The subscription intake now requires a **QR destination URL**. After Stripe confirms payment, the webhook automatically creates one campaign per purchased BeSeen location with:
+
+- the advertiser account
+- the specific BeSeen location
+- the customer-provided destination URL
+- a unique tracking code
+- an active tracked redirect at `/api/qr?c=...`
+
+Because each location gets a different tracking code, QR scans are attributed to the correct advertiser and location automatically. The advertiser's **Creative + QR Hub** reads only campaigns permitted by Supabase RLS and displays/can download the generated QR code.
+
+When deploying this version over an existing Supabase project, run the latest `supabase/schema.sql` once. It safely adds `qr_destination_url`, campaign linkage fields, and indexes using `IF NOT EXISTS`.
+
+
+## Owner QR Library update
+- Subscription intake wording now clearly asks for **Link your QR code should lead to**.
+- After successful Stripe checkout, the existing webhook automatically creates one campaign/tracking code per purchased location.
+- Owner/Admin can open **Control Center > Campaigns + QR Library** to see every generated campaign QR, the subscriber, the BeSeen tracking URL, and the final redirect URL.
+- **Download QR** gives the PNG to place directly into the customer's creative; no manual QR generation is required.
+
+
+## Owner advertiser → location QR workflow
+The Owner Control Center Campaigns + QR Library now groups paid QR campaigns by advertiser, then by BeSeen location. Click an advertiser to expand their subscribed locations; click a location to open that placement's tracked QR code, destination URL, and download/copy actions. This uses existing campaigns/location data and does not require a new database table.

@@ -216,6 +216,10 @@
     .bars{display:flex;width:60px;height:7px;overflow:hidden;border-radius:99px}
     .bars i{display:block;flex:1} .bars i:first-child{background:var(--blue)} .bars i:last-child{background:var(--red)}
 
+
+    .qr-auto-panel{margin:18px 0 6px;padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(4,18,48,.55)}
+    .qr-campaign-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}.qr-campaign-card{display:grid;grid-template-columns:126px 1fr;gap:16px;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.035);align-items:center}.qr-code-box{width:126px;height:126px;padding:8px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center}.qr-code-box img,.qr-code-box canvas{max-width:110px!important;max-height:110px!important}.qr-campaign-copy strong{display:block;font-size:16px;margin-bottom:4px}.qr-campaign-copy small{display:block;color:#9fb2d4;margin-bottom:10px;line-height:1.45}.qr-link-line{font-size:11px;color:#aebfe0;word-break:break-all;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.24);margin:7px 0}.qr-card-actions{display:flex;gap:8px;flex-wrap:wrap}.qr-card-actions button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:7px 11px;font-weight:700;cursor:pointer}.qr-card-actions button:hover{background:rgba(255,255,255,.12)}.qr-empty-card{grid-column:1/-1;padding:18px;border:1px dashed rgba(255,255,255,.15);border-radius:16px;color:#9fb2d4;text-align:center}@media(max-width:760px){.qr-campaign-grid{grid-template-columns:1fr}.qr-campaign-card{grid-template-columns:1fr}.qr-code-box{margin:auto}}
+    .owner-qr-directory{display:grid;gap:12px;margin-top:16px}.owner-qr-advertiser{width:100%;display:flex;justify-content:space-between;gap:16px;align-items:center;text-align:left;padding:16px 18px;border-radius:17px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.045);color:#fff;cursor:pointer}.owner-qr-advertiser:hover,.owner-qr-advertiser.open{background:rgba(255,255,255,.075);border-color:rgba(120,157,255,.42)}.owner-qr-advertiser strong{display:block;font-size:15px}.owner-qr-advertiser small{display:block;color:#9fb2d4;margin-top:4px}.owner-qr-advertiser-meta{text-align:right}.owner-qr-advertiser-meta b{display:block;font-size:12px}.owner-qr-advertiser-meta span{display:block;color:#7fa4ff;font-size:10px;margin-top:4px;font-weight:900}.owner-qr-locations{display:none;gap:8px;padding:0 8px 5px 18px}.owner-qr-locations.open{display:grid}.owner-qr-location{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(0,0,0,.18);color:#fff;text-align:left;cursor:pointer}.owner-qr-location:hover{border-color:rgba(120,157,255,.44);background:rgba(35,69,136,.22)}.owner-qr-location strong{display:block;font-size:13px}.owner-qr-location small{display:block;color:#91a6cb;margin-top:3px;font-size:10px}.owner-qr-location span{font-size:10px;color:#89abff;font-weight:950;white-space:nowrap}.owner-qr-modal{position:fixed;inset:0;z-index:175;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,11,28,.76);backdrop-filter:blur(12px)}.owner-qr-modal.open{display:flex}.owner-qr-modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:26px;background:#fff;color:#071631;padding:26px;box-shadow:0 32px 110px rgba(0,0,0,.42)}.owner-qr-modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.owner-qr-modal-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#2f63ff;font-weight:950}.owner-qr-modal-head h3{font-size:28px;letter-spacing:-.035em;margin:5px 0 4px}.owner-qr-modal-head p{margin:0;color:#6c7890;font-size:12px}.owner-qr-modal-close{border:0;background:#eef2f8;width:40px;height:40px;border-radius:50%;font-size:21px;cursor:pointer}.owner-qr-modal-body{display:grid;grid-template-columns:160px 1fr;gap:20px;align-items:start;margin-top:22px}.owner-qr-modal-code{width:160px;height:160px;border:1px solid #dde5f1;border-radius:18px;display:flex;align-items:center;justify-content:center;background:#fff;padding:12px}.owner-qr-modal-code img,.owner-qr-modal-code canvas{max-width:136px!important;max-height:136px!important}.owner-qr-detail{padding:10px 0;border-bottom:1px solid #e8edf5}.owner-qr-detail:first-child{padding-top:0}.owner-qr-detail label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8793a6;font-weight:900;margin-bottom:4px}.owner-qr-detail div{font-size:12px;color:#142c53;word-break:break-word}.owner-qr-modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.owner-qr-modal-actions button{border:0;border-radius:999px;padding:10px 13px;background:#071b44;color:#fff;font-weight:900;cursor:pointer}.owner-qr-modal-actions button.secondary{background:#eef3fb;color:#15366f}.owner-qr-preview-note{padding:9px 11px;border-radius:11px;background:#fff4cf;color:#6b4c00;font-weight:800;font-size:11px;margin-bottom:12px}@media(max-width:650px){.owner-qr-modal-body{grid-template-columns:1fr}.owner-qr-modal-code{margin:auto}.owner-qr-advertiser{align-items:flex-start}.owner-qr-advertiser-meta{text-align:right}}
     @media(max-width:900px){
       .navlinks a:not(.navcta){display:none}
       .hero-inner,.why-grid,.contact-wrap{grid-template-columns:1fr}
@@ -672,6 +676,12 @@
     }
     .portal-toast.show{opacity:1;transform:translate(-50%,0)}
     .checkout-preview{border:0;cursor:pointer}
+    .multi-location-savings{margin:18px 0 0;padding:18px 20px;border-radius:20px;border:1px solid rgba(59,111,255,.22);background:linear-gradient(135deg,rgba(30,83,214,.08),rgba(226,30,58,.06));display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .multi-location-savings-copy{display:flex;align-items:center;gap:14px;min-width:0}.multi-location-savings-badge{flex:0 0 auto;padding:8px 10px;border-radius:999px;background:#0a2455;color:#fff;font-size:10px;font-weight:950;letter-spacing:.08em}.multi-location-savings strong{display:block;color:#071b44;font-size:16px;margin-bottom:3px}.multi-location-savings p{margin:0;color:#5d6c86;font-size:12px;line-height:1.45}.multi-location-open{flex:0 0 auto;border:0;border-radius:999px;padding:12px 16px;background:#071b44;color:#fff;font-weight:900;cursor:pointer}.multi-location-open:hover{transform:translateY(-1px)}
+    .add-location-trigger-wrap{display:flex;justify-content:center;margin:12px 0 0}.add-location-trigger{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(7,27,68,.16);border-radius:999px;padding:9px 14px;background:#fff;color:#071b44;font-size:12px;font-weight:950;cursor:pointer;box-shadow:0 6px 18px rgba(7,27,68,.08);transition:.18s ease}.add-location-trigger:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(7,27,68,.12);border-color:rgba(47,99,255,.35)}
+    .multi-location-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,11,28,.68);backdrop-filter:blur(10px)}.multi-location-modal.open{display:flex}.multi-location-card{width:min(720px,100%);max-height:min(760px,92vh);overflow:auto;background:#fff;color:#071631;border-radius:28px;box-shadow:0 30px 100px rgba(0,0,0,.38);padding:28px}.multi-location-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.multi-location-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:950;color:#2f63ff}.multi-location-head h3{font-size:34px;letter-spacing:-.04em;margin:6px 0 8px}.multi-location-head p{margin:0;color:#63718a;line-height:1.55;max-width:560px}.multi-location-close{border:0;background:#eef2f8;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer}.multi-plan-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0 18px}.multi-plan-tab{border:1px solid #dbe3f0;background:#f7f9fc;color:#10264f;padding:12px;border-radius:14px;font-weight:900;cursor:pointer}.multi-plan-tab.active{background:#071b44;color:#fff;border-color:#071b44}.multi-location-list{display:grid;gap:9px}.multi-location-choice{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 15px;border:1px solid #e0e7f1;border-radius:15px;background:#fbfcfe;cursor:pointer}.multi-location-choice:hover{border-color:#aebddd}.multi-location-choice-left{display:flex;align-items:center;gap:12px;min-width:0}.multi-location-choice input{width:18px;height:18px}.multi-location-choice strong{display:block;font-size:13px}.multi-location-choice small{display:block;color:#75839a;margin-top:2px}.multi-location-choice-price{font-size:12px;font-weight:900;white-space:nowrap}.multi-location-summary{margin-top:18px;border-radius:18px;background:#071b44;color:#fff;padding:18px}.multi-location-summary-row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;color:#cbd7ec;font-size:12px}.multi-location-summary-row strong{color:#fff}.multi-location-summary-total{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;border-top:1px solid rgba(255,255,255,.12);margin-top:8px;padding-top:14px}.multi-location-summary-total strong{font-size:28px;letter-spacing:-.04em}.multi-location-save{color:#7ff2b2;font-size:11px;font-weight:900}.multi-location-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}.multi-location-fine{color:#78869c;font-size:10px;line-height:1.45}.multi-location-checkout{border:0;border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,#285cff,#e21e3a);color:#fff;font-weight:950;cursor:pointer;white-space:nowrap}.multi-location-checkout:disabled{opacity:.45;cursor:not-allowed}.multi-location-empty{padding:18px;border:1px dashed #ccd6e5;border-radius:15px;color:#77859b;text-align:center;font-size:12px}
+
+    .subscription-intake-modal{position:fixed;inset:0;z-index:135;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,11,28,.72);backdrop-filter:blur(12px)}.subscription-intake-modal.open{display:flex}.subscription-intake-card{width:min(760px,100%);max-height:min(820px,94vh);overflow:auto;background:#fff;color:#071631;border-radius:28px;box-shadow:0 32px 110px rgba(0,0,0,.42);padding:28px}.subscription-intake-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.subscription-intake-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:950;color:#2f63ff}.subscription-intake-head h3{font-size:34px;letter-spacing:-.04em;margin:6px 0 8px}.subscription-intake-head p{margin:0;color:#63718a;line-height:1.55;max-width:590px}.subscription-intake-close{border:0;background:#eef2f8;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;flex:0 0 auto}.subscription-order-chip{display:inline-flex;align-items:center;gap:7px;margin-top:16px;padding:9px 12px;border-radius:999px;background:#eef3ff;color:#15366f;font-size:11px;font-weight:900}.subscription-intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}.subscription-intake-field{display:grid;gap:7px}.subscription-intake-field.wide{grid-column:1/-1}.subscription-intake-field label{font-size:11px;font-weight:900;color:#203b67}.subscription-intake-field input,.subscription-intake-field textarea{width:100%;border:1px solid #dbe3ef;border-radius:13px;padding:12px 13px;background:#fbfcfe;color:#071631;font:inherit;outline:none}.subscription-intake-field textarea{min-height:94px;resize:vertical}.subscription-intake-field input:focus,.subscription-intake-field textarea:focus{border-color:#6d91ed;box-shadow:0 0 0 3px rgba(47,99,255,.08)}.subscription-intake-help{font-size:10px;color:#7b879b;line-height:1.45}.creative-choice-title{font-size:11px;font-weight:900;color:#203b67;margin:19px 0 9px}.creative-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.creative-choice{display:flex;gap:11px;align-items:flex-start;border:1px solid #dfe6f0;background:#fbfcfe;padding:15px;border-radius:16px;cursor:pointer}.creative-choice:has(input:checked){border-color:#426fdc;background:#f3f6ff;box-shadow:0 0 0 2px rgba(47,99,255,.06)}.creative-choice input{margin-top:3px}.creative-choice strong{display:block;font-size:13px;color:#112a53}.creative-choice span span{display:block;font-size:10px;color:#75839a;line-height:1.45;margin-top:4px}.ad-upload-panel{display:none;margin-top:12px;padding:15px;border:1px dashed #bcc9dc;border-radius:16px;background:#f8fafe}.ad-upload-panel.show{display:block}.ad-upload-panel input[type=file]{width:100%;font-size:12px}.ad-upload-name{font-size:10px;color:#51647f;margin-top:7px}.subscription-intake-message{display:none;margin-top:12px;padding:10px 12px;border-radius:12px;background:#fff2f4;color:#a91e36;font-size:11px;font-weight:800}.subscription-intake-message.show{display:block}.subscription-intake-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:20px}.subscription-intake-fine{font-size:10px;color:#7b879b;line-height:1.45;max-width:430px}.subscription-intake-submit{border:0;border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,#285cff,#e21e3a);color:#fff;font-weight:950;cursor:pointer;white-space:nowrap}.subscription-intake-submit:disabled{opacity:.55;cursor:wait}
 
     @media(max-width:1000px){
       .portal-shell{grid-template-columns:1fr}.portal-sidebar{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.portal-sidebar-head{grid-column:1/-1}.portal-nav-item{margin:0}
@@ -680,6 +690,8 @@
     @media(max-width:900px){#advertiserPortal{top:66px;padding-top:28px}.access-link{display:none!important}}
     @media(max-width:650px){
       .portal-hero{padding:26px 20px}.portal-top{align-items:flex-start;flex-direction:column}.portal-sidebar{grid-template-columns:1fr}.portal-grid,.future-private-grid{grid-template-columns:1fr}.portal-data-card.full{grid-column:auto}.portal-page-content{padding:20px}.portal-page-head{flex-direction:column}.portal-page-head h3{font-size:29px}.portal-main,.portal-page{min-height:610px}
+      .multi-location-savings{align-items:flex-start;flex-direction:column}.multi-location-savings-copy{align-items:flex-start;flex-direction:column;gap:8px}.multi-location-open{width:100%}.multi-location-card{padding:22px 18px;border-radius:22px}.multi-location-head h3{font-size:29px}.multi-plan-tabs{grid-template-columns:1fr}.multi-location-actions{align-items:stretch;flex-direction:column}.multi-location-checkout{width:100%}.multi-location-choice{align-items:flex-start;flex-direction:column}.multi-location-choice-price{padding-left:30px}
+      .subscription-intake-card{padding:22px 18px;border-radius:22px}.subscription-intake-head h3{font-size:29px}.subscription-intake-grid,.creative-choice-grid{grid-template-columns:1fr}.subscription-intake-actions{align-items:stretch;flex-direction:column}.subscription-intake-submit{width:100%}
     }
 
 
@@ -715,6 +727,26 @@
 .demo-only{display:none!important}
 .bscc-demo-note{display:none!important}
 #bsccSwitchRole{display:none!important}
+
+    /* Advertiser analytics — real account-scoped data */
+    .advertiser-location-panel{margin-top:12px}
+    .analytics-help{margin:6px 0 14px;color:#9fb1d3;font-size:13px;line-height:1.55}
+    .advertiser-location-table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.08);border-radius:14px}
+    .advertiser-location-table{width:100%;border-collapse:collapse;min-width:620px}
+    .advertiser-location-table th,.advertiser-location-table td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px}
+    .advertiser-location-table th{color:#8fa5cc;text-transform:uppercase;font-size:10px;letter-spacing:.09em;background:rgba(255,255,255,.025)}
+    .advertiser-location-table td{color:#eef4ff}
+    .advertiser-location-table tr:last-child td{border-bottom:0}
+    .advertiser-location-table td:first-child{font-weight:800}
+    .analytics-tier-copy{color:#c9d7ef;line-height:1.65;font-size:14px}
+    .platinum-analytics-deep{position:relative;margin-top:14px;border:1px solid rgba(125,92,255,.32);border-radius:20px;background:linear-gradient(145deg,rgba(44,28,97,.52),rgba(8,26,62,.96));padding:18px;overflow:hidden}
+    .platinum-analytics-deep.locked .platinum-deep-content{filter:blur(6px);opacity:.34;pointer-events:none;user-select:none}
+    .platinum-deep-lock{display:none;position:absolute;z-index:3;inset:0;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:28px;background:rgba(4,13,32,.62);backdrop-filter:blur(2px)}
+    .platinum-analytics-deep.locked .platinum-deep-lock{display:flex}
+    .platinum-deep-lock>span{font-size:28px;margin-bottom:7px}.platinum-deep-lock strong{font-size:18px}.platinum-deep-lock p{max-width:560px;color:#b7c7e5;line-height:1.55;margin:7px 0 0}
+    .platinum-head{margin-bottom:12px}.platinum-metrics{margin-top:0}
+    .platinum-highlight{display:flex;flex-direction:column;gap:6px;padding-top:8px}.platinum-highlight strong{font-size:23px}.platinum-highlight span{color:#9fb1d3;font-size:13px;line-height:1.5}
+
 </style>
 <style>
 /* ===== Final BeSeen host network + cursor glow ===== */
@@ -852,6 +884,14 @@ body.host-info-open #hostInfo{display:block}
 .checkout-secure-note{margin:18px 0 0;text-align:center;color:#8797b7;font-size:12px;font-weight:750}.checkout-secure-note strong{color:#344c80}
 .live-feature-banner{display:flex;gap:9px;align-items:center;margin:-4px 0 18px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.025);color:#8fa6cf;font-size:10px}
 .live-feature-banner span{font-weight:950;letter-spacing:.12em;color:#ff90a4}
+
+.bsauth-remember{display:flex;align-items:flex-start;gap:10px;margin:-2px 0 16px;padding:11px 12px;border:1px solid #dce5f7;border-radius:13px;background:#f8faff;cursor:pointer;user-select:none}
+.bsauth-remember input{position:absolute;opacity:0;pointer-events:none}
+.bsauth-check{width:18px;height:18px;flex:0 0 18px;border-radius:6px;border:1.5px solid #a8b8d5;background:#fff;display:grid;place-items:center;margin-top:1px;transition:.18s ease}
+.bsauth-check:after{content:'✓';font-size:12px;font-weight:1000;color:#fff;opacity:0;transform:scale(.7);transition:.18s ease}
+.bsauth-remember input:checked + .bsauth-check{background:#2f6fff;border-color:#2f6fff;box-shadow:0 0 0 4px rgba(47,111,255,.10)}
+.bsauth-remember input:checked + .bsauth-check:after{opacity:1;transform:scale(1)}
+.bsauth-remember-copy{display:grid;gap:2px}.bsauth-remember-copy strong{font-size:12px;color:#20365f}.bsauth-remember-copy span{font-size:10.5px;line-height:1.4;color:#7d8eac}
 </style>
 <style id="beseen-referral-center-style">
 .bs-referral-center{position:fixed;inset:0;z-index:88000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(3,12,31,.78);backdrop-filter:blur(16px)}
@@ -902,6 +942,7 @@ body.host-info-open #hostInfo{display:block}
   @media(max-width:1000px){.bscc-manager-grid{grid-template-columns:1fr}.bscc-formgrid{grid-template-columns:1fr}.bscc-field.wide{grid-column:auto}.bscc-location-row{grid-template-columns:1fr 1fr}.bscc-location-row .row-actions{grid-column:1/-1}}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
 <div class="bsauth-gate" id="bsauthGate">
@@ -927,13 +968,15 @@ body.host-info-open #hostInfo{display:block}
 </div>
 <div class="bsauth-form" id="bsauthLoginForm">
 <label class="bsauth-label">Email</label><input class="bsauth-input" id="bsauthLoginEmail" placeholder="you@business.com" type="email"/>
-<label class="bsauth-label">Password</label><input class="bsauth-input" id="bsauthLoginPassword" placeholder="••••••••••" type="password"/>
+<label class="bsauth-label">Password</label><input class="bsauth-input" id="bsauthLoginPassword" placeholder="••••••••••" type="password" autocomplete="current-password"/>
+<label class="bsauth-remember" for="bsauthRememberLogin"><input id="bsauthRememberLogin" type="checkbox"/><span class="bsauth-check"></span><span class="bsauth-remember-copy"><strong>Remember me</strong><span>Keep me signed in on this device so I don’t have to enter my password every time.</span></span></label>
 <div class="bsauth-formrow"><button class="bsauth-action bsauth-guest" data-auth-back="" type="button">Back</button><button class="bsauth-action bsauth-primary" id="bsauthFakeSignin" type="button">Sign In</button></div><div class="bsauth-login-feedback" id="bsauthLoginFeedback">Your account securely determines your BeSeen access after sign in.</div>
 </div>
 <div class="bsauth-form" id="bsauthCreateForm">
 <label class="bsauth-label">Your name</label><input class="bsauth-input" id="bsauthCreateName" placeholder="Your name" type="text"/>
 <label class="bsauth-label">Business email</label><input class="bsauth-input" id="bsauthCreateEmail" placeholder="you@business.com" type="email"/>
-<label class="bsauth-label">Create password</label><input class="bsauth-input" id="bsauthCreatePassword" placeholder="Create a secure password" type="password"/>
+<label class="bsauth-label">Create password</label><input class="bsauth-input" id="bsauthCreatePassword" placeholder="Create a secure password" type="password" autocomplete="new-password"/>
+<label class="bsauth-remember" for="bsauthRememberCreate"><input id="bsauthRememberCreate" type="checkbox"/><span class="bsauth-check"></span><span class="bsauth-remember-copy"><strong>Remember me on this device</strong><span>After you verify and sign in, BeSeen can keep your session active. Your password is never stored by BeSeen.</span></span></label>
 <label class="bsauth-label">Referral code <span style="font-weight:700;color:#8192b3">(optional)</span></label><input class="bsauth-input" id="bsauthReferralCode" placeholder="Enter referral code" type="text" autocomplete="off"/>
 <div class="bsauth-referral-help">Referred by someone? Enter their code so we can give them credit.</div>
 <div class="bsauth-formrow"><button class="bsauth-action bsauth-guest" data-auth-back="" type="button">Back</button><button class="bsauth-action bsauth-primary" id="bsauthCreateDemo" type="button">Create Account</button></div>
@@ -1006,7 +1049,7 @@ body.host-info-open #hostInfo{display:block}
 </section>
 <section class="bscc-page" data-cc-page="advertisers">
 <div class="bscc-heading"><div><h1>Advertisers</h1><p>Every paying account, subscription tier, campaign, billing state, and contact record.</p></div><button class="bscc-action" type="button">+ Add Advertiser</button></div>
-<div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Business</th><th>Plan</th><th>Status</th><th>Location</th><th>Next payment</th><th>Campaign</th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="6">No sample advertisers. Live subscriber data will appear here after Stripe and Supabase are connected.</td></tr></tbody></table></div></div>
+<div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Location(s)</th><th>Creative</th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="6">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
 </section>
 
 <section class="bscc-page" data-cc-page="accounts">
@@ -1019,8 +1062,10 @@ body.host-info-open #hostInfo{display:block}
   </div>
 </section>
 
-<section class="bscc-page" data-cc-page="campaigns"><div class="bscc-heading"><div><h1>Campaigns</h1><p>Control what is running, where it runs, which creative is approved, and the exact rotation settings.</p></div><button class="bscc-action" type="button">+ Create Campaign</button></div><div class="bscc-panelgrid">
-<div class="bscc-panel"><div class="icon">▶</div><h3>Live</h3><p>Campaigns currently playing on the BeSeen network.</p><strong id="bsccCampaignLiveCount">—</strong></div><div class="bscc-panel"><div class="icon">⌛</div><h3>Pending Approval</h3><p>New or revised creatives waiting for BeSeen approval.</p><strong>Real workflow data only</strong></div><div class="bscc-panel"><div class="icon">◫</div><h3>Scheduled</h3><p>Campaigns with future start dates or upcoming creative swaps.</p><strong>Real workflow data only</strong></div></div></section>
+<section class="bscc-page" data-cc-page="campaigns"><div class="bscc-heading"><div><h1>Campaigns + QR Library</h1><p>Every paid campaign gets its own tracked QR automatically. Download the exact QR here when you are building an advertiser's creative.</p></div><button class="bscc-action" id="bsccRefreshQrLibrary" type="button">Refresh QR Library</button></div><div class="bscc-panelgrid">
+<div class="bscc-panel"><div class="icon">▶</div><h3>Live</h3><p>Campaigns currently playing on the BeSeen network.</p><strong id="bsccCampaignLiveCount">—</strong></div><div class="bscc-panel"><div class="icon">⌁</div><h3>Automatic QR</h3><p>Stripe payment creates one tracked QR per purchased location.</p><strong>No manual QR setup</strong></div><div class="bscc-panel"><div class="icon">↗</div><h3>Redirect</h3><p>The QR records the scan first, then sends the customer to the subscriber's chosen link.</p><strong>Tracked automatically</strong></div></div>
+<div class="bscc-card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap"><div><h3>Advertisers → Locations → QR</h3><p class="desc">Click an advertiser to see every BeSeen location they are advertising at. Click a location and the exact tracked QR code for that placement pops up, ready to download for the ad.</p></div><span class="bscc-pill public">Owner / Admin</span></div><div class="owner-qr-directory" id="bsccQrLibrary"><div class="qr-empty-card">Paid advertisers and their location QR codes will appear here automatically.</div></div><div class="bscc-message" id="bsccQrLibraryMessage"></div></div></section>
+<div class="owner-qr-modal" id="ownerQrModal" aria-hidden="true"><div class="owner-qr-modal-card" role="dialog" aria-modal="true" aria-labelledby="ownerQrModalTitle"><div class="owner-qr-modal-head"><div><div class="owner-qr-modal-kicker" id="ownerQrModalBusiness">Advertiser QR</div><h3 id="ownerQrModalTitle">Location QR Code</h3><p id="ownerQrModalSubscriber"></p></div><button class="owner-qr-modal-close" id="ownerQrModalClose" type="button" aria-label="Close">×</button></div><div class="owner-qr-modal-body"><div class="owner-qr-modal-code" id="ownerQrModalCode"></div><div><div class="owner-qr-detail"><label>BeSeen tracking URL</label><div id="ownerQrModalTracking"></div></div><div class="owner-qr-detail"><label>Redirects customer to</label><div id="ownerQrModalDestination"></div></div><div class="owner-qr-detail"><label>Campaign</label><div id="ownerQrModalCampaign"></div></div><div class="owner-qr-detail"><label>Status</label><div id="ownerQrModalStatus"></div></div></div></div><div class="owner-qr-modal-actions"><button id="ownerQrModalDownload" type="button">Download QR</button><button class="secondary" id="ownerQrModalCopy" type="button">Copy tracking link</button><button class="secondary" id="ownerQrModalCopyDestination" type="button">Copy destination link</button></div></div></div>
 <section class="bscc-page" data-cc-page="analytics"><div class="bscc-heading"><div><h1>QR &amp; Analytics</h1><p>See what each tracked ad actually generated: scans, visits, calls, lead forms, and campaign attribution.</p></div><button class="bscc-action" type="button">Export Report</button></div>
 <div class="bscc-statgrid">
 <div class="bscc-stat"><div class="lab">QR scans</div><strong id="bsccAnalyticsQr">—</strong><small>Recorded events</small></div>
@@ -1162,7 +1207,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="preview-note">Package pricing below applies to advertising at Exclusive Hookah Lounge.</div>
 </div>
 </div>
-<div class="plans" id="locationPlans"><article class="plan gold"><div class="plan-tag">15-Display Coverage</div><h4>Gold</h4><div class="plan-price">$200 <span>/ month</span></div><ul><li>Your ad is displayed across 15 different tablets throughout the lounge</li><li>Consistent exposure while guests sit, socialize, and move around the venue</li><li>Standard 5-second ad rotation</li><li>Includes private Campaign Center + Creative/QR Hub access</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Gold" href="#">Subscribe — $200/mo</a></article><article class="plan premium featured"><div class="plan-tag">Most Popular</div><h4>Premium</h4><div class="plan-price">$250 <span>/ month</span></div><ul><li>Longer 9-second display time instead of 5 seconds</li><li>More frequent exposure and stronger visibility</li><li>Displayed throughout the Exclusive lounge network</li><li>Includes QR scan and campaign performance analytics</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Premium" href="#">Subscribe — $250/mo</a></article><article class="plan platinum"><div class="plan-tag">Maximum Exposure</div><h4>Platinum</h4><div class="plan-price">$300 <span>/ month</span></div><ul><li>Your ad appears after every 2 ads</li><li>Longer 9-second display time instead of 5 seconds</li><li>Maximum visibility and repeated exposure throughout the lounge</li><li>Includes full lead attribution + early access to private placements</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Platinum" href="#">Subscribe — $300/mo</a></article></div><div class="checkout-secure-note">Secure monthly checkout through <strong>Stripe</strong> • Your BeSeen access updates automatically after payment</div>
+<div class="plans" id="locationPlans"><article class="plan gold"><div class="plan-tag">15-Display Coverage</div><h4>Gold</h4><div class="plan-price">$200 <span>/ month</span></div><ul><li>Your ad is displayed across 15 different tablets throughout the lounge</li><li>Consistent exposure while guests sit, socialize, and move around the venue</li><li>Standard 5-second ad rotation</li><li>Includes private Campaign Center + Creative/QR Hub access</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Gold" href="#">Subscribe — $200/mo</a></article><article class="plan premium featured"><div class="plan-tag">Most Popular</div><h4>Premium</h4><div class="plan-price">$250 <span>/ month</span></div><ul><li>Longer 9-second display time instead of 5 seconds</li><li>More frequent exposure and stronger visibility</li><li>Displayed throughout the Exclusive lounge network</li><li>Includes QR scan and campaign performance analytics</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Premium" href="#">Subscribe — $250/mo</a></article><article class="plan platinum"><div class="plan-tag">Maximum Exposure</div><h4>Platinum</h4><div class="plan-price">$300 <span>/ month</span></div><ul><li>Your ad appears after every 2 ads</li><li>Longer 9-second display time instead of 5 seconds</li><li>Maximum visibility and repeated exposure throughout the lounge</li><li>Includes full lead attribution + early access to private placements</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Platinum" href="#">Subscribe — $300/mo</a></article></div><div class="checkout-secure-note">Secure monthly checkout through <strong>Stripe</strong> • Your BeSeen access updates automatically after payment</div><div class="add-location-trigger-wrap"><button class="add-location-trigger multi-location-open" data-location="exclusive" type="button">＋ Add Another Location — $50 Off/mo</button></div>
 </div>
 
 <div class="location-panel" id="dynamicLocationPanel" style="display:none">
@@ -1176,9 +1221,42 @@ body.host-info-open #hostInfo{display:block}
     <article class="plan platinum"><div class="plan-tag">Maximum Exposure</div><h4>Platinum</h4><div class="plan-price" id="dynamicPlatinumPrice">$300 <span>/ month</span></div><ul><li>Highest BeSeen placement priority</li><li>Full lead attribution tools</li><li>Early access to private placements</li></ul><a class="plan-btn checkout-preview dynamic-checkout" data-plan="Platinum" href="#">Subscribe</a></article>
   </div>
   <div class="checkout-secure-note">Secure monthly checkout through <strong>Stripe</strong> • Location and subscription access update from Supabase automatically</div>
+  <div class="add-location-trigger-wrap"><button class="add-location-trigger multi-location-open" type="button">＋ Add Another Location — $50 Off/mo</button></div>
 </div>
 </div>
 </section>
+<div class="multi-location-modal" id="multiLocationModal" aria-hidden="true">
+  <div class="multi-location-card" role="dialog" aria-modal="true" aria-labelledby="multiLocationTitle">
+    <div class="multi-location-head"><div><div class="multi-location-kicker">Multi-location savings</div><h3 id="multiLocationTitle">Add locations. Save $50 each.</h3><p>Choose one package and as many live BeSeen locations as you want. Your first location is regular price; every additional location gets $50 off every month.</p></div><button class="multi-location-close" id="multiLocationClose" type="button" aria-label="Close">×</button></div>
+    <div class="multi-plan-tabs" id="multiPlanTabs"><button class="multi-plan-tab active" data-plan="Gold" type="button">Gold</button><button class="multi-plan-tab" data-plan="Premium" type="button">Premium</button><button class="multi-plan-tab" data-plan="Platinum" type="button">Platinum</button></div>
+    <div class="multi-location-list" id="multiLocationChoices"></div>
+    <div class="multi-location-summary" id="multiLocationSummary"></div>
+    <div class="multi-location-actions"><div class="multi-location-fine">Already advertising at a BeSeen location? The $50 discount automatically applies to every new location you add. Only live public locations can be purchased.</div><button class="multi-location-checkout" id="multiLocationCheckout" type="button">Continue to secure checkout →</button></div>
+  </div>
+</div>
+<div class="subscription-intake-modal" id="subscriptionIntakeModal" aria-hidden="true">
+  <div class="subscription-intake-card" role="dialog" aria-modal="true" aria-labelledby="subscriptionIntakeTitle">
+    <div class="subscription-intake-head"><div><div class="subscription-intake-kicker">Before secure checkout</div><h3 id="subscriptionIntakeTitle">Tell us about your business.</h3><p>We use this information to set up your BeSeen campaign correctly and make sure your ad is ready for the locations you selected.</p><div class="subscription-order-chip" id="subscriptionOrderChip">Gold • 1 location</div></div><button class="subscription-intake-close" id="subscriptionIntakeClose" type="button" aria-label="Close">×</button></div>
+    <form id="subscriptionIntakeForm">
+      <div class="subscription-intake-grid">
+        <div class="subscription-intake-field"><label for="intakeBusinessName">Business name *</label><input id="intakeBusinessName" maxlength="120" autocomplete="organization" placeholder="Your business name" required></div>
+        <div class="subscription-intake-field"><label for="intakeBusinessType">What type of business is it? *</label><input id="intakeBusinessType" maxlength="80" placeholder="Real estate, restaurant, auto, salon…" required></div>
+        <div class="subscription-intake-field"><label for="intakeWebsite">Business page (optional)</label><input id="intakeWebsite" maxlength="300" placeholder="Website, Instagram, or other business page"></div>
+        <div class="subscription-intake-field"><label for="intakePhone">Best phone number</label><input id="intakePhone" maxlength="40" autocomplete="tel" placeholder="(313) 555-0123"></div>
+        <div class="subscription-intake-field wide"><label for="intakeCampaignDetails">What are you promoting? *</label><textarea id="intakeCampaignDetails" maxlength="1500" placeholder="Tell us the offer, service, product, event, property, or message you want customers to see." required></textarea><div class="subscription-intake-help">This gives BeSeen context for your campaign and helps us set up the right creative and tracking.</div></div>
+        <div class="subscription-intake-field wide"><label for="intakeQrDestination">Link your QR code should lead to *</label><input id="intakeQrDestination" type="url" maxlength="1000" inputmode="url" autocomplete="url" placeholder="https://yourwebsite.com/page" required><div class="subscription-intake-help">Paste the exact link customers should open after scanning your ad. After payment, BeSeen automatically creates a separate tracked QR code for each location you selected.</div></div>
+      </div>
+      <div class="creative-choice-title">How do you want to handle the ad creative?</div>
+      <div class="creative-choice-grid">
+        <label class="creative-choice"><input type="radio" name="creativeChoice" value="own_ad" checked><span><strong>Upload my own ad</strong><span>I already have the finished ad I want BeSeen to display.</span></span></label>
+        <label class="creative-choice"><input type="radio" name="creativeChoice" value="beseen_create"><span><strong>Have BeSeen create my ad</strong><span>Use my business details and promotion notes to build the creative for me.</span></span></label>
+      </div>
+      <div class="ad-upload-panel show" id="adUploadPanel"><div class="subscription-intake-field"><label for="intakeAdFile">Upload your finished ad *</label><input id="intakeAdFile" type="file" accept="image/png,image/jpeg,image/webp"><div class="subscription-intake-help">JPG, PNG, or WEBP • up to 12 MB. Your upload is saved privately in BeSeen's campaign storage.</div><div class="ad-upload-name" id="adUploadName"></div></div></div>
+      <div class="subscription-intake-message" id="subscriptionIntakeMessage"></div>
+      <div class="subscription-intake-actions"><div class="subscription-intake-fine">Your campaign information is saved to your BeSeen account. After you continue, Stripe handles the secure monthly payment.</div><button class="subscription-intake-submit" id="subscriptionIntakeSubmit" type="submit">Continue to secure checkout →</button></div>
+    </form>
+  </div>
+</div>
 <section aria-label="Private advertiser access preview" id="advertiserPortal">
 <div class="wrap">
 <div class="portal-top">
@@ -1196,7 +1274,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="portal-sidebar-head"><strong>Private Advertiser Pages</strong><span id="portalViewingAs">Viewing as Public Visitor</span></div>
 <button class="portal-nav-item" data-min="1" data-page="campaign" type="button"><span class="portal-nav-copy"><strong>Live Campaign Center</strong><small>Your active campaign + placement status</small><span class="tier-pill gold">Gold+</span></span><span class="portal-nav-status">🔒</span></button>
 <button class="portal-nav-item" data-min="1" data-page="creative" type="button"><span class="portal-nav-copy"><strong>Creative + QR Hub</strong><small>Ad files, QR links, destinations</small><span class="tier-pill gold">Gold+</span></span><span class="portal-nav-status">🔒</span></button>
-<button class="portal-nav-item active" data-min="2" data-page="analytics" type="button"><span class="portal-nav-copy"><strong>Performance Analytics</strong><small>Scans, visits, clicks, engagement</small><span class="tier-pill premium">Premium+</span></span><span class="portal-nav-status">🔒</span></button>
+<button class="portal-nav-item active" data-min="1" data-page="analytics" type="button"><span class="portal-nav-copy"><strong>Performance Analytics</strong><small>Your results by location + deeper Platinum insights</small><span class="tier-pill gold">Gold+</span></span><span class="portal-nav-status">🔒</span></button>
 <button class="portal-nav-item" data-min="3" data-page="attribution" type="button"><span class="portal-nav-copy"><strong>Lead Attribution</strong><small>See actions generated by your ad</small><span class="tier-pill platinum">Platinum</span></span><span class="portal-nav-status">🔒</span></button>
 <button class="portal-nav-item" data-min="3" data-page="upcoming" type="button"><span class="portal-nav-copy"><strong>Private Placements</strong><small>Upcoming locations before public release</small><span class="tier-pill platinum">Platinum</span></span><span class="portal-nav-status">🔒</span></button>
 <button class="portal-nav-item" data-min="3" data-page="opportunities" type="button"><span class="portal-nav-copy"><strong>Priority Opportunities</strong><small>First look at limited inventory</small><span class="tier-pill platinum">Platinum</span></span><span class="portal-nav-status">🔒</span></button>
@@ -1220,33 +1298,55 @@ body.host-info-open #hostInfo{display:block}
 <div class="portal-page-head"><div><h3>Creative + QR Hub</h3><p>Every ad asset and trackable campaign link in one private place.</p></div><span class="portal-access-chip">Gold Access</span></div>
 <div class="vault-row"><div class="vault-icon">▣</div><div><strong>Live Ad Creative</strong><span>Current screen creative + approved versions</span></div></div>
 <div class="vault-row"><div class="vault-icon">⌁</div><div><strong>Unique QR Campaign Links</strong><span>Trackable QR destinations created for each campaign</span></div></div>
+<div class="qr-auto-panel"><div class="panel-label">Your automatic QR codes</div><p class="analytics-help">After a successful subscription payment, BeSeen creates a unique tracked QR code for every location on your campaign. Each scan is recorded against your account and that specific location before the visitor is redirected to your chosen destination.</p><div class="qr-campaign-grid" id="qrCampaignGrid"><div class="qr-empty-card">Your live campaign QR codes will appear here automatically after checkout.</div></div></div>
 <div class="vault-row"><div class="vault-icon">↗</div><div><strong>Destination Manager</strong><span>Website, listing, property page, review link, or custom landing page</span></div></div>
 <div class="vault-row"><div class="vault-icon">◫</div><div><strong>Creative History</strong><span>See which ad version ran and when it changed</span></div></div>
 </div>
 <div class="portal-lock-layer"><div class="portal-lock-card"><div class="big-lock">🔒</div><div class="lock-tier">Gold access or higher</div><h4>Your QR codes become campaign assets.</h4><p>Subscribers get a private hub for ad files, unique QR links, destinations, and creative updates.</p><button class="unlock-preview-btn" type="button">Unlock advertiser access</button></div></div>
 </article>
-<article class="portal-page active locked" data-min="2" data-page="analytics">
+<article class="portal-page active locked" data-min="1" data-page="analytics">
 <div class="portal-page-content">
-<div class="portal-page-head"><div><h3>Performance Analytics</h3><p>See whether people are actually interacting with the campaign—not just whether the ad is running.</p></div><span class="portal-access-chip">Premium Access</span></div>
-<div class="live-feature-banner"><span>CAMPAIGN ANALYTICS</span> Performance updates only from actual tracked interactions collected across your BeSeen campaign.</div>
+<div class="portal-page-head"><div><h3>Performance Analytics</h3><p>See how your own ads are performing across every BeSeen location you subscribe to. No other advertiser's data is shown here.</p></div><span class="portal-access-chip">Gold+ Access</span></div>
+<div class="live-feature-banner"><span>YOUR CAMPAIGN DATA</span> Every number below comes from actual tracked BeSeen interactions tied to your account, campaign, and location.</div>
 <div class="analytics-metrics">
-<div class="metric-card"><span>QR scans</span><strong id="portalQrScans">—</strong><small>Recorded campaign scans</small></div>
-<div class="metric-card"><span>Landing visits</span><strong id="portalLandingVisits">—</strong><small>Recorded tracked visits</small></div>
-<div class="metric-card"><span>High-intent actions</span><strong id="portalHighIntent">—</strong><small>Calls, forms, directions, listing clicks</small></div>
-<div class="metric-card"><span>Engagement rate</span><strong id="portalEngagementRate">—</strong><small>Calculated from tracked campaign activity</small></div>
+<div class="metric-card"><span>QR scans</span><strong id="portalQrScans">0</strong><small>Your recorded campaign scans</small></div>
+<div class="metric-card"><span>Landing visits</span><strong id="portalLandingVisits">0</strong><small>Your tracked destination visits</small></div>
+<div class="metric-card"><span>High-intent actions</span><strong id="portalHighIntent">0</strong><small>Calls, forms, directions, listing clicks</small></div>
+<div class="metric-card"><span>Engagement rate</span><strong id="portalEngagementRate">0%</strong><small>High-intent actions ÷ QR scans</small></div>
+</div>
+<div class="analytics-panel advertiser-location-panel">
+<div class="panel-label">Performance by BeSeen location</div>
+<p class="analytics-help">Use this table to compare how your ad performs at each location. Select All Locations for your combined totals.</p>
+<div class="advertiser-location-table-wrap"><table class="advertiser-location-table"><thead><tr><th>Location</th><th>QR scans</th><th>Visits</th><th>Phone clicks</th><th>Leads</th></tr></thead><tbody id="portalLocationAnalyticsBody"><tr><td colspan="5">Your live location performance will appear here after tracked activity begins.</td></tr></tbody></table></div>
 </div>
 <div class="analytics-layout">
 <div class="analytics-panel">
-<div class="panel-label">7-day QR activity</div>
-<div class="bscc-muted" id="portalChartEmpty">7-day activity will populate from real tracked events once your campaign is live.</div>
+<div class="panel-label">Tracked actions</div>
+<div class="action-breakdown"><div><span>Property / product views</span><strong id="portalListingViews">0</strong></div><div><span>Phone taps</span><strong id="portalPhoneClicks">0</strong></div><div><span>Form starts</span><strong id="portalFormStarts">0</strong></div><div><span>Completed inquiries</span><strong id="portalFormSubmits">0</strong></div></div>
 </div>
 <div class="analytics-panel">
-<div class="panel-label">Tracked actions</div>
-<div class="action-breakdown"><div><span>Property / product views</span><strong id="portalListingViews">—</strong></div><div><span>Phone taps</span><strong id="portalPhoneClicks">—</strong></div><div><span>Form starts</span><strong id="portalFormStarts">—</strong></div><div><span>Completed inquiries</span><strong id="portalFormSubmits">—</strong></div></div>
+<div class="panel-label">Access level</div>
+<div class="analytics-tier-copy" id="portalAnalyticsTierNote">Gold shows your core results and location-by-location performance. Platinum unlocks deeper attribution and optimization insights.</div>
+</div>
+</div>
+<div class="platinum-analytics-deep locked" id="portalPlatinumDeep">
+<div class="platinum-deep-lock"><span>◆</span><strong>Platinum Deep Analytics</strong><p>Platinum sees the full funnel, unique vs repeat scanners, conversion rates, best-performing location, and strongest time of day.</p></div>
+<div class="platinum-deep-content">
+<div class="portal-page-head platinum-head"><div><h3>Platinum Deep Analytics</h3><p>Go beyond totals and understand where your strongest engagement is coming from.</p></div><span class="portal-access-chip">Platinum</span></div>
+<div class="analytics-metrics platinum-metrics">
+<div class="metric-card"><span>Unique scanners</span><strong id="portalUniqueScanners">0</strong><small>Distinct tracked sessions that scanned</small></div>
+<div class="metric-card"><span>Repeat scans</span><strong id="portalRepeatScans">0</strong><small>Additional scans from returning sessions</small></div>
+<div class="metric-card"><span>Lead conversion</span><strong id="portalLeadConversion">0%</strong><small>Completed inquiries ÷ QR scans</small></div>
+<div class="metric-card"><span>Best time</span><strong id="portalBestHour">—</strong><small>Highest QR scan hour</small></div>
+</div>
+<div class="analytics-layout">
+<div class="analytics-panel"><div class="panel-label">Best-performing location</div><div class="platinum-highlight"><strong id="portalBestLocation">No activity yet</strong><span id="portalBestLocationDetail">Location ranking begins after scans are recorded.</span></div></div>
+<div class="analytics-panel"><div class="panel-label">Full funnel</div><div class="action-breakdown"><div><span>QR scans</span><strong id="portalFunnelScans">0</strong></div><div><span>Website visits</span><strong id="portalFunnelVisits">0</strong></div><div><span>High-intent actions</span><strong id="portalFunnelActions">0</strong></div><div><span>Completed leads</span><strong id="portalFunnelLeads">0</strong></div></div></div>
 </div>
 </div>
 </div>
-<div class="portal-lock-layer"><div class="portal-lock-card"><div class="big-lock">📊</div><div class="lock-tier">Premium access or higher</div><h4>See what people do after they notice your ad.</h4><p>Unlock QR scans, tracked site visits, high-intent actions, engagement trends, and campaign performance over time.</p><button class="unlock-preview-btn" type="button">Unlock Performance Analytics</button></div></div>
+</div>
+<div class="portal-lock-layer"><div class="portal-lock-card"><div class="big-lock">📊</div><div class="lock-tier">Gold access or higher</div><h4>See how your own ad performs by location.</h4><p>Gold advertisers can view their core campaign results and compare their subscribed BeSeen locations. Platinum adds much deeper attribution and optimization detail.</p><button class="unlock-preview-btn" type="button">Unlock Performance Analytics</button></div></div>
 </article>
 <article class="portal-page locked" data-min="3" data-page="attribution">
 <div class="portal-page-content">
@@ -1585,6 +1685,89 @@ body.host-info-open #hostInfo{display:block}
       }catch(err){ console.warn('Public locations are using the built-in fallback until the database is connected.',err); }
     }
 
+    const multiLocationModal=document.getElementById('multiLocationModal');
+    const multiLocationClose=document.getElementById('multiLocationClose');
+    const multiLocationChoices=document.getElementById('multiLocationChoices');
+    const multiLocationSummary=document.getElementById('multiLocationSummary');
+    const multiLocationCheckout=document.getElementById('multiLocationCheckout');
+    const multiPlanTabs=document.getElementById('multiPlanTabs');
+    let multiLocationPlan='Gold';
+    let multiLocationAnchor='exclusive';
+
+    function multiPlanPriceCents(loc,plan){
+      const key={Gold:'gold_price_cents',Premium:'premium_price_cents',Platinum:'platinum_price_cents'}[plan] || 'gold_price_cents';
+      const fallback={Gold:20000,Premium:25000,Platinum:30000}[plan] || 20000;
+      return Number(loc?.[key] ?? fallback);
+    }
+    function multiMoney(cents){ return '$'+(Math.max(0,Number(cents)||0)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
+    function multiAvailableLocations(){
+      const rows=Object.values(publicLocations||{}).filter(loc=>loc?.slug);
+      if(!rows.some(loc=>loc.slug==='exclusive')) rows.push({slug:'exclusive',name:'Exclusive Hookah Lounge',city:'Dearborn',gold_price_cents:20000,premium_price_cents:25000,platinum_price_cents:30000});
+      rows.sort((a,b)=>{ if(a.slug===multiLocationAnchor) return -1; if(b.slug===multiLocationAnchor) return 1; return Number(a.sort_order||100)-Number(b.sort_order||100) || String(a.name||'').localeCompare(String(b.name||'')); });
+      return rows;
+    }
+    function renderMultiLocationBuilder(preserveSelected=false){
+      if(!multiLocationChoices||!multiLocationSummary) return;
+      const selectedBefore=preserveSelected ? new Set([...multiLocationChoices.querySelectorAll('input:checked')].map(i=>i.value)) : new Set([multiLocationAnchor]);
+      const rows=multiAvailableLocations();
+      multiLocationChoices.innerHTML='';
+      rows.forEach((loc,index)=>{
+        const regular=multiPlanPriceCents(loc,multiLocationPlan);
+        const extra=Math.max(0,regular-5000);
+        const label=document.createElement('label');
+        label.className='multi-location-choice';
+        label.innerHTML=`<span class="multi-location-choice-left"><input type="checkbox" value="${loc.slug}" ${selectedBefore.has(loc.slug)?'checked':''}><span><strong>${loc.name}</strong><small>${loc.city?loc.city+' • ':''}Live BeSeen location</small></span></span><span class="multi-location-choice-price">${multiMoney(regular)} first • ${multiMoney(extra)} additional</span>`;
+        multiLocationChoices.appendChild(label);
+      });
+      if(rows.length===1){
+        const note=document.createElement('div'); note.className='multi-location-empty'; note.textContent='More live locations will appear here automatically as BeSeen expands. The $50 additional-location discount will be ready for them.'; multiLocationChoices.appendChild(note);
+      }
+      multiLocationChoices.querySelectorAll('input[type="checkbox"]').forEach(input=>input.addEventListener('change',renderMultiLocationSummary));
+      renderMultiLocationSummary();
+    }
+    function renderMultiLocationSummary(){
+      if(!multiLocationSummary||!multiLocationCheckout) return;
+      const selected=[...multiLocationChoices.querySelectorAll('input:checked')].map(input=>{
+        const loc=multiAvailableLocations().find(row=>row.slug===input.value); return loc;
+      }).filter(Boolean);
+      let total=0, savings=0;
+      const lines=selected.map((loc,index)=>{
+        const regular=multiPlanPriceCents(loc,multiLocationPlan);
+        const discount=index>0?Math.min(5000,regular):0;
+        const billed=regular-discount; total+=billed; savings+=discount;
+        return `<div class="multi-location-summary-row"><span>${loc.name}${index>0?' <span class="multi-location-save">−$50</span>':''}</span><strong>${multiMoney(billed)}/mo</strong></div>`;
+      }).join('');
+      multiLocationSummary.innerHTML=`${lines||'<div class="multi-location-summary-row"><span>Select at least one location</span><strong>—</strong></div>'}<div class="multi-location-summary-total"><div><div style="font-size:10px;color:#8fa6cf;text-transform:uppercase;letter-spacing:.1em;font-weight:900">Estimated monthly total</div>${savings?`<div class="multi-location-save">You save ${multiMoney(savings)}/month</div>`:''}</div><strong>${multiMoney(total)}/mo</strong></div>`;
+      multiLocationCheckout.disabled=selected.length===0;
+      multiLocationCheckout.textContent=selected.length?`Continue to secure checkout — ${multiMoney(total)}/mo`:'Choose a location';
+    }
+    function openMultiLocationBuilder(plan='Gold',anchorSlug='exclusive'){
+      multiLocationPlan=['Gold','Premium','Platinum'].includes(plan)?plan:'Gold';
+      multiLocationAnchor=anchorSlug||'exclusive';
+      multiPlanTabs?.querySelectorAll('.multi-plan-tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.plan===multiLocationPlan));
+      renderMultiLocationBuilder(false);
+      multiLocationModal?.classList.add('open');
+      multiLocationModal?.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    }
+    function closeMultiLocationBuilder(){
+      multiLocationModal?.classList.remove('open');
+      multiLocationModal?.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    }
+    window.openBeseenMultiLocation=openMultiLocationBuilder;
+    document.querySelectorAll('.multi-location-open').forEach(btn=>btn.addEventListener('click',()=>openMultiLocationBuilder('Gold',btn.dataset.location||activeLocationSlug||'exclusive')));
+    multiLocationClose?.addEventListener('click',closeMultiLocationBuilder);
+    multiLocationModal?.addEventListener('click',e=>{ if(e.target===multiLocationModal) closeMultiLocationBuilder(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&multiLocationModal?.classList.contains('open')) closeMultiLocationBuilder(); });
+    multiPlanTabs?.querySelectorAll('.multi-plan-tab').forEach(btn=>btn.addEventListener('click',()=>{ multiLocationPlan=btn.dataset.plan; multiPlanTabs.querySelectorAll('.multi-plan-tab').forEach(b=>b.classList.toggle('active',b===btn)); renderMultiLocationBuilder(true); }));
+    multiLocationCheckout?.addEventListener('click',async()=>{
+      const slugs=[...multiLocationChoices.querySelectorAll('input:checked')].map(i=>i.value);
+      if(!slugs.length) return;
+      multiLocationCheckout.disabled=true; multiLocationCheckout.textContent='Opening Stripe…';
+      try{ if(typeof window.startBeseenCheckout==='function') await window.startBeseenCheckout(multiLocationPlan,slugs); else throw new Error('Secure checkout is still loading.'); } finally { setTimeout(()=>{ multiLocationCheckout.disabled=false; renderMultiLocationSummary(); },1200); }
+    });
+
     function openLocationPage(key){
       renderLocation(key);
       document.body.classList.add('location-page-open');
@@ -1713,6 +1896,119 @@ body.host-info-open #hostInfo{display:block}
       }catch(err){ console.warn('Private placements could not be loaded.',err); }
     }
 
+    function safeText(value){ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    async function loadAutomaticQrHub(){
+      const grid=document.getElementById('qrCampaignGrid');
+      if(!grid || !supabase || (accessLevels[currentAccess]||0)<1) return;
+      grid.innerHTML='<div class="qr-empty-card">Loading your campaign QR codes…</div>';
+      try{
+        const {data,error}=await supabase.from('campaigns').select('id,name,tracking_code,landing_url,status,created_at').order('created_at',{ascending:false});
+        if(error) throw error;
+        const rows=Array.isArray(data)?data:[];
+        if(!rows.length){ grid.innerHTML='<div class="qr-empty-card">No paid campaign QR codes yet. They will be created automatically after your first successful subscription checkout.</div>'; return; }
+        grid.innerHTML=rows.map((c,i)=>`<div class="qr-campaign-card"><div class="qr-code-box" id="campaignQr${i}"></div><div class="qr-campaign-copy"><strong>${safeText(c.name||'BeSeen campaign')}</strong><small>${safeText(c.status||'draft')} • unique tracked QR</small><div class="qr-link-line" data-track-url></div><small>Destination: ${safeText(c.landing_url||'Not set')}</small><div class="qr-card-actions"><button type="button" data-copy-qr>Copy tracking link</button><button type="button" data-download-qr>Download QR</button></div></div></div>`).join('');
+        rows.forEach((c,i)=>{
+          const trackingUrl=`${window.location.origin}/api/qr?c=${encodeURIComponent(c.tracking_code)}`;
+          const card=grid.children[i]; const line=card?.querySelector('[data-track-url]'); if(line) line.textContent=trackingUrl;
+          const holder=document.getElementById(`campaignQr${i}`);
+          if(holder && window.QRCode){ new QRCode(holder,{text:trackingUrl,width:110,height:110,colorDark:'#071b44',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+          card?.querySelector('[data-copy-qr]')?.addEventListener('click',async()=>{ try{await navigator.clipboard.writeText(trackingUrl); showPortalToast('Tracking link copied.');}catch{showPortalToast(trackingUrl);} });
+          card?.querySelector('[data-download-qr]')?.addEventListener('click',()=>{ const canvas=holder?.querySelector('canvas'); const img=holder?.querySelector('img'); const href=canvas?.toDataURL?.('image/png')||img?.src; if(!href){showPortalToast('QR image is still loading.');return;} const a=document.createElement('a'); a.href=href; a.download=`beseen-${String(c.name||'campaign').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}-qr.png`; a.click(); });
+        });
+      }catch(err){ console.warn('QR hub could not be loaded',err); grid.innerHTML='<div class="qr-empty-card">Your QR codes could not be loaded right now. Please refresh and try again.</div>'; }
+    }
+
+    let ownerQrCampaignCache=new Map();
+    function closeOwnerQrModal(){
+      const modal=document.getElementById('ownerQrModal');
+      if(modal){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+    }
+    function openOwnerQrCampaign(c,context={}){
+      const modal=document.getElementById('ownerQrModal');
+      const code=document.getElementById('ownerQrModalCode');
+      if(!modal||!code||!c) return;
+      const trackingUrl=`${window.location.origin}/api/qr?c=${encodeURIComponent(c.tracking_code)}`;
+      const business=context.businessName||'Advertiser';
+      const locationName=context.locationName||'BeSeen location';
+      document.getElementById('ownerQrModalBusiness').textContent=business;
+      document.getElementById('ownerQrModalTitle').textContent=locationName;
+      document.getElementById('ownerQrModalSubscriber').textContent=context.subscriber||'';
+      document.getElementById('ownerQrModalTracking').textContent=trackingUrl;
+      document.getElementById('ownerQrModalDestination').textContent=c.landing_url||'Not set';
+      document.getElementById('ownerQrModalCampaign').textContent=c.name||'BeSeen campaign';
+      document.getElementById('ownerQrModalStatus').textContent=c.status||'draft';
+      code.innerHTML='';
+      if(window.QRCode) new QRCode(code,{text:trackingUrl,width:136,height:136,colorDark:'#071b44',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      const msg=document.getElementById('bsccQrLibraryMessage');
+      document.getElementById('ownerQrModalCopy').onclick=async()=>{ try{await navigator.clipboard.writeText(trackingUrl); if(msg) msg.textContent='Tracking link copied.';}catch{ if(msg) msg.textContent=trackingUrl; } };
+      document.getElementById('ownerQrModalCopyDestination').onclick=async()=>{ const url=c.landing_url||''; if(!url) return; try{await navigator.clipboard.writeText(url); if(msg) msg.textContent='Destination link copied.';}catch{ if(msg) msg.textContent=url; } };
+      document.getElementById('ownerQrModalDownload').onclick=()=>{ const canvas=code.querySelector('canvas'); const img=code.querySelector('img'); const href=canvas?.toDataURL?.('image/png')||img?.src; if(!href){ if(msg) msg.textContent='QR image is still loading. Try again in a moment.'; return; } const a=document.createElement('a'); a.href=href; const slug=`${business}-${locationName}`.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); a.download=`beseen-${slug}-qr.png`; a.click(); };
+      modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    }
+
+    async function loadOwnerQrLibrary(){
+      const grid=document.getElementById('bsccQrLibrary');
+      const msg=document.getElementById('bsccQrLibraryMessage');
+      if(!grid || !supabase || !['owner','admin'].includes(String(currentRole||'').toLowerCase())) return;
+      grid.innerHTML='<div class="qr-empty-card">Loading advertisers and location QR codes…</div>';
+      if(msg) msg.textContent='';
+      try{
+        const {data:campaigns,error}=await supabase.from('campaigns').select('id,advertiser_id,location_id,name,tracking_code,landing_url,status,created_at').order('created_at',{ascending:false});
+        if(error) throw error;
+        const rows=Array.isArray(campaigns)?campaigns:[];
+        if(!rows.length){ grid.innerHTML='<div class="qr-empty-card">No paid campaign QR codes yet. Advertisers will appear here after a subscription checkout succeeds.</div>'; return; }
+        ownerQrCampaignCache=new Map(rows.map(c=>[c.id,c]));
+        const advertiserIds=[...new Set(rows.map(r=>r.advertiser_id).filter(Boolean))];
+        const locationIds=[...new Set(rows.map(r=>r.location_id).filter(Boolean))];
+        let profileMap=new Map(), locationMap=new Map(), businessMap=new Map();
+        if(advertiserIds.length){
+          const {data:profiles,error:profileError}=await supabase.from('profiles').select('id,full_name,email').in('id',advertiserIds);
+          if(profileError) throw profileError;
+          profileMap=new Map((profiles||[]).map(p=>[p.id,p]));
+          const {data:intakes,error:intakeError}=await supabase.from('subscription_intakes').select('user_id,business_name,created_at').in('user_id',advertiserIds).order('created_at',{ascending:false});
+          if(!intakeError){ (intakes||[]).forEach(i=>{ if(!businessMap.has(i.user_id)&&i.business_name) businessMap.set(i.user_id,i.business_name); }); }
+        }
+        if(locationIds.length){
+          const {data:locations,error:locError}=await supabase.from('locations').select('id,name,city,slug').in('id',locationIds);
+          if(locError) throw locError;
+          locationMap=new Map((locations||[]).map(l=>[l.id,l]));
+        }
+        const groups=new Map();
+        rows.forEach(c=>{
+          if(!groups.has(c.advertiser_id)) groups.set(c.advertiser_id,[]);
+          groups.get(c.advertiser_id).push(c);
+        });
+        grid.innerHTML=[...groups.entries()].map(([advertiserId,items])=>{
+          const profile=profileMap.get(advertiserId)||{};
+          const business=safeText(businessMap.get(advertiserId)||profile.full_name||profile.email||'Advertiser');
+          const subscriber=safeText(profile.full_name||profile.email||'Advertiser');
+          const email=profile.email&&profile.full_name?safeText(profile.email):'';
+          const locGroups=new Map();
+          items.forEach(c=>{ const k=c.location_id||'unassigned'; if(!locGroups.has(k)) locGroups.set(k,[]); locGroups.get(k).push(c); });
+          const locationsHtml=[...locGroups.entries()].map(([locationId,campaignList])=>{
+            const loc=locationMap.get(locationId)||{};
+            const locationName=safeText(loc.name||'Unassigned location');
+            const latest=campaignList.find(c=>c.status==='live')||campaignList[0];
+            const city=loc.city?` • ${safeText(loc.city)}`:'';
+            return `<button class="owner-qr-location" type="button" data-owner-campaign-id="${safeText(latest.id)}" data-owner-business="${business}" data-owner-subscriber="${subscriber}${email?' • '+email:''}" data-owner-location="${locationName}"><div><strong>${locationName}</strong><small>${safeText(latest.status||'draft')}${city} • ${campaignList.length} tracked QR${campaignList.length===1?'':'s'}</small></div><span>View QR →</span></button>`;
+          }).join('');
+          return `<div class="owner-qr-advertiser-group"><button class="owner-qr-advertiser" type="button" data-owner-advertiser="${safeText(advertiserId||'unknown')}"><div><strong>${business}</strong><small>${subscriber}${email?' • '+email:''}</small></div><div class="owner-qr-advertiser-meta"><b>${locGroups.size} location${locGroups.size===1?'':'s'}</b><span>View locations ↓</span></div></button><div class="owner-qr-locations" data-owner-locations-for="${safeText(advertiserId||'unknown')}">${locationsHtml}</div></div>`;
+        }).join('');
+        grid.querySelectorAll('[data-owner-advertiser]').forEach(btn=>btn.addEventListener('click',()=>{
+          const id=btn.dataset.ownerAdvertiser;
+          const panel=grid.querySelector(`[data-owner-locations-for="${CSS.escape(id)}"]`);
+          const opening=!panel?.classList.contains('open');
+          grid.querySelectorAll('.owner-qr-locations.open').forEach(el=>el.classList.remove('open'));
+          grid.querySelectorAll('.owner-qr-advertiser.open').forEach(el=>el.classList.remove('open'));
+          if(opening&&panel){ panel.classList.add('open'); btn.classList.add('open'); }
+        }));
+        grid.querySelectorAll('[data-owner-campaign-id]').forEach(btn=>btn.addEventListener('click',()=>{
+          const c=ownerQrCampaignCache.get(btn.dataset.ownerCampaignId); if(!c) return;
+          openOwnerQrCampaign(c,{businessName:btn.dataset.ownerBusiness,subscriber:btn.dataset.ownerSubscriber,locationName:btn.dataset.ownerLocation});
+        }));
+      }catch(err){ console.warn('Owner QR library could not be loaded',err); grid.innerHTML='<div class="qr-empty-card">QR campaigns could not be loaded right now. Refresh and try again.</div>'; if(msg) msg.textContent='Could not load the QR library.'; }
+    }
+
     function renderPortalPage(page){
       currentPortalPage = page;
       const level = accessLevels[currentAccess] || 0;
@@ -1726,6 +2022,7 @@ body.host-info-open #hostInfo{display:block}
       });
       document.querySelectorAll('.portal-nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
       history.replaceState(null, '', '#portal-' + page);
+      if(page==='creative' && level>=1) loadAutomaticQrHub();
     }
 
     function setPortalAccess(access){
@@ -1746,6 +2043,11 @@ body.host-info-open #hostInfo{display:block}
         const required = Number(el.dataset.min || 0);
         el.classList.toggle('locked', level < required);
       });
+      document.querySelectorAll('.platinum-analytics-deep').forEach(el => el.classList.toggle('locked', level < 3));
+      const tierNote=document.getElementById('portalAnalyticsTierNote');
+      if(tierNote){
+        tierNote.textContent = level>=3 ? 'Platinum: full analytics unlocked — including deeper funnel, repeat engagement, best location, and strongest scan time.' : level>=2 ? 'Premium includes your core location analytics. Upgrade to Platinum for deeper attribution and optimization detail.' : 'Gold includes your core results and location-by-location performance. Platinum unlocks deeper attribution and optimization insights.';
+      }
       renderPortalPage(currentPortalPage);
       if(level>=3) loadPrivatePlacements();
     }
@@ -1970,7 +2272,7 @@ function openControlCenter(role=currentRole){
   const lock=document.getElementById('bsccAdminTeamLock'); if(lock) lock.style.display=role==='owner'?'none':'block';
   accountBar?.classList.remove('show');
   if(role==='owner') loadOwnerAccounts();
-  if(role==='owner'||role==='admin'){ loadOwnerLocations(); loadOwnerMetrics(); }
+  if(role==='owner'||role==='admin'){ loadOwnerLocations(); loadOwnerMetrics(); loadOwnerAdvertisers(); }
 }
 function enter(role, subscription='none'){
   currentRole=role;
@@ -2004,38 +2306,111 @@ async function enterFromSession(session){
     enter('member','none');
   }
 }
-async function startCheckout(plan, locationSlug='exclusive'){
+const intakeModal=document.getElementById('subscriptionIntakeModal');
+const intakeClose=document.getElementById('subscriptionIntakeClose');
+const intakeForm=document.getElementById('subscriptionIntakeForm');
+const intakeOrderChip=document.getElementById('subscriptionOrderChip');
+const intakeBusinessName=document.getElementById('intakeBusinessName');
+const intakeBusinessType=document.getElementById('intakeBusinessType');
+const intakeWebsite=document.getElementById('intakeWebsite');
+const intakePhone=document.getElementById('intakePhone');
+const intakeCampaignDetails=document.getElementById('intakeCampaignDetails');
+const intakeQrDestination=document.getElementById('intakeQrDestination');
+const intakeAdFile=document.getElementById('intakeAdFile');
+const adUploadPanel=document.getElementById('adUploadPanel');
+const adUploadName=document.getElementById('adUploadName');
+const intakeMessage=document.getElementById('subscriptionIntakeMessage');
+const intakeSubmit=document.getElementById('subscriptionIntakeSubmit');
+let pendingCheckout={plan:'gold',locationSlugs:['exclusive']};
+
+function intakeChoice(){ return intakeForm?.querySelector('input[name="creativeChoice"]:checked')?.value || 'own_ad'; }
+function setIntakeMessage(message=''){ if(!intakeMessage) return; intakeMessage.textContent=message; intakeMessage.classList.toggle('show',Boolean(message)); }
+function syncCreativeChoice(){
+  const own=intakeChoice()==='own_ad';
+  adUploadPanel?.classList.toggle('show',own);
+  if(intakeAdFile) intakeAdFile.required=own;
+}
+function closeSubscriptionIntake(){
+  intakeModal?.classList.remove('open');
+  intakeModal?.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  setIntakeMessage('');
+}
+async function openSubscriptionIntake(plan, locations='exclusive'){
   clearFeedback();
-  if(!supabase){
-    gate?.classList.remove('hidden');
-    showForm('login');
-    setFeedback('Sign in or create an account before subscribing.');
-    return;
-  }
+  if(!supabase){ gate?.classList.remove('hidden'); showForm('login'); setFeedback('Sign in or create an account before subscribing.'); return; }
   const { data:{ session } } = await supabase.auth.getSession();
-  if(!session){
-    gate?.classList.remove('hidden');
-    showForm('login');
-    setFeedback('Sign in or create an account before subscribing.');
-    return;
-  }
+  if(!session){ gate?.classList.remove('hidden'); showForm('login'); setFeedback('Sign in or create an account before subscribing.'); return; }
+  const locationSlugs=(Array.isArray(locations)?locations:[locations]).map(v=>String(v||'').toLowerCase()).filter(Boolean);
+  if(!locationSlugs.length) return;
+  pendingCheckout={plan:String(plan||'gold').toLowerCase(),locationSlugs};
+  if(intakeOrderChip) intakeOrderChip.textContent=`${pendingCheckout.plan.charAt(0).toUpperCase()+pendingCheckout.plan.slice(1)} • ${locationSlugs.length} ${locationSlugs.length===1?'location':'locations'}`;
+  setIntakeMessage('');
+  syncCreativeChoice();
+  intakeModal?.classList.add('open'); intakeModal?.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+}
+async function uploadAdvertiserAd(session){
+  const file=intakeAdFile?.files?.[0];
+  if(!file) throw new Error('Upload the ad you want BeSeen to display.');
+  const form=new FormData(); form.append('kind','ad'); form.append('file',file);
+  const res=await fetch('/api/upload-location-image',{method:'POST',headers:{'authorization':`Bearer ${session.access_token}`},body:form});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok || !data.path) throw new Error(data.error || 'Your ad could not be uploaded.');
+  return data.path;
+}
+async function launchStripeCheckout(intake){
+  const { data:{ session } } = await supabase.auth.getSession();
+  if(!session) throw new Error('Your session expired. Please sign in again.');
   const toast=document.getElementById('portalToast');
-  if(toast){ toast.textContent=`Opening secure ${plan} checkout…`; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2600); }
+  if(toast){ toast.textContent=`Opening secure ${pendingCheckout.plan} checkout…`; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2600); }
+  const res=await fetch('/api/create-checkout-session',{
+    method:'POST',
+    headers:{'content-type':'application/json','authorization':`Bearer ${session.access_token}`},
+    body:JSON.stringify({plan:pendingCheckout.plan,locationSlugs:pendingCheckout.locationSlugs,intake})
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok || !data.url) throw new Error(data.error || 'Checkout could not be started.');
+  window.location.href=data.url;
+}
+async function submitSubscriptionIntake(event){
+  event?.preventDefault();
+  if(!supabase) return;
+  setIntakeMessage('');
+  const businessName=String(intakeBusinessName?.value||'').trim();
+  const businessType=String(intakeBusinessType?.value||'').trim();
+  const websiteOrSocial=String(intakeWebsite?.value||'').trim();
+  const phone=String(intakePhone?.value||'').trim();
+  const campaignDetails=String(intakeCampaignDetails?.value||'').trim();
+  const qrDestinationUrl=String(intakeQrDestination?.value||'').trim();
+  const creativeChoice=intakeChoice();
+  if(businessName.length<2) return setIntakeMessage('Enter your business name.');
+  if(businessType.length<2) return setIntakeMessage('Tell us what type of business you have.');
+  if(campaignDetails.length<5) return setIntakeMessage('Tell us what you want to promote.');
+  if(!qrDestinationUrl) return setIntakeMessage('Paste the link you want your QR code to open.');
+  try{ const u=new URL(/^https?:\/\//i.test(qrDestinationUrl)?qrDestinationUrl:`https://${qrDestinationUrl}`); if(!['http:','https:'].includes(u.protocol)) throw new Error(); }catch{ return setIntakeMessage('Enter a valid QR destination link, like https://yourwebsite.com.'); }
+  if(creativeChoice==='own_ad' && !intakeAdFile?.files?.[0]) return setIntakeMessage('Upload the ad you want BeSeen to display.');
+  intakeSubmit.disabled=true; intakeSubmit.textContent=creativeChoice==='own_ad'?'Uploading ad…':'Saving campaign…';
   try{
-    const res=await fetch('/api/create-checkout-session',{
-      method:'POST',
-      headers:{'content-type':'application/json','authorization':`Bearer ${session.access_token}`},
-      body:JSON.stringify({plan:String(plan||'').toLowerCase(),locationSlug:String(locationSlug||'exclusive').toLowerCase()})
-    });
-    const data=await res.json().catch(()=>({}));
-    if(!res.ok || !data.url) throw new Error(data.error || 'Checkout could not be started.');
-    window.location.href=data.url;
+    const { data:{ session } }=await supabase.auth.getSession();
+    if(!session) throw new Error('Your session expired. Please sign in again.');
+    const adAssetPath=creativeChoice==='own_ad' ? await uploadAdvertiserAd(session) : null;
+    intakeSubmit.textContent='Opening Stripe…';
+    await launchStripeCheckout({businessName,businessType,websiteOrSocial,phone,campaignDetails,qrDestinationUrl,creativeChoice,adAssetPath});
   }catch(err){
-    console.error(err);
-    if(toast){ toast.textContent=err.message || 'Checkout could not be started.'; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3800); }
+    console.error(err); setIntakeMessage(err.message || 'We could not save your campaign information.');
+    intakeSubmit.disabled=false; intakeSubmit.textContent='Continue to secure checkout →';
   }
 }
+
+async function startCheckout(plan, locations='exclusive'){ return openSubscriptionIntake(plan,locations); }
 window.startBeseenCheckout=startCheckout;
+window.openSubscriptionIntake=openSubscriptionIntake;
+intakeClose?.addEventListener('click',closeSubscriptionIntake);
+intakeModal?.addEventListener('click',e=>{ if(e.target===intakeModal) closeSubscriptionIntake(); });
+intakeForm?.addEventListener('submit',submitSubscriptionIntake);
+intakeForm?.querySelectorAll('input[name="creativeChoice"]').forEach(r=>r.addEventListener('change',syncCreativeChoice));
+intakeAdFile?.addEventListener('change',()=>{ if(adUploadName) adUploadName.textContent=intakeAdFile.files?.[0]?.name ? `Selected: ${intakeAdFile.files[0].name}` : ''; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&intakeModal?.classList.contains('open')) closeSubscriptionIntake(); });
 
 async function openBillingPortal(){
   if(!supabase) return;
@@ -2064,6 +2439,27 @@ async function ownerApi(path, options={}){
 }
 function esc(value){ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function dateLabel(value){ if(!value) return '—'; const d=new Date(value); return Number.isNaN(d.getTime())?'—':d.toLocaleDateString(); }
+
+async function loadOwnerAdvertisers(){
+  if(!['owner','admin'].includes(currentRole)) return;
+  const body=document.getElementById('bsccAdvertisersBody');
+  if(body) body.innerHTML='<tr><td colspan="6">Loading live subscribers…</td></tr>';
+  try{
+    const data=await ownerApi('/api/analytics?scope=advertisers');
+    if(!body) return;
+    const rows=data.advertisers||[];
+    body.innerHTML=rows.map(a=>{
+      const subscriber=`<strong>${esc(a.subscriber_name||a.email||'BeSeen subscriber')}</strong><br><span style="color:#7892bd">${esc(a.email||'')}</span>`;
+      const business=`<strong>${esc(a.business_name||'—')}</strong>${a.business_type?`<br><span style="color:#7892bd">${esc(a.business_type)}</span>`:''}`;
+      const locations=(a.locations||[]).length ? (a.locations||[]).map(esc).join(', ') : '—';
+      const creative=a.creative_choice==='own_ad'?'Uploaded own ad':a.creative_choice==='beseen_create'?'BeSeen creating ad':'—';
+      return `<tr><td>${subscriber}</td><td>${business}</td><td>${esc(String(a.plan||'none').toUpperCase())}</td><td>${esc(a.billing_status||'inactive')}</td><td>${locations}</td><td>${esc(creative)}</td></tr>`;
+    }).join('') || '<tr><td colspan="6">No paying subscribers yet.</td></tr>';
+  }catch(err){
+    if(body) body.innerHTML='<tr><td colspan="6">Could not load subscribers.</td></tr>';
+    console.error(err);
+  }
+}
 
 async function loadOwnerAccounts(){
   if(currentRole!=='owner') return;
@@ -2181,6 +2577,21 @@ async function loadMyAnalytics(){
     setText('attrLeads',m.form_submit??0); setText('attrPhoneClicks',m.phone_click??0); setText('attrFormSubmits',m.form_submit??0);
     setText('attrDirections',m.directions_click??0); setText('attrTotalEvents',m.total??0);
     setText('attrQrSummary',`${m.qr_scan??0} scans • ${m.form_submit??0} completed inquiries`);
+
+    const body=document.getElementById('portalLocationAnalyticsBody');
+    const rows=Array.isArray(data.by_location)?data.by_location:[];
+    if(body){
+      if(!rows.length) body.innerHTML='<tr><td colspan="5">Your live location performance will appear here after tracked activity begins.</td></tr>';
+      else body.innerHTML=rows.map(r=>`<tr><td>${escapeHtml(r.location_name||'Unassigned campaign')}</td><td>${Number(r.qr_scan||0)}</td><td>${Number(r.landing_visit||0)}</td><td>${Number(r.phone_click||0)}</td><td>${Number(r.form_submit||0)}</td></tr>`).join('');
+    }
+
+    const d=data.platinum_details||{};
+    setText('portalUniqueScanners',d.unique_scanners??0); setText('portalRepeatScans',d.repeat_scans??0);
+    setText('portalLeadConversion',`${d.lead_conversion_rate??0}%`); setText('portalBestHour',d.best_hour_label||'—');
+    setText('portalBestLocation',d.best_location_name||'No activity yet');
+    setText('portalBestLocationDetail',d.best_location_name?`${d.best_location_scans||0} recorded QR scans at this location.`:'Location ranking begins after scans are recorded.');
+    setText('portalFunnelScans',m.qr_scan??0); setText('portalFunnelVisits',m.landing_visit??0);
+    setText('portalFunnelActions',m.high_intent??0); setText('portalFunnelLeads',m.form_submit??0);
   }catch(err){ console.warn('Live advertiser analytics unavailable',err); }
 }
 async function loadOwnerMetrics(){
@@ -2197,6 +2608,59 @@ async function loadOwnerMetrics(){
   }catch(err){ console.warn('Owner metrics unavailable',err); }
 }
 
+const BSAUTH_REMEMBER_FLAG='beseen_remember_me';
+const BSAUTH_REMEMBER_EMAIL='beseen_remember_email';
+let bsRememberSession=localStorage.getItem(BSAUTH_REMEMBER_FLAG)==='1';
+
+// Preserve anyone already signed in from the previous version of the site.
+if(localStorage.getItem(BSAUTH_REMEMBER_FLAG)===null){
+  try{
+    const legacyKey=Object.keys(localStorage).find(k=>k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if(legacyKey && localStorage.getItem(legacyKey)){
+      bsRememberSession=true;
+      localStorage.setItem(BSAUTH_REMEMBER_FLAG,'1');
+    }
+  }catch(_){}
+}
+
+const bsAuthStorage={
+  getItem(key){
+    try{ return (bsRememberSession ? localStorage : sessionStorage).getItem(key); }catch(_){ return null; }
+  },
+  setItem(key,value){
+    try{
+      if(bsRememberSession){ localStorage.setItem(key,value); sessionStorage.removeItem(key); }
+      else { sessionStorage.setItem(key,value); localStorage.removeItem(key); }
+    }catch(_){}
+  },
+  removeItem(key){
+    try{ localStorage.removeItem(key); }catch(_){}
+    try{ sessionStorage.removeItem(key); }catch(_){}
+  }
+};
+
+function applyRememberChoice(checked,email){
+  bsRememberSession=!!checked;
+  if(bsRememberSession){
+    localStorage.setItem(BSAUTH_REMEMBER_FLAG,'1');
+    if(email) localStorage.setItem(BSAUTH_REMEMBER_EMAIL,email);
+  }else{
+    localStorage.removeItem(BSAUTH_REMEMBER_FLAG);
+    localStorage.removeItem(BSAUTH_REMEMBER_EMAIL);
+  }
+}
+
+function hydrateRememberUI(){
+  const remembered=localStorage.getItem(BSAUTH_REMEMBER_FLAG)==='1';
+  const rememberedEmail=localStorage.getItem(BSAUTH_REMEMBER_EMAIL)||'';
+  const loginCheck=document.getElementById('bsauthRememberLogin');
+  const createCheck=document.getElementById('bsauthRememberCreate');
+  if(loginCheck) loginCheck.checked=remembered;
+  if(createCheck) createCheck.checked=remembered;
+  const loginEmail=document.getElementById('bsauthLoginEmail');
+  if(loginEmail && rememberedEmail && !loginEmail.value) loginEmail.value=rememberedEmail;
+}
+
 async function initAuth(){
   try{
     const res=await fetch('/api/config');
@@ -2205,7 +2669,8 @@ async function initAuth(){
       setFeedback('Account access is not connected yet. You can continue as a guest while Supabase is configured.');
       return;
     }
-    supabase=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+    supabase=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,storage:bsAuthStorage,autoRefreshToken:true,detectSessionInUrl:true}});
+    hydrateRememberUI();
     const { data:{ session } } = await supabase.auth.getSession();
     if(session) await enterFromSession(session);
     supabase.auth.onAuthStateChange(async (event, session)=>{
@@ -2234,6 +2699,7 @@ document.getElementById('bsauthFakeSignin')?.addEventListener('click',async()=>{
   const email=document.getElementById('bsauthLoginEmail')?.value?.trim();
   const password=document.getElementById('bsauthLoginPassword')?.value || '';
   if(!email||!password){ setFeedback('Enter your email and password.'); return; }
+  applyRememberChoice(!!document.getElementById('bsauthRememberLogin')?.checked,email);
   const { error }=await supabase.auth.signInWithPassword({email,password});
   if(error) setFeedback(error.message);
 });
@@ -2246,6 +2712,7 @@ document.getElementById('bsauthCreateDemo')?.addEventListener('click',async()=>{
   const password=document.getElementById('bsauthCreatePassword')?.value || '';
   const referral_code=document.getElementById('bsauthReferralCode')?.value?.trim() || '';
   if(!email||password.length<8){ setFeedback('Use a valid email and a password with at least 8 characters.'); return; }
+  applyRememberChoice(!!document.getElementById('bsauthRememberCreate')?.checked,email);
   const { error }=await supabase.auth.signUp({ email, password, options:{ data:{ full_name, referral_code, referred_by_code: referral_code } } });
   if(error) setFeedback(error.message); else setFeedback('Account created. Check your email to confirm your account, then sign in.');
 });
@@ -2253,6 +2720,9 @@ document.getElementById('bsauthCreateDemo')?.addEventListener('click',async()=>{
 document.getElementById('bsChangeAccount')?.addEventListener('click',()=>{ control?.classList.remove('show'); gate?.classList.remove('hidden'); showForm('login'); });
 openControl?.addEventListener('click',()=>openControlCenter(currentRole));
 document.getElementById('bsccViewWebsite')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); });
+document.getElementById('bsccRefreshQrLibrary')?.addEventListener('click',loadOwnerQrLibrary);
+document.getElementById('ownerQrModalClose')?.addEventListener('click',closeOwnerQrModal);
+document.getElementById('ownerQrModal')?.addEventListener('click',(e)=>{ if(e.target?.id==='ownerQrModal') closeOwnerQrModal(); });
 document.getElementById('bsccPreviewFomo')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); if(typeof window.openAdvertiserPortal==='function') window.openAdvertiserPortal('upcoming'); else { document.body.classList.add('portal-open'); } });
 document.getElementById('bsccLogout')?.addEventListener('click',async()=>{ if(supabase) await supabase.auth.signOut(); else { control?.classList.remove('show'); gate?.classList.remove('hidden'); showMain(); } });
 document.getElementById('bsccSwitchRole')?.addEventListener('click',()=>{ control?.classList.remove('show'); gate?.classList.remove('hidden'); showForm('login'); });
@@ -2262,7 +2732,9 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   const p=btn.dataset.ccPage;
   document.querySelectorAll('.bscc-page').forEach(pg=>pg.classList.toggle('active',pg.dataset.ccPage===p));
   if(p==='accounts') loadOwnerAccounts();
+  if(p==='advertisers') loadOwnerAdvertisers();
   if(p==='devices') loadOwnerLocations();
+  if(p==='campaigns') loadOwnerQrLibrary();
 }));
 const navSignIn=document.getElementById('navSignIn');
 navSignIn?.addEventListener('click',()=>{ gate?.classList.remove('hidden'); setTimeout(()=>document.getElementById('bsauthShowLogin')?.click(),0); });
@@ -2272,7 +2744,7 @@ closeReferrals?.addEventListener('click',closeReferralCenter);
 referralCenter?.addEventListener('click',(e)=>{ if(e.target===referralCenter) closeReferralCenter(); });
 document.getElementById('bsCopyReferralCode')?.addEventListener('click',()=>copyReferral(referralCodeEl?.textContent||'','Referral code'));
 document.getElementById('bsCopyReferralLink')?.addEventListener('click',()=>copyReferral(referralLinkEl?.value||'','Referral link'));
-document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeReferralCenter(); });
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ closeReferralCenter(); closeOwnerQrModal(); } });
 
 const referralFromUrl=new URLSearchParams(window.location.search).get('ref');
 if(referralFromUrl){

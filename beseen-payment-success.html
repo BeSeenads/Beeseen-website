@@ -2331,8 +2331,7 @@ function enter(role, subscription='none'){
   window.__beseenPortalAccess=(role==='owner'||role==='admin')?'platinum':(['gold','premium','platinum'].includes(currentSubscription)?currentSubscription:'visitor');
   gate?.classList.add('hidden');
   setAccountBar(role);
-  if(role==='owner'||role==='admin') openControlCenter(role);
-  else if(['gold','premium','platinum'].includes(subscription)){
+  if(['gold','premium','platinum'].includes(subscription)){
     if(typeof window.setPortalAccess==='function') window.setPortalAccess(subscription);
   }
 }

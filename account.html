@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account | BeSeen</title>
+<meta name="theme-color" content="#071b44">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<style>
+:root{--navy:#071b44;--navy2:#0b285d;--blue:#1877ff;--red:#ed334f;--ink:#10213f;--muted:#6f7f9b;--line:#dfe7f3;--bg:#f5f8fd;--green:#138a55;--amber:#b66b00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}button,a{touch-action:manipulation}
+.top{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:22px 20px;position:sticky;top:0;z-index:20;box-shadow:0 10px 30px #071b4422}
+.topin{max-width:1180px;margin:auto;display:flex;align-items:center;gap:16px}.brand{font-size:25px;font-weight:950;letter-spacing:-.04em}.brand span:first-child{color:#ff455f}.brand span:last-child{color:#4a9aff}
+.spacer{flex:1}.topbtn{border:1px solid #ffffff42;background:#ffffff12;color:#fff;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none}.topbtn:hover{background:#ffffff20}
+.wrap{max-width:1180px;margin:32px auto;padding:0 18px 60px}.hero{display:flex;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px}.hero h1{font-size:clamp(30px,5vw,54px);letter-spacing:-.05em;margin:0}.hero p{margin:7px 0 0;color:var(--muted);font-weight:650}.heroactions{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
+.btn{border:0;border-radius:13px;padding:12px 16px;font-weight:850;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn-primary{background:var(--blue);color:#fff}.btn-dark{background:var(--navy);color:#fff}.btn-light{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn-danger{background:#fff0f2;color:#b11f35;border:1px solid #ffd2d9}.btn:disabled{opacity:.45;cursor:not-allowed}
+.alert{display:none;background:#fff4db;border:1px solid #ffd47a;color:#7a4d00;border-radius:16px;padding:15px 17px;font-weight:750;margin:14px 0}.alert.show{display:block}
+.section{margin-top:28px}.sectionhead{display:flex;align-items:end;gap:12px;margin-bottom:12px}.sectionhead h2{margin:0;font-size:24px;letter-spacing:-.03em}.sectionhead p{margin:0;color:var(--muted);font-size:14px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:15px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:19px;box-shadow:0 12px 30px #071b440a}.cardtop{display:flex;gap:10px;align-items:start}.card h3{font-size:20px;margin:0 0 4px;letter-spacing:-.02em}.subtle{color:var(--muted);font-size:13px;font-weight:650}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.pill{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:6px 9px;border-radius:999px;background:#edf3fb;color:#345}.pill.green{background:#e6f8ef;color:#087044}.pill.red{background:#ffe9ed;color:#b11f35}.pill.amber{background:#fff1d8;color:#9a5d00}.pill.blue{background:#e9f2ff;color:#1165d5}
+.price{font-size:27px;font-weight:950;letter-spacing:-.04em}.price span{font-size:13px;color:var(--muted);font-weight:750;letter-spacing:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}.stat{background:#f7f9fd;border:1px solid #e9eef7;border-radius:13px;padding:10px}.stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.stat strong{display:block;margin-top:4px;font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions .btn{padding:9px 11px;font-size:12px}
+.campaign{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}.campaign h4{margin:0 0 9px}.fieldlabel{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#667892;margin:11px 0 6px}.fieldrow{display:flex;gap:7px}.fieldrow input,.fieldrow textarea{width:100%;border:1px solid #cad6e7;border-radius:11px;padding:10px 11px;background:#fff}.fieldrow textarea{min-height:76px;resize:vertical}.preview{width:100%;max-height:340px;object-fit:contain;background:#f4f6fa;border:1px solid var(--line);border-radius:14px;margin-top:8px}
+.qrrow{display:flex;gap:12px;align-items:center;margin-top:10px}.qr{width:110px;height:110px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:5px}.qrmeta{font-size:12px;word-break:break-all;color:var(--muted)}
+.refgrid{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:12px}@media(max-width:720px){.refgrid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.topin{align-items:flex-start}.heroactions{margin-left:0}.topbtn.hide-mobile{display:none}}
+.bigcode{font-size:22px;font-weight:950;letter-spacing:.04em}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fff}.table{border-collapse:collapse;width:100%;min-width:920px}.table th,.table td{text-align:left;padding:11px 12px;border-bottom:1px solid #edf1f7;font-size:12px;vertical-align:top}.table th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#657790;background:#f8fafd;position:sticky;top:0}.ownercontrols{display:flex;gap:5px;flex-wrap:wrap}.empty{text-align:center;color:var(--muted);padding:35px;background:#fff;border:1px dashed #cbd6e5;border-radius:18px}
+.toast{position:fixed;right:18px;bottom:18px;background:#071b44;color:#fff;border-radius:14px;padding:12px 15px;font-weight:800;box-shadow:0 18px 50px #071b4450;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s;z-index:100}.toast.show{opacity:1;transform:none}
+.modal{position:fixed;inset:0;background:#06152bbb;display:none;place-items:center;padding:18px;z-index:80}.modal.show{display:grid}.modalcard{width:min(540px,100%);background:#fff;border-radius:22px;padding:20px;max-height:90vh;overflow:auto}.modalcard h3{margin-top:0}.choice{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:13px;padding:13px;margin:5px 0;cursor:pointer}.choice:hover{border-color:#8bb9ff;background:#f5f9ff}
+.loading{min-height:55vh;display:grid;place-items:center;text-align:center;color:var(--muted);font-weight:800}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><div class="brand"><span>Be</span><span>Seen</span></div><div class="spacer"></div><a class="topbtn hide-mobile" href="/">Back to Website</a><button class="topbtn" id="signOutBtn">Sign Out</button></div></header>
+<main class="wrap">
+  <div id="loading" class="loading">Loading your BeSeen account…</div>
+  <div id="app" hidden>
+    <div class="hero">
+      <div><h1>My Account</h1><p id="welcome">Your advertising, billing, campaigns, QR codes and referrals in one place.</p></div>
+      <div class="heroactions"><a class="btn btn-primary" href="/?add_location=1">＋ Add Another Location — $50 Off/mo</a><button class="btn btn-light" data-account-action="portal">Billing & Receipts</button></div>
+    </div>
+    <div class="alert" id="paymentAlert">A payment needs attention. Update your payment method to keep billing in good standing. <button class="btn btn-dark" style="margin-left:8px;padding:7px 10px" data-account-action="portal">Fix Payment</button></div>
+
+    <section class="section">
+      <div class="sectionhead"><div><h2>Advertising Locations</h2><p>Each location is shown separately even when Stripe bills several locations together.</p></div></div>
+      <div class="cards" id="locationCards"></div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead"><div><h2>Referrals</h2><p>Share your BeSeen code and track signups connected to you.</p></div></div>
+      <div class="refgrid">
+        <div class="card"><div class="subtle">YOUR REFERRAL CODE</div><div class="bigcode" id="refCode">—</div><div class="actions"><button class="btn btn-light" id="copyRefCode">Copy Code</button><button class="btn btn-light" id="copyRefLink">Copy Link</button></div></div>
+        <div class="card"><div class="subtle">TOTAL REFERRALS</div><div class="price" id="refTotal">0</div></div>
+        <div class="card"><div class="subtle">ACTIVE SUBSCRIBERS</div><div class="price" id="refActive">0</div></div>
+      </div>
+    </section>
+
+    <section class="section" id="ownerSection" hidden>
+      <div class="sectionhead"><div><h2>Owner Overview</h2><p>Customer billing, cancellations and campaign status from the same live Supabase data.</p></div></div>
+      <div class="tablewrap"><table class="table"><thead><tr><th>Customer</th><th>Location</th><th>Plan</th><th>Billing</th><th>Cancellation</th><th>Campaign</th><th>Ad Review</th><th>Owner Actions</th></tr></thead><tbody id="ownerRows"></tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div class="modal" id="upgradeModal"><div class="modalcard"><h3>Upgrade Plan</h3><p class="subtle" id="upgradeLocationName"></p><div id="upgradeChoices"></div><div class="actions"><button class="btn btn-light" id="closeUpgrade">Cancel</button></div></div></div>
+<div class="modal" id="feedbackModal"><div class="modalcard"><h3>Request Changes</h3><p class="subtle">Tell BeSeen what you want changed in the ad.</p><div class="fieldrow"><textarea id="feedbackText" placeholder="Example: Make the phone number larger and move the logo higher."></textarea></div><div class="actions"><button class="btn btn-primary" id="sendFeedback">Send Request</button><button class="btn btn-light" id="closeFeedback">Cancel</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PLAN_RANK={gold:1,premium:2,platinum:3};
+let supabase=null,session=null,profile=null,rows=[],locations=[],campaigns=[],locationMap=new Map(),campaignByLocation=new Map();
+let selectedUpgrade=null,selectedFeedback=null;
+
+function money(cents){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((Number(cents)||0)/100)}
+function dateText(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function uiStatus(v){v=String(v||'').toLowerCase();if(v==='draft')return 'Preparing';if(v==='past_due')return 'Payment Failed';return v? v.replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase()):'—'}
+function pillClass(v){v=String(v||'').toLowerCase();if(['active','live','approved','trialing'].includes(v))return 'green';if(['past_due','unpaid','canceled','ended','changes_requested'].includes(v))return 'red';if(['draft','preparing','pending'].includes(v))return 'amber';return 'blue'}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600)}
+async function copyText(text,label='Copied'){try{await navigator.clipboard.writeText(text);showToast(label)}catch{showToast(text)}}
+
+function authStorage(){
+  const useLocal=localStorage.getItem('beseen_remember_me')==='1';
+  const store=useLocal?localStorage:sessionStorage;
+  return {getItem:k=>store.getItem(k),setItem:(k,v)=>store.setItem(k,v),removeItem:k=>store.removeItem(k)};
+}
+
+async function api(body){
+  const res=await fetch('/api/create-billing-portal',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+session.access_token},body:JSON.stringify(body||{})});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error||'Request failed.');
+  return data;
+}
+
+async function openPortal(){
+  try{const data=await api({action:'portal'});if(data.url)location.href=data.url}catch(e){showToast(e.message)}
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-account-action="portal"]'))openPortal()});
+
+function qrUrl(code){return location.origin+'/api/qr?c='+encodeURIComponent(code||'')}
+async function fillQR(img,code){
+  if(!code||!window.QRCode)return;
+  try{img.src=await QRCode.toDataURL(qrUrl(code),{width:260,margin:1,errorCorrectionLevel:'M'})}catch{}
+}
+
+function renderLocations(){
+  const holder=document.getElementById('locationCards');
+  if(!rows.length){holder.innerHTML='<div class="empty">You do not have an active advertising location yet.<br><br><a class="btn btn-primary" href="/?add_location=1">Choose a Location</a></div>';return}
+  holder.innerHTML=rows.map(r=>{
+    const loc=locationMap.get(r.location_id)||locations.find(x=>x.slug===r.location_slug)||{};
+    const camp=campaignByLocation.get(r.location_id)||null;
+    const canceling=!!r.cancel_at_period_end;
+    const failed=!!r.payment_failed||['past_due','unpaid'].includes(String(r.status||'').toLowerCase());
+    const currentPlan=String(r.plan||'gold').toLowerCase();
+    const canUpgrade=PLAN_RANK[currentPlan]<PLAN_RANK.platinum && !canceling && !['canceled','inactive'].includes(String(r.status||'').toLowerCase());
+    const tracked=camp?.tracking_code?qrUrl(camp.tracking_code):'';
+    return `<article class="card" data-row="${esc(r.id)}">
+      <div class="cardtop"><div><h3>${esc(loc.name||r.location_slug||'BeSeen Location')}</h3><div class="subtle">${esc(loc.city||'Metro Detroit')}</div></div><div style="margin-left:auto"><span class="pill ${pillClass(camp?.status||'draft')}">${esc(uiStatus(camp?.status||'draft'))}</span></div></div>
+      <div class="pills"><span class="pill blue">${esc(currentPlan.toUpperCase())}</span><span class="pill ${failed?'red':pillClass(r.status)}">${esc(uiStatus(r.status))}</span>${canceling?'<span class="pill amber">Ends at period end</span>':''}${r.discount_cents?'<span class="pill green">$50 Location Savings</span>':''}</div>
+      <div class="price">${money(r.billed_price_cents)} <span>/ month</span></div>
+      <div class="grid2">
+        <div class="stat"><small>Next billing date</small><strong>${canceling?'Ends '+dateText(r.current_period_end):dateText(r.current_period_end)}</strong></div>
+        <div class="stat"><small>List price</small><strong>${money(r.list_price_cents)}/mo</strong></div>
+      </div>
+      <div class="actions">
+        ${canUpgrade?`<button class="btn btn-primary" data-upgrade="${esc(r.id)}">Upgrade</button>`:''}
+        ${!canceling && !['canceled','inactive'].includes(String(r.status||'').toLowerCase())?`<button class="btn btn-danger" data-cancel="${esc(r.id)}">Cancel</button>`:''}
+        <button class="btn btn-light" data-account-action="portal">Update Card</button>
+        <button class="btn btn-light" data-account-action="portal">Invoices & Receipts</button>
+      </div>
+      ${camp?`<div class="campaign" data-campaign="${esc(camp.id)}">
+        <h4>Campaign + Ad Review</h4>
+        <div class="pills"><span class="pill ${pillClass(camp.status)}">${esc(uiStatus(camp.status))}</span><span class="pill ${pillClass(camp.approval_status)}">${esc(uiStatus(camp.approval_status||'pending'))}</span></div>
+        ${camp.ad_preview_url?`<img class="preview" src="${esc(camp.ad_preview_url)}" alt="Ad preview">`: '<div class="subtle">Your BeSeen ad preview will appear here when it is ready for review.</div>'}
+        ${camp.ad_preview_url && camp.approval_status!=='approved'?`<div class="actions"><button class="btn btn-primary" data-approve="${esc(camp.id)}">Approve Ad</button><button class="btn btn-light" data-feedback="${esc(camp.id)}">Request Changes</button></div>`:''}
+        ${camp.customer_feedback?`<div class="stat" style="margin-top:10px"><small>Your latest feedback</small><strong>${esc(camp.customer_feedback)}</strong></div>`:''}
+        <div class="fieldlabel">QR destination</div>
+        <div class="fieldrow"><input value="${esc(camp.landing_url||'')}" data-destination="${esc(camp.id)}" placeholder="https://yourwebsite.com"><button class="btn btn-light" data-save-destination="${esc(camp.id)}">Save</button></div>
+        ${camp.tracking_code?`<div class="qrrow"><img class="qr" data-qr="${esc(camp.tracking_code)}" alt="Campaign QR code"><div class="qrmeta"><strong>Tracked QR link</strong><br>${esc(tracked)}<div class="actions"><button class="btn btn-light" data-copy="${esc(tracked)}">Copy Link</button><button class="btn btn-light" data-download-qr="${esc(camp.tracking_code)}">Download QR</button></div></div></div>`:''}
+      </div>`:''}
+    </article>`
+  }).join('');
+  holder.querySelectorAll('[data-qr]').forEach(img=>fillQR(img,img.dataset.qr));
+}
+
+async function loadData(){
+  const user=session.user;
+  const [{data:p,error:pe},{data:subs,error:se},{data:locs,error:le},{data:camps,error:ce}] = await Promise.all([
+    supabase.from('profiles').select('id,email,full_name,role,subscription,subscription_status,my_referral_code').eq('id',user.id).single(),
+    supabase.from('subscription_locations').select('id,user_id,stripe_subscription_id,stripe_subscription_item_id,stripe_price_id,location_id,location_slug,plan,status,list_price_cents,billed_price_cents,discount_cents,current_period_start,current_period_end,cancel_at_period_end,cancellation_requested_at,canceled_at,payment_failed,created_at').eq('user_id',user.id).order('created_at',{ascending:true}),
+    supabase.from('locations').select('id,slug,name,city,status,visibility,gold_price_cents,premium_price_cents,platinum_price_cents').order('sort_order',{ascending:true}),
+    supabase.from('campaigns').select('id,advertiser_id,location_id,name,tracking_code,landing_url,status,stripe_subscription_id,approval_status,ad_preview_url,customer_feedback,owner_notes,creative_updated_at,customer_reviewed_at').eq('advertiser_id',user.id)
+  ]);
+  if(pe)throw pe;if(se)throw se;if(le)throw le;if(ce)throw ce;
+  profile=p;rows=subs||[];locations=locs||[];campaigns=camps||[];
+  locationMap=new Map(locations.map(x=>[x.id,x]));
+  campaignByLocation=new Map(campaigns.map(x=>[x.location_id,x]));
+  document.getElementById('welcome').textContent=`Welcome${profile.full_name?' back, '+profile.full_name:''}. Manage each BeSeen location separately.`;
+  document.getElementById('paymentAlert').classList.toggle('show',rows.some(r=>r.payment_failed||['past_due','unpaid'].includes(String(r.status||'').toLowerCase())));
+  renderLocations();
+  await loadReferrals();
+  if(['owner','admin'].includes(profile.role)) await loadOwner();
+}
+
+async function loadReferrals(){
+  document.getElementById('refCode').textContent=profile.my_referral_code||'—';
+  const {data,error}=await supabase.rpc('get_my_referral_stats');
+  const stat=Array.isArray(data)?data[0]:data;
+  if(!error&&stat){document.getElementById('refTotal').textContent=stat.total_referrals||0;document.getElementById('refActive').textContent=stat.active_subscribers||0}
+}
+document.getElementById('copyRefCode').onclick=()=>copyText(profile?.my_referral_code||'','Referral code copied');
+document.getElementById('copyRefLink').onclick=()=>copyText(location.origin+'/?ref='+encodeURIComponent(profile?.my_referral_code||''),'Referral link copied');
+
+async function loadOwner(){
+  document.getElementById('ownerSection').hidden=false;
+  const [{data:profiles},{data:subs},{data:camps},{data:locs}] = await Promise.all([
+    supabase.from('profiles').select('id,email,full_name,subscription,subscription_status,role').order('created_at',{ascending:false}),
+    supabase.from('subscription_locations').select('id,user_id,location_id,location_slug,plan,status,billed_price_cents,cancel_at_period_end,current_period_end,payment_failed').order('created_at',{ascending:false}),
+    supabase.from('campaigns').select('id,advertiser_id,location_id,status,approval_status,ad_preview_url'),
+    supabase.from('locations').select('id,slug,name')
+  ]);
+  const pmap=new Map((profiles||[]).map(p=>[p.id,p])),lmap=new Map((locs||[]).map(l=>[l.id,l])),cmap=new Map();
+  for(const c of camps||[])cmap.set(c.advertiser_id+'|'+c.location_id,c);
+  const tbody=document.getElementById('ownerRows');
+  tbody.innerHTML=(subs||[]).map(s=>{
+    const p=pmap.get(s.user_id)||{},l=lmap.get(s.location_id)||{},c=cmap.get(s.user_id+'|'+s.location_id)||{};
+    return `<tr><td><strong>${esc(p.full_name||'Customer')}</strong><br>${esc(p.email||'')}</td><td>${esc(l.name||s.location_slug||'—')}</td><td>${esc(String(s.plan||'').toUpperCase())}<br>${money(s.billed_price_cents)}/mo</td><td><span class="pill ${s.payment_failed?'red':pillClass(s.status)}">${esc(uiStatus(s.status))}</span></td><td>${s.cancel_at_period_end?`Ends ${dateText(s.current_period_end)}`:'—'}</td><td><span class="pill ${pillClass(c.status)}">${esc(uiStatus(c.status||'draft'))}</span></td><td><span class="pill ${pillClass(c.approval_status)}">${esc(uiStatus(c.approval_status||'pending'))}</span></td><td><div class="ownercontrols">${c.id?`<button class="btn btn-light" data-owner-status="${esc(c.id)}" data-status="live">Live</button><button class="btn btn-light" data-owner-status="${esc(c.id)}" data-status="paused">Pause</button><button class="btn btn-light" data-owner-status="${esc(c.id)}" data-status="ended">End</button><button class="btn btn-light" data-owner-preview="${esc(c.id)}">Set Preview</button>`:'—'}</div></td></tr>`
+  }).join('')||'<tr><td colspan="8">No subscriptions yet.</td></tr>';
+}
+
+document.addEventListener('click',async e=>{
+  const up=e.target.closest('[data-upgrade]');
+  if(up){
+    const row=rows.find(x=>x.id===up.dataset.upgrade);if(!row)return;
+    selectedUpgrade=row;
+    const loc=locationMap.get(row.location_id)||{};
+    document.getElementById('upgradeLocationName').textContent=loc.name||row.location_slug||'BeSeen location';
+    const choices=document.getElementById('upgradeChoices');choices.innerHTML='';
+    ['gold','premium','platinum'].filter(p=>PLAN_RANK[p]>PLAN_RANK[row.plan]).forEach(plan=>{
+      const b=document.createElement('button');b.className='choice';b.innerHTML=`<strong>${plan.toUpperCase()}</strong><br><span class="subtle">Upgrade this location only</span>`;
+      b.onclick=async()=>{try{b.disabled=true;await api({action:'upgrade',customerLocationId:row.id,newPlan:plan});showToast('Plan upgraded');document.getElementById('upgradeModal').classList.remove('show');await loadData()}catch(err){showToast(err.message)}finally{b.disabled=false}};
+      choices.appendChild(b);
+    });
+    document.getElementById('upgradeModal').classList.add('show');
+  }
+  const cancel=e.target.closest('[data-cancel]');
+  if(cancel){
+    const row=rows.find(x=>x.id===cancel.dataset.cancel);if(!row)return;
+    const loc=locationMap.get(row.location_id)||{};
+    if(!confirm(`Cancel ${loc.name||row.location_slug}?\n\nThere is no refund. Advertising stays available through the paid billing period and then stops automatically.`))return;
+    try{cancel.disabled=true;await api({action:'cancel',customerLocationId:row.id});showToast('Cancellation scheduled');await loadData()}catch(err){showToast(err.message)}finally{cancel.disabled=false}
+  }
+  const save=e.target.closest('[data-save-destination]');
+  if(save){
+    const id=save.dataset.saveDestination;const input=document.querySelector(`[data-destination="${CSS.escape(id)}"]`);
+    try{save.disabled=true;await api({action:'update_qr',campaignId:id,destinationUrl:input.value});showToast('QR destination updated');await loadData()}catch(err){showToast(err.message)}finally{save.disabled=false}
+  }
+  const approve=e.target.closest('[data-approve]');
+  if(approve){try{approve.disabled=true;await api({action:'review_ad',campaignId:approve.dataset.approve,decision:'approved'});showToast('Ad approved');await loadData()}catch(err){showToast(err.message)}finally{approve.disabled=false}}
+  const fb=e.target.closest('[data-feedback]');
+  if(fb){selectedFeedback=fb.dataset.feedback;document.getElementById('feedbackText').value='';document.getElementById('feedbackModal').classList.add('show')}
+  const cp=e.target.closest('[data-copy]');if(cp)copyText(cp.dataset.copy,'Tracked link copied');
+  const dl=e.target.closest('[data-download-qr]');
+  if(dl){const img=document.querySelector(`[data-qr="${CSS.escape(dl.dataset.downloadQr)}"]`);if(img?.src){const a=document.createElement('a');a.href=img.src;a.download='beseen-qr-'+dl.dataset.downloadQr+'.png';a.click()}}
+  const os=e.target.closest('[data-owner-status]');
+  if(os){try{await api({action:'campaign_status',campaignId:os.dataset.ownerStatus,status:os.dataset.status});showToast('Campaign status updated');await loadOwner()}catch(err){showToast(err.message)}}
+  const op=e.target.closest('[data-owner-preview]');
+  if(op){const url=prompt('Paste the customer-facing ad preview URL:');if(url!==null){try{await api({action:'set_preview',campaignId:op.dataset.ownerPreview,previewUrl:url});showToast('Preview updated');await loadOwner()}catch(err){showToast(err.message)}}}
+});
+
+document.getElementById('closeUpgrade').onclick=()=>document.getElementById('upgradeModal').classList.remove('show');
+document.getElementById('closeFeedback').onclick=()=>document.getElementById('feedbackModal').classList.remove('show');
+document.getElementById('sendFeedback').onclick=async()=>{if(!selectedFeedback)return;const btn=document.getElementById('sendFeedback');try{btn.disabled=true;await api({action:'review_ad',campaignId:selectedFeedback,decision:'changes_requested',message:document.getElementById('feedbackText').value});showToast('Change request sent');document.getElementById('feedbackModal').classList.remove('show');await loadData()}catch(err){showToast(err.message)}finally{btn.disabled=false}};
+document.getElementById('signOutBtn').onclick=async()=>{try{await supabase?.auth.signOut()}finally{location.href='/'}};
+
+(async()=>{
+  try{
+    const cfg=await fetch('/api/config',{cache:'no-store'}).then(r=>r.json());
+    if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)throw new Error('Account access is not configured.');
+    supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,storage:authStorage(),autoRefreshToken:true,detectSessionInUrl:true}});
+    const result=await supabase.auth.getSession();session=result.data.session;
+    if(!session){location.href='/';return}
+    await loadData();
+    document.getElementById('loading').remove();document.getElementById('app').hidden=false;
+  }catch(err){document.getElementById('loading').innerHTML=`<div><strong>We could not load your account.</strong><br><br>${esc(err.message)}<br><br><a class="btn btn-primary" href="/">Back to BeSeen</a></div>`}
+})();
+</script>
+</body>
+</html>

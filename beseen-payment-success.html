@@ -2833,5 +2833,31 @@ if(checkoutState==='cancelled'){
 if(checkoutState) history.replaceState(null,'',window.location.pathname+window.location.hash);
 
 initAuth();
-</script></body>
+</script>
+<script id="beseen-auth-page-redirect">
+(function () {
+  function sendToNewAuth() {
+    const gate = document.querySelector('.bsauth-gate');
+    if (!gate) return;
+
+    const visible =
+      gate.classList.contains('show') ||
+      getComputedStyle(gate).display !== 'none';
+
+    if (visible) {
+      window.location.replace('/auth.html');
+    }
+  }
+
+  setTimeout(sendToNewAuth, 700);
+
+  new MutationObserver(sendToNewAuth).observe(document.documentElement, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class', 'style']
+  });
+})();
+</script>
+
+</body>
 </html>

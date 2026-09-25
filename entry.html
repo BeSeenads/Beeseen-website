@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeSeen</title>
+<style>
+html,body{margin:0;min-height:100%;background:#071b44;color:#fff;font-family:Arial,sans-serif}.loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}.logo{font-size:54px;font-weight:950;letter-spacing:-.06em}.be{color:#ed334f}.seen{color:#4a9aff}.text{margin-top:14px;color:rgba(255,255,255,.72);font-weight:800;font-size:14px}
+</style>
+</head>
+<body>
+<div class="loading"><div><div class="logo"><span class="be">Be</span><span class="seen">Seen</span></div><div class="text">Loading your account...</div></div></div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+try {
+  const cfg = await fetch('/api/config', { cache: 'no-store' }).then(r => r.json());
+
+  const authStorage = {
+    getItem(key) {
+      const remember = localStorage.getItem('beseen_remember_me') === '1';
+      return remember ? localStorage.getItem(key) : sessionStorage.getItem(key);
+    },
+    setItem(key, value) {
+      const remember = localStorage.getItem('beseen_remember_me') === '1';
+      if (remember) {
+        localStorage.setItem(key, value);
+        sessionStorage.removeItem(key);
+      } else {
+        sessionStorage.setItem(key, value);
+        localStorage.removeItem(key);
+      }
+    },
+    removeItem(key) {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    }
+  };
+
+  const supabase = createClient(
+    cfg.supabaseUrl,
+    cfg.supabasePublishableKey,
+    { auth: { persistSession: true, storage: authStorage } }
+  );
+
+  const { data } = await supabase.auth.getSession();
+
+  if (data?.session) {
+    window.location.replace('/index.html');
+  } else {
+    window.location.replace('/auth.html');
+  }
+} catch (error) {
+  console.error(error);
+  window.location.replace('/auth.html');
+}
+</script>
+</body>
+</html>

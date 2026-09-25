@@ -1,10 +1,35 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <script>
-    window.location.replace('/beseen-payment-success.html' + window.location.search + window.location.hash);
-  </script>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BeSeen Advertising</title>
+  <meta name="theme-color" content="#071b44">
+  <style>
+    html,body{margin:0;min-height:100%;background:#071b44;color:white;font-family:Arial,sans-serif}
+    .loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
+    .loading strong{font-size:24px}.loading span{display:block;margin-top:8px;opacity:.72}
+  </style>
 </head>
-<body></body>
+<body>
+  <div class="loading" id="beseenLoader"><div><strong>BeSeen</strong><span>Loading…</span></div></div>
+  <script>
+  (async function(){
+    try{
+      const response = await fetch('/beseen-payment-success.html', {cache:'no-store'});
+      if(!response.ok) throw new Error('Main site could not be loaded');
+      let html = await response.text();
+      const bridge = '<script src="/beseen-account-bridge.js"><\/script>';
+      if (/<\/body>/i.test(html)) html = html.replace(/<\/body>/i, bridge + '</body>');
+      else html += bridge;
+      document.open();
+      document.write(html);
+      document.close();
+    }catch(error){
+      console.error(error);
+      window.location.replace('/beseen-payment-success.html' + window.location.search + window.location.hash);
+    }
+  })();
+  </script>
+</body>
 </html>

@@ -17,9 +17,28 @@ html,body{margin:0;min-height:100%;background:#071b44;color:#fff;font-family:Ari
     const response=await fetch('/index.html',{cache:'no-store'});
     if(!response.ok)throw new Error('Main site could not be loaded');
     let html=await response.text();
-    const bridge='<script src="/signup-verify-bridge.js"><\/script>';
-    if(/<head[^>]*>/i.test(html))html=html.replace(/<head([^>]*)>/i,'<head$1>'+bridge);
-    else html=bridge+html;
+
+    const helper=`<script>
+    (function(){
+      function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+      function styles(){
+        if(document.getElementById('bsInstantSignupStyles'))return;
+        var s=document.createElement('style');s.id='bsInstantSignupStyles';s.textContent='\n#bsauthGate{overflow-y:auto!important;place-items:start center!important;align-items:flex-start!important;justify-content:center!important;padding:24px 16px!important}#bsauthGate>*{margin:auto 0!important;max-height:none!important}.bs-signup-instant{position:fixed;inset:0;z-index:1000000;display:grid;place-items:center;padding:22px;background:rgba(3,12,31,.84);backdrop-filter:blur(12px)}.bs-signup-instant-card{width:min(520px,100%);background:#fff;color:#10213f;border-radius:28px;padding:38px 30px;text-align:center;box-shadow:0 35px 110px rgba(0,0,0,.45);animation:bsPop .28s ease}.bs-signup-instant-logo{font-size:30px;font-weight:950;letter-spacing:-.06em;margin-bottom:22px}.bs-signup-instant-logo .be{color:#ed334f}.bs-signup-instant-logo .seen{color:#1877ff}.bs-signup-spinner{width:68px;height:68px;border:6px solid #dce9ff;border-top-color:#1877ff;border-radius:50%;margin:0 auto 20px;animation:bsSpin .75s linear infinite}.bs-signup-check{width:78px;height:78px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:#e8f8ef;color:#138a55;font-size:40px;font-weight:950}.bs-signup-error{width:78px;height:78px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:#fff0f2;color:#b11f35;font-size:38px;font-weight:950}.bs-signup-instant h2{margin:0 0 10px;font-size:30px;letter-spacing:-.04em}.bs-signup-instant p{margin:0 auto;color:#6f7f9b;line-height:1.6;font-weight:650;max-width:420px}.bs-signup-email{margin:18px auto 0;padding:11px 14px;border-radius:12px;background:#f5f8fd;border:1px solid #dfe7f3;font-weight:850;word-break:break-word}.bs-signup-btn{margin-top:22px;border:0;border-radius:13px;padding:12px 16px;background:#1877ff;color:#fff;font:inherit;font-weight:850;cursor:pointer}@keyframes bsSpin{to{transform:rotate(360deg)}}@keyframes bsPop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}';document.head.appendChild(s)
+      }
+      function box(){styles();var o=document.getElementById('bsInstantSignup');if(!o){o=document.createElement('div');o.id='bsInstantSignup';o.className='bs-signup-instant';document.body.appendChild(o)}return o}
+      window.__beseenSignupCreating=function(email){var o=box();o.innerHTML='<div class="bs-signup-instant-card"><div class="bs-signup-instant-logo"><span class="be">Be</span><span class="seen">Seen</span></div><div class="bs-signup-spinner"></div><h2>Creating your account…</h2><p>Just a second. We’re setting up your BeSeen account.</p>'+(email?'<div class="bs-signup-email">'+esc(email)+'</div>':'')+'</div>'}
+      window.__beseenSignupSuccess=function(email){var o=box();o.innerHTML='<div class="bs-signup-instant-card"><div class="bs-signup-instant-logo"><span class="be">Be</span><span class="seen">Seen</span></div><div class="bs-signup-check">✓</div><h2>Account created!</h2><p>Verify your email to continue.</p>'+(email?'<div class="bs-signup-email">'+esc(email)+'</div>':'')+'<p style="margin-top:16px">Check your inbox and click the BeSeen verification link. After verification, you’ll return to BeSeen.</p><button class="bs-signup-btn" type="button" onclick="document.getElementById(\\'bsInstantSignup\\').remove()">Got it</button></div>'}
+      window.__beseenSignupError=function(message){var o=box();o.innerHTML='<div class="bs-signup-instant-card"><div class="bs-signup-error">!</div><h2>Couldn’t create account</h2><p>'+esc(message||'Please try again.')+'</p><button class="bs-signup-btn" type="button" onclick="document.getElementById(\\'bsInstantSignup\\').remove()">Try again</button></div>'}
+    })();
+    <\/script>`;
+
+    if(/<head[^>]*>/i.test(html))html=html.replace(/<head([^>]*)>/i,'<head$1>'+helper);
+    else html=helper+html;
+
+    const oldSignup=`const { error }=await supabase.auth.signUp({ email, password, options:{ data:{ full_name, referral_code, referred_by_code: referral_code } } });\n  if(error) setFeedback(error.message); else setFeedback('Account created. Check your email to confirm your account, then sign in.');`;
+    const newSignup=`window.__beseenSignupCreating?.(email);\n  const { error }=await supabase.auth.signUp({ email, password, options:{ emailRedirectTo: window.location.origin + '/verify-email.html', data:{ full_name, referral_code, referred_by_code: referral_code } } });\n  if(error){ setFeedback(error.message); window.__beseenSignupError?.(error.message); } else { setFeedback('Account created. Verify your email to continue.'); window.__beseenSignupSuccess?.(email); }`;
+    if(html.includes(oldSignup)) html=html.replace(oldSignup,newSignup);
+
     document.open();
     document.write(html);
     document.close();

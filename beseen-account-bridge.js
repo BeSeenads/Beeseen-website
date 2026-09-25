@@ -1,5 +1,6 @@
 (() => {
   const ACCOUNT_URL = '/account.html';
+  const OWNER_BILLING_URL = '/owner-billing.html';
 
   function role() {
     return String(window.__beseenCurrentRole || 'guest').toLowerCase();
@@ -40,6 +41,31 @@
         bar.insertBefore(btn, signOut);
       } else {
         bar.appendChild(btn);
+      }
+    }
+
+    if (
+      bar &&
+      role() === 'owner' &&
+      !document.getElementById('bsOwnerBilling')
+    ) {
+      const billingBtn = document.createElement('button');
+
+      billingBtn.className = 'bs-account-btn';
+      billingBtn.id = 'bsOwnerBilling';
+      billingBtn.type = 'button';
+      billingBtn.textContent = 'Billing Control';
+
+      billingBtn.addEventListener('click', () => {
+        window.location.href = OWNER_BILLING_URL;
+      });
+
+      const signOut = document.getElementById('bsChangeAccount');
+
+      if (signOut) {
+        bar.insertBefore(billingBtn, signOut);
+      } else {
+        bar.appendChild(billingBtn);
       }
     }
   }

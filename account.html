@@ -70,7 +70,7 @@ button,input,textarea,select{font:inherit}button,a{touch-action:manipulation}
 
 <script>
 const PLAN_RANK={gold:1,premium:2,platinum:3};
-let supabase=null,session=null,profile=null,rows=[],locations=[],campaigns=[],locationMap=new Map(),campaignByLocation=new Map();
+let sb=null,session=null,profile=null,rows=[],locations=[],campaigns=[],locationMap=new Map(),campaignByLocation=new Map();
 let selectedUpgrade=null,selectedFeedback=null;
 
 function money(cents){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((Number(cents)||0)/100)}
@@ -148,10 +148,10 @@ function renderLocations(){
 async function loadData(){
   const user=session.user;
   const [{data:p,error:pe},{data:subs,error:se},{data:locs,error:le},{data:camps,error:ce}] = await Promise.all([
-    supabase.from('profiles').select('id,email,full_name,role,subscription,subscription_status,my_referral_code').eq('id',user.id).single(),
-    supabase.from('subscription_locations').select('id,user_id,stripe_subscription_id,stripe_subscription_item_id,stripe_price_id,location_id,location_slug,plan,status,list_price_cents,billed_price_cents,discount_cents,current_period_start,current_period_end,cancel_at_period_end,cancellation_requested_at,canceled_at,payment_failed,created_at').eq('user_id',user.id).order('created_at',{ascending:true}),
-    supabase.from('locations').select('id,slug,name,city,status,visibility,gold_price_cents,premium_price_cents,platinum_price_cents').order('sort_order',{ascending:true}),
-    supabase.from('campaigns').select('id,advertiser_id,location_id,name,tracking_code,landing_url,status,stripe_subscription_id,approval_status,ad_preview_url,customer_feedback,owner_notes,creative_updated_at,customer_reviewed_at').eq('advertiser_id',user.id)
+    sb.from('profiles').select('id,email,full_name,role,subscription,subscription_status,my_referral_code').eq('id',user.id).single(),
+    sb.from('subscription_locations').select('id,user_id,stripe_subscription_id,stripe_subscription_item_id,stripe_price_id,location_id,location_slug,plan,status,list_price_cents,billed_price_cents,discount_cents,current_period_start,current_period_end,cancel_at_period_end,cancellation_requested_at,canceled_at,payment_failed,created_at').eq('user_id',user.id).order('created_at',{ascending:true}),
+    sb.from('locations').select('id,slug,name,city,status,visibility,gold_price_cents,premium_price_cents,platinum_price_cents').order('sort_order',{ascending:true}),
+    sb.from('campaigns').select('id,advertiser_id,location_id,name,tracking_code,landing_url,status,stripe_subscription_id,approval_status,ad_preview_url,customer_feedback,owner_notes,creative_updated_at,customer_reviewed_at').eq('advertiser_id',user.id)
   ]);
   if(pe)throw pe;if(se)throw se;if(le)throw le;if(ce)throw ce;
   profile=p;rows=subs||[];locations=locs||[];campaigns=camps||[];
@@ -166,7 +166,7 @@ async function loadData(){
 
 async function loadReferrals(){
   document.getElementById('refCode').textContent=profile.my_referral_code||'—';
-  const {data,error}=await supabase.rpc('get_my_referral_stats');
+  const {data,error}=await sb.rpc('get_my_referral_stats');
   const stat=Array.isArray(data)?data[0]:data;
   if(!error&&stat){document.getElementById('refTotal').textContent=stat.total_referrals||0;document.getElementById('refActive').textContent=stat.active_subscribers||0}
 }
@@ -176,10 +176,10 @@ document.getElementById('copyRefLink').onclick=()=>copyText(location.origin+'/?r
 async function loadOwner(){
   document.getElementById('ownerSection').hidden=false;
   const [{data:profiles},{data:subs},{data:camps},{data:locs}] = await Promise.all([
-    supabase.from('profiles').select('id,email,full_name,subscription,subscription_status,role').order('created_at',{ascending:false}),
-    supabase.from('subscription_locations').select('id,user_id,location_id,location_slug,plan,status,billed_price_cents,cancel_at_period_end,current_period_end,payment_failed').order('created_at',{ascending:false}),
-    supabase.from('campaigns').select('id,advertiser_id,location_id,status,approval_status,ad_preview_url'),
-    supabase.from('locations').select('id,slug,name')
+    sb.from('profiles').select('id,email,full_name,subscription,subscription_status,role').order('created_at',{ascending:false}),
+    sb.from('subscription_locations').select('id,user_id,location_id,location_slug,plan,status,billed_price_cents,cancel_at_period_end,current_period_end,payment_failed').order('created_at',{ascending:false}),
+    sb.from('campaigns').select('id,advertiser_id,location_id,status,approval_status,ad_preview_url'),
+    sb.from('locations').select('id,slug,name')
   ]);
   const pmap=new Map((profiles||[]).map(p=>[p.id,p])),lmap=new Map((locs||[]).map(l=>[l.id,l])),cmap=new Map();
   for(const c of camps||[])cmap.set(c.advertiser_id+'|'+c.location_id,c);
@@ -233,14 +233,14 @@ document.addEventListener('click',async e=>{
 document.getElementById('closeUpgrade').onclick=()=>document.getElementById('upgradeModal').classList.remove('show');
 document.getElementById('closeFeedback').onclick=()=>document.getElementById('feedbackModal').classList.remove('show');
 document.getElementById('sendFeedback').onclick=async()=>{if(!selectedFeedback)return;const btn=document.getElementById('sendFeedback');try{btn.disabled=true;await api({action:'review_ad',campaignId:selectedFeedback,decision:'changes_requested',message:document.getElementById('feedbackText').value});showToast('Change request sent');document.getElementById('feedbackModal').classList.remove('show');await loadData()}catch(err){showToast(err.message)}finally{btn.disabled=false}};
-document.getElementById('signOutBtn').onclick=async()=>{try{await supabase?.auth.signOut()}finally{location.href='/'}};
+document.getElementById('signOutBtn').onclick=async()=>{try{await sb?.auth.signOut()}finally{location.href='/'}};
 
 (async()=>{
   try{
     const cfg=await fetch('/api/config',{cache:'no-store'}).then(r=>r.json());
     if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)throw new Error('Account access is not configured.');
-    supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,storage:authStorage(),autoRefreshToken:true,detectSessionInUrl:true}});
-    const result=await supabase.auth.getSession();session=result.data.session;
+    sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,storage:authStorage(),autoRefreshToken:true,detectSessionInUrl:true}});
+    const result=await sb.auth.getSession();session=result.data.session;
     if(!session){location.href='/';return}
     await loadData();
     document.getElementById('loading').remove();document.getElementById('app').hidden=false;

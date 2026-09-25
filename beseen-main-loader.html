@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeSeen Advertising</title>
+<meta name="theme-color" content="#071b44">
+<style>
+html,body{margin:0;min-height:100%;background:#071b44;color:#fff;font-family:Arial,sans-serif}.loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}.logo{font-size:58px;font-weight:950;letter-spacing:-.06em}.be{color:#ed334f}.seen{color:#4a9aff}.text{margin-top:16px;color:rgba(255,255,255,.72);font-weight:800;font-size:14px}
+</style>
+</head>
+<body>
+<div class="loading"><div><div class="logo"><span class="be">Be</span><span class="seen">Seen</span></div><div class="text">Making sure your brand gets seen</div></div></div>
+<script>
+(async function(){
+  try{
+    const response=await fetch('/index.html',{cache:'no-store'});
+    if(!response.ok)throw new Error('Main site could not be loaded');
+    let html=await response.text();
+    const bridge='<script type="module" src="/signup-verify-bridge.js"><\/script>';
+    if(/<\/body>/i.test(html))html=html.replace(/<\/body>/i,bridge+'</body>');
+    else html+=bridge;
+    document.open();
+    document.write(html);
+    document.close();
+  }catch(error){
+    console.error(error);
+    window.location.replace('/index.html'+window.location.search+window.location.hash);
+  }
+})();
+</script>
+</body>
+</html>

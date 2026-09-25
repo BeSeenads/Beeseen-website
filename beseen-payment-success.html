@@ -965,6 +965,16 @@ body.host-info-open #hostInfo{display:block}
   @media(prefers-reduced-motion:reduce){.bs-payment-success-overlay,.bs-payment-success-card,.bs-payment-success-circle,.bs-payment-success-check,.bs-payment-success-icon:after{animation:none!important;transition:none!important}.bs-payment-success-circle,.bs-payment-success-check{stroke-dashoffset:0}}
 </style>
 
+
+<style id="beseen-hide-old-auth-gate">
+.bsauth-gate{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+</style>
+
 </head>
 <body>
 <div class="bsauth-gate" id="bsauthGate">
@@ -2835,6 +2845,7 @@ if(checkoutState) history.replaceState(null,'',window.location.pathname+window.l
 initAuth();
 </script>
 
+
 <script id="beseen-smart-auth-redirect">
 (function () {
 
@@ -2858,39 +2869,17 @@ initAuth();
     return false;
   }
 
-  function checkAuthGate() {
-    const gate = document.querySelector('.bsauth-gate');
-
-    if (!gate) return;
-
-    const visible =
-      gate.classList.contains('show') ||
-      getComputedStyle(gate).display !== 'none';
-
-    if (visible && !hasSupabaseSession()) {
-      setTimeout(function () {
-
-        if (!hasSupabaseSession()) {
-          window.location.replace('/auth.html');
-        }
-
-      }, 800);
+  function redirectIfLoggedOut() {
+    if (!hasSupabaseSession()) {
+      window.location.replace('/auth.html');
     }
   }
 
-  setTimeout(checkAuthGate, 1000);
-
-  new MutationObserver(checkAuthGate).observe(
-    document.documentElement,
-    {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class', 'style']
-    }
-  );
+  setTimeout(redirectIfLoggedOut, 150);
 
 })();
 </script>
+
 
 </body>
 </html>

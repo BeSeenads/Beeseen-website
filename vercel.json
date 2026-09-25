@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/beseen-main-loader.html"
+      "destination": "/entry.html"
     }
   ],
   "headers": [

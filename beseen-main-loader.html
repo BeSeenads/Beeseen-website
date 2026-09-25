@@ -3,145 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>BeSeen Advertising</title>
-
 <style>
-html,body{
-  margin:0;
-  min-height:100%;
-  background:#071b44;
-  color:white;
-  font-family:Arial,sans-serif;
-}
-
-.loading{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  text-align:center;
-}
-
-.logo{
-  font-size:58px;
-  font-weight:950;
-}
-
-.be{color:#ed334f}
-.seen{color:#4a9aff}
+html,body{margin:0;min-height:100%;background:#071b44;color:white;font-family:Arial,sans-serif}.loading{min-height:100vh;display:grid;place-items:center;text-align:center}.logo{font-size:58px;font-weight:950}.be{color:#ed334f}.seen{color:#4a9aff}
 </style>
 </head>
-
 <body>
-
-<div class="loading">
-  <div class="logo">
-    <span class="be">Be</span><span class="seen">Seen</span>
-  </div>
-</div>
-
+<div class="loading"><div class="logo"><span class="be">Be</span><span class="seen">Seen</span></div></div>
 <script>
 (async function(){
-
   try{
+    const response=await fetch('/index.html',{cache:'no-store'});
+    if(!response.ok) throw new Error('Could not load BeSeen');
+    let html=await response.text();
 
-    const response = await fetch('/index.html',{
-      cache:'no-store'
-    });
+    const earlyAuth=`<script>
+    (function(){
+      document.addEventListener('click',function(event){
+        var button=event.target.closest&&event.target.closest('a,button');
+        if(!button) return;
+        var text=(button.textContent||'').trim().toLowerCase();
+        if(text==='sign in'||text==='create account'){
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          window.location.href='/auth.html';
+        }
+      },true);
+    })();
+    <\/script>`;
 
-    if(!response.ok){
-      throw new Error('Could not load BeSeen');
-    }
-
-    let html = await response.text();
-
-
-    /*
-      Load BeSeen account controls
-    */
-
-    const accountBridge = `
-      <script src="/beseen-account-bridge.js"><\/script>
-    `;
-
-
-    /*
-      Backup Sign In redirect.
-      This catches the old homepage Sign In button
-      even if its old code tries to open the modal.
-    */
-
-    const authRedirect = `
-      <script>
-      (function(){
-
-        document.addEventListener(
-          'click',
-          function(event){
-
-            var button =
-              event.target.closest('a,button');
-
-            if(!button) return;
-
-            var text =
-              (button.textContent || '')
-              .trim()
-              .toLowerCase();
-
-            if(text === 'sign in'){
-
-              event.preventDefault();
-              event.stopPropagation();
-              event.stopImmediatePropagation();
-
-              window.location.href =
-                '/auth.html';
-            }
-
-          },
-          true
-        );
-
-      })();
-      <\/script>
-    `;
-
-
-    const scripts =
-      accountBridge +
-      authRedirect;
-
-
-    if(/<\/body>/i.test(html)){
-
-      html = html.replace(
-        /<\/body>/i,
-        scripts + '</body>'
-      );
-
+    if(/<head[^>]*>/i.test(html)){
+      html=html.replace(/<head([^>]*)>/i,'<head$1>'+earlyAuth);
     }else{
-
-      html += scripts;
-
+      html=earlyAuth+html;
     }
 
+    const accountBridge=`<script src="/beseen-account-bridge.js"><\/script>`;
+    if(/<\/body>/i.test(html)){
+      html=html.replace(/<\/body>/i,accountBridge+'</body>');
+    }else{
+      html+=accountBridge;
+    }
 
     document.open();
     document.write(html);
     document.close();
-
-
   }catch(error){
-
     console.error(error);
-
     window.location.replace('/index.html');
-
   }
-
 })();
 </script>
-
 </body>
 </html>

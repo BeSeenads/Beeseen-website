@@ -560,6 +560,27 @@ const supabase = createClient(
 
 
 /* -------------------------
+   GOOGLE OAUTH CALLBACK
+------------------------- */
+
+const { data: initialAuthData } =
+  await supabase.auth.getSession();
+
+if(initialAuthData?.session){
+  window.location.replace('/');
+}
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if(
+    session &&
+    (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')
+  ){
+    window.location.replace('/');
+  }
+});
+
+
+/* -------------------------
    TABS
 ------------------------- */
 
@@ -849,7 +870,7 @@ async function googleSignIn(){
 
       options:{
         redirectTo:
-          `${window.location.origin}/`
+          `${window.location.origin}/auth.html?oauth=1`
       }
 
     });

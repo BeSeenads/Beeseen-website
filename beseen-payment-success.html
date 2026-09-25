@@ -2834,5 +2834,63 @@ if(checkoutState) history.replaceState(null,'',window.location.pathname+window.l
 
 initAuth();
 </script>
+
+<script id="beseen-smart-auth-redirect">
+(function () {
+
+  function hasSupabaseSession() {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+
+      if (
+        key &&
+        key.startsWith('sb-') &&
+        key.endsWith('-auth-token')
+      ) {
+        const value = localStorage.getItem(key);
+
+        if (value && value.includes('access_token')) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  function checkAuthGate() {
+    const gate = document.querySelector('.bsauth-gate');
+
+    if (!gate) return;
+
+    const visible =
+      gate.classList.contains('show') ||
+      getComputedStyle(gate).display !== 'none';
+
+    if (visible && !hasSupabaseSession()) {
+      setTimeout(function () {
+
+        if (!hasSupabaseSession()) {
+          window.location.replace('/auth.html');
+        }
+
+      }, 800);
+    }
+  }
+
+  setTimeout(checkAuthGate, 1000);
+
+  new MutationObserver(checkAuthGate).observe(
+    document.documentElement,
+    {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    }
+  );
+
+})();
+</script>
+
 </body>
 </html>

@@ -533,30 +533,15 @@ const cfg = await fetch('/api/config', {
 
 const authStorage = {
   getItem(key){
-    const remember =
-      localStorage.getItem('beseen_remember_me') === '1';
-
-    return remember
-      ? localStorage.getItem(key)
-      : sessionStorage.getItem(key);
+    return localStorage.getItem(key);
   },
 
   setItem(key,value){
-    const remember =
-      localStorage.getItem('beseen_remember_me') === '1';
-
-    if(remember){
-      localStorage.setItem(key,value);
-      sessionStorage.removeItem(key);
-    }else{
-      sessionStorage.setItem(key,value);
-      localStorage.removeItem(key);
-    }
+    localStorage.setItem(key,value);
   },
 
   removeItem(key){
     localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
   }
 };
 

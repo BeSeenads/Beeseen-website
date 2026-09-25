@@ -135,10 +135,16 @@ export async function POST(request) {
 
     const lineItems = [];
     for (const loc of orderedLocations) {
-      let priceId = loc[priceColumn] || null;
-      if (!priceId && loc.slug === 'exclusive') {
-        priceId = { gold: process.env.STRIPE_PRICE_GOLD, premium: process.env.STRIPE_PRICE_PREMIUM, platinum: process.env.STRIPE_PRICE_PLATINUM }[plan];
-      }
+     let priceId = loc[priceColumn] || null;
+
+if (loc.slug === 'exclusive') {
+  priceId =
+    {
+      gold: process.env.STRIPE_PRICE_GOLD,
+      premium: process.env.STRIPE_PRICE_PREMIUM,
+      platinum: process.env.STRIPE_PRICE_PLATINUM
+    }[plan] || priceId;
+}
       if (!priceId) return json({ error: `Stripe pricing for ${loc.name} is not configured yet.` }, 400);
       lineItems.push({ price: priceId, quantity: 1 });
     }
@@ -150,16 +156,52 @@ export async function POST(request) {
     const discountedLocations = orderedLocations.filter((_, index) => existingLocationCount > 0 || index > 0);
     const totalDiscountCents = discountedLocations.length * EXTRA_LOCATION_DISCOUNT_CENTS;
 
-    let customerId = profile?.stripe_customer_id || null;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email || undefined,
-        name: user.user_metadata?.full_name || undefined,
-        metadata: { beseen_user_id: user.id }
-      });
-      customerId = customer.id;
-      await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
+let customerId = profile?.stripe_customer_id || null;
+
+/*
+  A Stripe customer ID only exists in the Stripe mode/account
+  where it was created. If Supabase contains an old test-mode
+  customer while this deployment is using live Stripe, ignore it
+  and create the correct customer automatically.
+*/
+if (customerId) {
+  try {
+    const existingCustomer =
+      await stripe.customers.retrieve(customerId);
+
+    if (existingCustomer?.deleted) {
+      customerId = null;
     }
+  } catch (error) {
+    if (
+      error?.code === 'resource_missing' ||
+      error?.type === 'StripeInvalidRequestError'
+    ) {
+      customerId = null;
+    } else {
+      throw error;
+    }
+  }
+}
+
+if (!customerId) {
+  const customer = await stripe.customers.create({
+    email: user.email || undefined,
+    name: user.user_metadata?.full_name || undefined,
+    metadata: {
+      beseen_user_id: user.id
+    }
+  });
+
+  customerId = customer.id;
+
+  await supabase
+    .from('profiles')
+    .update({
+      stripe_customer_id: customerId
+    })
+    .eq('id', user.id);
+}
 
     const discounts = [];
     if (totalDiscountCents > 0) {

@@ -143,13 +143,15 @@
       color:#4d5c76;
     }
 
-    input{
+    input,
+select{
       width:100%;
       padding:13px 14px;
       border:1px solid #ccd7e7;
       border-radius:12px;
       font-size:15px;
       outline:none;
+      background:white;
     }
 
     input:focus{
@@ -448,6 +450,25 @@
         <label>Business email</label>
         <input id="createEmail" type="email" placeholder="you@business.com">
 
+        <label>Business category</label>
+        <select id="businessCategory">
+          <option value="">Select your business type</option>
+          <option value="hookah lounge">Hookah Lounge</option>
+          <option value="car wash">Car Wash</option>
+          <option value="coffee shop">Coffee Shop</option>
+          <option value="oil change">Oil Change</option>
+          <option value="banquet hall">Banquet Hall</option>
+          <option value="car dealership">Car Dealership</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="real estate">Real Estate</option>
+          <option value="retail">Retail</option>
+          <option value="barbershop">Barbershop / Salon</option>
+          <option value="medical">Medical / Dental</option>
+          <option value="fitness">Gym / Fitness</option>
+          <option value="home services">Home Services</option>
+          <option value="other">Other</option>
+        </select>
+
         <label>Create password</label>
         <input id="createPassword" type="password" placeholder="At least 8 characters">
 
@@ -678,6 +699,10 @@ document
       document.getElementById('createPassword')
         .value;
 
+    const businessCategory =
+      document.getElementById('businessCategory')
+        .value;
+
     const referral =
       document.getElementById('referralCode')
         .value.trim();
@@ -696,6 +721,12 @@ document
       feedback.textContent =
         'Enter your email.';
 
+      return;
+    }
+
+    if(!businessCategory){
+      feedback.textContent =
+        'Select your business category.';
       return;
     }
 
@@ -737,6 +768,7 @@ document
 
           data:{
             full_name:name,
+            business_category:businessCategory,
             referral_code:referral,
             referred_by_code:referral
           }

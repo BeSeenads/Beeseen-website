@@ -548,57 +548,80 @@ from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
    SUPABASE
 ------------------------- */
 
-const cfg = await fetch('/api/config', {
-  cache:'no-store'
-}).then(r => r.json());
-
-const authStorage = {
-  getItem(key){
-    return localStorage.getItem(key);
-  },
-
-  setItem(key,value){
-    localStorage.setItem(key,value);
-  },
-
-  removeItem(key){
-    localStorage.removeItem(key);
-  }
-};
-
-const supabase = createClient(
-  cfg.supabaseUrl,
-  cfg.supabasePublishableKey,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true,
-      storage:authStorage
-    }
-  }
-);
-
-
-/* -------------------------
-   GOOGLE OAUTH CALLBACK
-------------------------- */
-
-const { data: initialAuthData } =
-  await supabase.auth.getSession();
-
-if(initialAuthData?.session){
-  window.location.replace('/');
+function showAuthError(message){
+  const loginFeedback = document.getElementById('loginFeedback');
+  const createFeedback = document.getElementById('createFeedback');
+  if(loginFeedback) loginFeedback.textContent = message;
+  if(createFeedback) createFeedback.textContent = message;
 }
 
-supabase.auth.onAuthStateChange((event, session) => {
-  if(
-    session &&
-    (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')
-  ){
+function authStorage(){
+  return {
+    getItem(key){
+      return localStorage.getItem(key);
+    },
+    setItem(key,value){
+      localStorage.setItem(key,value);
+    },
+    removeItem(key){
+      localStorage.removeItem(key);
+    }
+  };
+}
+
+let supabase = null;
+let authReadyError = '';
+
+try {
+  const configResponse = await fetch('/api/config', {
+    cache:'no-store'
+  });
+
+  const contentType = configResponse.headers.get('content-type') || '';
+
+  if(!configResponse.ok || !contentType.includes('json')){
+    throw new Error('BeSeen authentication is not available on this server.');
+  }
+
+  const cfg = await configResponse.json();
+
+  if(!cfg.supabaseUrl || !cfg.supabasePublishableKey){
+    throw new Error('BeSeen authentication is not configured.');
+  }
+
+  supabase = createClient(
+    cfg.supabaseUrl,
+    cfg.supabasePublishableKey,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true,
+        storage:authStorage()
+      }
+    }
+  );
+
+  const { data: initialAuthData } =
+    await supabase.auth.getSession();
+
+  if(initialAuthData?.session){
     window.location.replace('/');
   }
-});
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if(
+      session &&
+      (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')
+    ){
+      window.location.replace('/');
+    }
+  });
+} catch (error) {
+  console.error(error);
+  authReadyError = error.message || 'BeSeen authentication is not available.';
+  showAuthError(authReadyError);
+}
 
 
 /* -------------------------
@@ -738,6 +761,11 @@ document
       return;
     }
 
+    if(!supabase){
+      feedback.textContent = authReadyError || 'BeSeen authentication is not configured.';
+      return;
+    }
+
     if(remember){
       localStorage.setItem(
         'beseen_remember_me',
@@ -844,6 +872,15 @@ document
 
     feedback.textContent = '';
 
+    if(!email || !password){
+      feedback.textContent = 'Enter your email and password.';
+      return;
+    }
+
+    if(!supabase){
+      feedback.textContent = authReadyError || 'BeSeen authentication is not configured.';
+      return;
+    }
 
     if(remember){
       localStorage.setItem(
@@ -863,28 +900,25 @@ document
     button.disabled = true;
     button.textContent = 'Signing in...';
 
+    try {
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      if(error){
+        feedback.textContent = error.message;
+        return;
+      }
 
-
-    button.disabled = false;
-    button.textContent = 'Sign In';
-
-
-    if(error){
-
-      feedback.textContent =
-        error.message;
-
-      return;
+      window.location.href = '/';
+    } catch (error) {
+      feedback.textContent = error.message || 'Sign in failed.';
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Sign In';
     }
-
-
-    window.location.href = '/';
 
   });
 
@@ -894,6 +928,11 @@ document
 ------------------------- */
 
 async function googleSignIn(){
+
+  if(!supabase){
+    showAuthError(authReadyError || 'BeSeen authentication is not configured.');
+    return;
+  }
 
   const { error } =
     await supabase.auth.signInWithOAuth({

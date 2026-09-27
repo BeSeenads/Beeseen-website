@@ -2,6 +2,15 @@
 
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0S283NH9RW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0S283NH9RW');
+</script>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BeSeen Advertising | Advertising That Gets Seen</title>
@@ -45,7 +54,9 @@
       width:48px;height:48px;border-radius:999px;object-fit:cover;display:block;
       background:white;padding:2px;box-shadow:0 8px 22px rgba(31,92,255,.22);flex:0 0 auto;
     }
-    .navlinks{display:flex;gap:28px;align-items:center;color:#d9e5ff;font-weight:750;font-size:14px}
+    .navlinks{display:flex;gap:28px;align-items:center;color:#d9e5ff;font-weight:750;font-size:14px;flex:1}
+    .nav-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .navlinks a,.location-trigger,.navsignin,.navcta{white-space:nowrap}
     .navlinks a:hover{color:white}
     .navcta{
       color:white!important;background:linear-gradient(135deg,var(--red),var(--red2));
@@ -213,6 +224,9 @@
     footer{padding:32px 0 44px;color:#6d7788;font-size:14px}
     .footer-inner{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:26px}
     .footer-brand{font-weight:950;color:var(--ink)}
+    .footer-links{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+    .footer-links a{font-weight:800}
+    .footer-links a:hover{color:var(--ink)}
     .bars{display:flex;width:60px;height:7px;overflow:hidden;border-radius:99px}
     .bars i{display:block;flex:1} .bars i:first-child{background:var(--blue)} .bars i:last-child{background:var(--red)}
 
@@ -221,7 +235,7 @@
     .qr-campaign-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}.qr-campaign-card{display:grid;grid-template-columns:126px 1fr;gap:16px;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.035);align-items:center}.qr-code-box{width:126px;height:126px;padding:8px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center}.qr-code-box img,.qr-code-box canvas{max-width:110px!important;max-height:110px!important}.qr-campaign-copy strong{display:block;font-size:16px;margin-bottom:4px}.qr-campaign-copy small{display:block;color:#9fb2d4;margin-bottom:10px;line-height:1.45}.qr-link-line{font-size:11px;color:#aebfe0;word-break:break-all;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.24);margin:7px 0}.qr-card-actions{display:flex;gap:8px;flex-wrap:wrap}.qr-card-actions button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:7px 11px;font-weight:700;cursor:pointer}.qr-card-actions button:hover{background:rgba(255,255,255,.12)}.qr-empty-card{grid-column:1/-1;padding:18px;border:1px dashed rgba(255,255,255,.15);border-radius:16px;color:#9fb2d4;text-align:center}@media(max-width:760px){.qr-campaign-grid{grid-template-columns:1fr}.qr-campaign-card{grid-template-columns:1fr}.qr-code-box{margin:auto}}
     .owner-qr-directory{display:grid;gap:12px;margin-top:16px}.owner-qr-advertiser{width:100%;display:flex;justify-content:space-between;gap:16px;align-items:center;text-align:left;padding:16px 18px;border-radius:17px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.045);color:#fff;cursor:pointer}.owner-qr-advertiser:hover,.owner-qr-advertiser.open{background:rgba(255,255,255,.075);border-color:rgba(120,157,255,.42)}.owner-qr-advertiser strong{display:block;font-size:15px}.owner-qr-advertiser small{display:block;color:#9fb2d4;margin-top:4px}.owner-qr-advertiser-meta{text-align:right}.owner-qr-advertiser-meta b{display:block;font-size:12px}.owner-qr-advertiser-meta span{display:block;color:#7fa4ff;font-size:10px;margin-top:4px;font-weight:900}.owner-qr-locations{display:none;gap:8px;padding:0 8px 5px 18px}.owner-qr-locations.open{display:grid}.owner-qr-location{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(0,0,0,.18);color:#fff;text-align:left;cursor:pointer}.owner-qr-location:hover{border-color:rgba(120,157,255,.44);background:rgba(35,69,136,.22)}.owner-qr-location strong{display:block;font-size:13px}.owner-qr-location small{display:block;color:#91a6cb;margin-top:3px;font-size:10px}.owner-qr-location span{font-size:10px;color:#89abff;font-weight:950;white-space:nowrap}.owner-qr-modal{position:fixed;inset:0;z-index:175;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,11,28,.76);backdrop-filter:blur(12px)}.owner-qr-modal.open{display:flex}.owner-qr-modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:26px;background:#fff;color:#071631;padding:26px;box-shadow:0 32px 110px rgba(0,0,0,.42)}.owner-qr-modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.owner-qr-modal-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#2f63ff;font-weight:950}.owner-qr-modal-head h3{font-size:28px;letter-spacing:-.035em;margin:5px 0 4px}.owner-qr-modal-head p{margin:0;color:#6c7890;font-size:12px}.owner-qr-modal-close{border:0;background:#eef2f8;width:40px;height:40px;border-radius:50%;font-size:21px;cursor:pointer}.owner-qr-modal-body{display:grid;grid-template-columns:160px 1fr;gap:20px;align-items:start;margin-top:22px}.owner-qr-modal-code{width:160px;height:160px;border:1px solid #dde5f1;border-radius:18px;display:flex;align-items:center;justify-content:center;background:#fff;padding:12px}.owner-qr-modal-code img,.owner-qr-modal-code canvas{max-width:136px!important;max-height:136px!important}.owner-qr-detail{padding:10px 0;border-bottom:1px solid #e8edf5}.owner-qr-detail:first-child{padding-top:0}.owner-qr-detail label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8793a6;font-weight:900;margin-bottom:4px}.owner-qr-detail div{font-size:12px;color:#142c53;word-break:break-word}.owner-qr-modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.owner-qr-modal-actions button{border:0;border-radius:999px;padding:10px 13px;background:#071b44;color:#fff;font-weight:900;cursor:pointer}.owner-qr-modal-actions button.secondary{background:#eef3fb;color:#15366f}.owner-qr-preview-note{padding:9px 11px;border-radius:11px;background:#fff4cf;color:#6b4c00;font-weight:800;font-size:11px;margin-bottom:12px}@media(max-width:650px){.owner-qr-modal-body{grid-template-columns:1fr}.owner-qr-modal-code{margin:auto}.owner-qr-advertiser{align-items:flex-start}.owner-qr-advertiser-meta{text-align:right}}
     @media(max-width:900px){
-      .navlinks a:not(.navcta){display:none}
+      .navlinks{gap:18px}
       .hero-inner,.why-grid,.contact-wrap{grid-template-columns:1fr}
       .hero{min-height:auto}
       .hero-inner{padding-top:68px}
@@ -231,6 +245,7 @@
       .section-head{align-items:flex-start;flex-direction:column}
     }
     @media(max-width:580px){
+      .navlinks > a{display:none}
       .wrap{width:min(100% - 24px,1180px)}
       nav{height:66px}
       .brand{font-size:26px}
@@ -264,12 +279,12 @@
     .location-trigger .chev{font-size:11px;transition:transform .2s ease}
     .location-nav.open .chev{transform:rotate(180deg)}
     .location-menu{
-      position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(-6px);
+      position:absolute;top:calc(100% + 12px);left:0;transform:translateY(-6px);
       width:325px;max-height:70vh;overflow-y:auto;padding:9px;background:rgba(7,27,68,.98);border:1px solid rgba(255,255,255,.12);
       box-shadow:0 24px 70px rgba(0,0,0,.35);border-radius:18px;opacity:0;visibility:hidden;
       transition:.2s ease;backdrop-filter:blur(18px);z-index:200
     }
-    .location-nav.open .location-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+    .location-nav.open .location-menu{opacity:1;visibility:visible;transform:translateY(0)}
     .location-menu button{
       width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:12px 13px;
       border-radius:12px;cursor:pointer;font-weight:750;font-size:14px
@@ -325,7 +340,7 @@
     @media(max-width:900px){
       .location-hero{grid-template-columns:1fr}.location-gallery{min-height:360px}.plans{grid-template-columns:1fr}.location-copy{padding:30px}
       .location-toolbar{align-items:flex-start;flex-direction:column}.location-select{width:100%;min-width:0}
-      .location-menu{left:auto;right:0;transform:translateY(-6px)}.location-nav.open .location-menu{transform:translateY(0)}
+      .location-menu{left:0;right:auto;transform:translateY(-6px)}.location-nav.open .location-menu{transform:translateY(0)}
     }
     @media(max-width:680px){
       .location-nav{display:none}
@@ -1155,20 +1170,18 @@ body.host-info-open #hostInfo{display:block}
 <span>BeSeen</span>
 </a>
 <div class="navlinks">
-<a href="#services">Services</a>
 <div class="location-nav" id="locationNav">
 <button class="location-trigger" id="locationTrigger" type="button">Locations <span class="chev">▼</span></button>
 <div class="location-menu" id="locationMenu">
 <button class="live-location active" data-location="exclusive" type="button">Exclusive Hookah Lounge<small>Available now • subscriptions + photos</small></button>
-<div class="location-menu-label">Subscriber-only placements</div>
-<button class="private-location-teaser" data-private-locations="true" type="button">More BeSeen Locations <span aria-hidden="true">🔒</span><small>Private placement opportunities are revealed inside Advertiser Access</small></button>
 </div>
 </div>
 <a href="#process">How It Works</a>
-<a class="access-link" href="#advertiser-access" id="accessTrigger">Advertiser Access <span class="access-lock">🔒</span></a>
-<a href="#host" id="hostTrigger">Host BeSeen</a><a href="#contact">Contact</a>
+<a href="#host" id="hostTrigger">Host</a>
+<div class="nav-actions">
 <button class="navsignin" id="navSignIn" type="button">Sign In</button>
-<a class="navcta" href="tel:+13139798989">Call BeSeen</a>
+<a class="navcta" id="startAdvertising" href="#locations">Start Advertising</a>
+</div>
 </div>
 </nav>
 </div>
@@ -1643,6 +1656,10 @@ body.host-info-open #hostInfo{display:block}
 <div class="footer-brand">BeSeen Advertising</div>
 <div>More eyes. More attention. More business.</div>
 </div>
+<div class="footer-links">
+<a href="#contact">Contact</a>
+<a href="tel:+13139798989">Call 313-979-8989</a>
+</div>
 <div>
 <div class="bars"><i></i><i></i></div>
 <div style="margin-top:8px">© <span id="year"></span> BeSeen. All rights reserved.</div>
@@ -1857,6 +1874,13 @@ body.host-info-open #hostInfo{display:block}
     document.addEventListener('click', () => locationNav && locationNav.classList.remove('open'));
 
     // Header links leave the dedicated location view and return to the normal site.
+    document.getElementById('startAdvertising')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const firstLive = Object.keys(publicLocations || {})[0] || 'exclusive';
+      openLocationPage(publicLocations.exclusive ? 'exclusive' : firstLive);
+    });
+
     document.querySelectorAll('.brand, .navlinks a[href^="#"]').forEach(link => {
       if(link.closest('.location-nav')) return;
       link.addEventListener('click', (e) => {

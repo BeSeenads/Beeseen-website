@@ -228,6 +228,20 @@ async function staffAnalytics(role,supabase){
     }
   }
 
+  const [{data:manualBilling},{data:liveCampaignRows}] = await Promise.all([
+    supabase.from('billing_overrides')
+      .select('custom_price_cents,user_id,location_id')
+      .eq('billing_source','manual')
+      .eq('custom_price_active',true)
+      .is('stripe_subscription_id',null),
+    supabase.from('campaigns').select('advertiser_id,location_id').eq('status','live')
+  ]);
+  const liveCampaignKeys=new Set((liveCampaignRows||[]).map(row=>`${row.advertiser_id}:${row.location_id}`));
+  for(const row of (manualBilling||[])){
+    if(!liveCampaignKeys.has(`${row.user_id}:${row.location_id}`)) continue;
+    mrrCents += Number(row.custom_price_cents)||0;
+  }
+
   return json({metrics:{
     mrr_cents:mrrCents,
     active_subscriptions:activeSubscriptions||0,

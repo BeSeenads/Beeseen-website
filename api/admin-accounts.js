@@ -1486,6 +1486,7 @@ export async function POST(request) {
   const businessName = String(body.businessName || '').trim().slice(0, 160);
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
   const locationSlug = cleanSlug(body.locationSlug);
+  const monthlyCents = Math.round(Number(body.monthlyAmount) * 100);
   let destination;
 
   try {
@@ -1505,6 +1506,9 @@ export async function POST(request) {
   }
   if (!locationSlug) {
     return json({ error: 'Choose a BeSeen location.' }, 400);
+  }
+  if (!Number.isFinite(monthlyCents) || monthlyCents < 100) {
+    return json({ error: 'Enter the monthly amount they pay, at least $1.' }, 400);
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -1576,11 +1580,41 @@ export async function POST(request) {
     status: 'paid'
   });
 
+  const { data: billingRow } = await supabase
+    .from('billing_overrides')
+    .select('id,stripe_subscription_id')
+    .eq('user_id', profile.id)
+    .eq('location_slug', location.slug)
+    .maybeSingle();
+
+  let revenueRecorded = false;
+  if (!billingRow?.stripe_subscription_id) {
+    const { error: billingError } = await supabase.from('billing_overrides').upsert({
+      user_id: profile.id,
+      location_id: location.id,
+      location_slug: location.slug,
+      plan: 'gold',
+      standard_price_cents: monthlyCents,
+      custom_price_cents: monthlyCents,
+      custom_price_active: true,
+      billing_source: 'manual',
+      migration_status: 'recorded',
+      owner_note: `Manual advertiser: ${businessName}`.slice(0, 500),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,location_slug' });
+    if (billingError) {
+      return json({ error: 'The advertiser was saved, but the monthly amount could not be added to revenue.' }, 500);
+    }
+    revenueRecorded = true;
+  }
+
   const origin = new URL(request.url).origin;
   return json({
     ok: true,
     trackingUrl: `${origin}/api/qr?c=${encodeURIComponent(trackingCode)}`,
     businessName,
-    locationName: location.name
+    locationName: location.name,
+    monthlyAmountCents: monthlyCents,
+    revenueRecorded
   }, existing?.id ? 200 : 201);
 }

@@ -1072,7 +1072,7 @@ body.host-info-open #hostInfo{display:block}
 <section class="bscc-page active" data-cc-page="overview">
 <div class="bscc-heading"><div><h1>Good afternoon.</h1><p>Your live business snapshot: advertisers, recurring subscriptions, campaigns, hosts, devices, and tracked campaign activity.</p></div><button class="bscc-action" type="button">+ New Campaign</button></div>
 <div class="bscc-statgrid">
-<div class="bscc-stat"><div class="lab">Monthly recurring revenue</div><strong id="bsccMrr">—</strong><small class="bscc-up">Live Stripe subscriptions only</small></div>
+<div class="bscc-stat"><div class="lab">Monthly recurring revenue</div><strong id="bsccMrr">—</strong><small class="bscc-up">Stripe plus recorded monthly payments</small></div>
 <div class="bscc-stat"><div class="lab">Active subscriptions</div><strong id="bsccActiveSubscriptions">—</strong><small>Loaded from Supabase + Stripe sync</small></div>
 <div class="bscc-stat"><div class="lab">Live campaigns</div><strong id="bsccLiveCampaigns">—</strong><small>Real campaigns only</small></div>
 <div class="bscc-stat"><div class="lab">Tracked QR scans</div><strong id="bsccQrScans">—</strong><small class="bscc-up">Recorded campaign events only</small></div>
@@ -1100,10 +1100,11 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Location(s)</th><th>Creative</th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="6">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
 <div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
   <h3>Add an advertiser</h3>
-  <p class="desc">Use an email that has already signed in to BeSeen. This creates a live tracked QR for one location. It does not start a Stripe checkout.</p>
+  <p class="desc">Use an email that has already signed in to BeSeen. This creates a live tracked QR for one location and adds their monthly payment to Control Center revenue. It does not start a Stripe checkout.</p>
   <div class="bscc-formgrid">
     <div class="bscc-field"><label for="bsccAdvEmail">Account email</label><input id="bsccAdvEmail" type="email" autocomplete="off" placeholder="name@business.com"/></div>
     <div class="bscc-field"><label for="bsccAdvBusiness">Business name</label><input id="bsccAdvBusiness" placeholder="Business name"/></div>
+    <div class="bscc-field"><label for="bsccAdvMonthly">Monthly amount they pay</label><input id="bsccAdvMonthly" type="number" min="1" step="0.01" inputmode="decimal" placeholder="200"/></div>
     <div class="bscc-field wide"><label for="bsccAdvUrl">Link the QR should open</label><input id="bsccAdvUrl" type="url" placeholder="https://"/></div>
     <div class="bscc-field"><label for="bsccAdvLocation">Location</label><select id="bsccAdvLocation"></select></div>
   </div>
@@ -2575,11 +2576,15 @@ document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=
   const businessName=document.getElementById('bsccAdvBusiness')?.value.trim();
   const destinationUrl=document.getElementById('bsccAdvUrl')?.value.trim();
   const locationSlug=document.getElementById('bsccAdvLocation')?.value;
+  const monthlyAmount=document.getElementById('bsccAdvMonthly')?.value.trim();
   if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   cmsMessage('bsccAddAdvertiserMessage','');
   try{
-    const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlug})});
-    cmsMessage('bsccAddAdvertiserMessage',`Advertiser added. Tracking link: ${data.trackingUrl}`);
+    const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlug,monthlyAmount})});
+    const dollars=Number(data.monthlyAmountCents||0)/100;
+    const price=Number.isFinite(dollars)&&dollars>0?dollars.toLocaleString('en-US',{style:'currency',currency:'USD'}):'';
+    const revenue=data.revenueRecorded&&price?` ${price}/month is now included in monthly revenue.`:' This location is already billed in Stripe, so that payment is already in monthly revenue.';
+    cmsMessage('bsccAddAdvertiserMessage',`Advertiser added.${revenue} Tracking link: ${data.trackingUrl}`);
     await loadOwnerAdvertisers();
     if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
   }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }

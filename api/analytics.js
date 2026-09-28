@@ -106,12 +106,24 @@ async function userAnalytics(user,access,supabase){
 async function staffAdvertisers(role,supabase){
   if(!['owner','admin'].includes(role)) return json({error:'Staff access required.'},403);
 
-  const {data:profiles,error:profileError}=await supabase
-    .from('profiles')
-    .select('id,email,full_name,subscription,subscription_status,created_at,stripe_customer_id,stripe_subscription_id')
-    .neq('subscription','none')
-    .order('created_at',{ascending:false});
-  if(profileError) return json({error:'Could not load subscribers.'},500);
+  const [{data:paidProfiles,error:profileError},{data:campaignRows,error:campaignIdError}]=await Promise.all([
+    supabase.from('profiles')
+      .select('id,email,full_name,subscription,subscription_status,created_at,stripe_customer_id,stripe_subscription_id')
+      .neq('subscription','none')
+      .order('created_at',{ascending:false}),
+    supabase.from('campaigns').select('advertiser_id')
+  ]);
+  if(profileError||campaignIdError) return json({error:'Could not load subscribers.'},500);
+  const campaignOwnerIds=[...new Set((campaignRows||[]).map(row=>row.advertiser_id).filter(Boolean))];
+  let campaignProfiles=[];
+  if(campaignOwnerIds.length){
+    const {data,error}=await supabase.from('profiles')
+      .select('id,email,full_name,subscription,subscription_status,created_at,stripe_customer_id,stripe_subscription_id')
+      .in('id',campaignOwnerIds);
+    if(error) return json({error:'Could not load subscribers.'},500);
+    campaignProfiles=data||[];
+  }
+  const profiles=[...new Map([...(paidProfiles||[]),...campaignProfiles].map(profile=>[profile.id,profile])).values()];
 
   const ids=(profiles||[]).map(p=>p.id);
   if(!ids.length) return json({advertisers:[]});
@@ -143,11 +155,30 @@ async function staffAdvertisers(role,supabase){
     const {data:locations}=await supabase.from('locations').select('slug,name').in('slug',allSlugs);
     locationMap=new Map((locations||[]).map(l=>[l.slug,l.name]));
   }
+  const {data:campaignPlaces,error:campaignPlaceError}=await supabase.from('campaigns').select('advertiser_id,location_id').in('advertiser_id',ids);
+  if(campaignPlaceError) return json({error:'Could not load subscriber locations.'},500);
+  const campaignLocationIds=[...new Set((campaignPlaces||[]).map(row=>row.location_id).filter(Boolean))];
+  let campaignLocationNames=new Map();
+  if(campaignLocationIds.length){
+    const {data:campaignLocationRows,error}=await supabase.from('locations').select('id,name').in('id',campaignLocationIds);
+    if(error) return json({error:'Could not load subscriber locations.'},500);
+    campaignLocationNames=new Map((campaignLocationRows||[]).map(row=>[row.id,row.name]));
+  }
+  const campaignLocations=new Map();
+  for(const row of (campaignPlaces||[])){
+    const name=campaignLocationNames.get(row.location_id);
+    if(!row.advertiser_id||!name) continue;
+    const list=campaignLocations.get(row.advertiser_id)||[];
+    list.push(name);
+    campaignLocations.set(row.advertiser_id,list);
+  }
 
   const advertisers=(profiles||[]).map(p=>{
     const intake=latestIntake.get(p.id)||null;
     const userSubs=(byUser.get(p.id)||[]).filter(r=>!['canceled','inactive'].includes(String(r.status||'').toLowerCase()));
-    const locationNames=[...new Set(userSubs.map(r=>locationMap.get(r.location_slug)||r.location_slug).filter(Boolean))];
+    const subscribedNames=userSubs.map(r=>locationMap.get(r.location_slug)||r.location_slug).filter(Boolean);
+    const campaignNames=(campaignLocations.get(p.id)||[]);
+    const locationNames=[...new Set([...subscribedNames,...campaignNames])];
     return {
       id:p.id,
       subscriber_name:p.full_name||null,

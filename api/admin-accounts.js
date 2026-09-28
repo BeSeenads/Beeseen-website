@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
@@ -1469,4 +1470,117 @@ export async function PATCH(request) {
       500
     );
   }
+}
+
+export async function POST(request) {
+  const supabase = db();
+  if (!supabase) {
+    return json({ error: 'Supabase server access is not configured.' }, 503);
+  }
+
+  const auth = await requireOwner(request, supabase);
+  if (auth.error) return auth.error;
+
+  const body = await request.json().catch(() => ({}));
+  const email = String(body.email || '').trim().toLowerCase();
+  const businessName = String(body.businessName || '').trim().slice(0, 160);
+  const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
+  const locationSlug = cleanSlug(body.locationSlug);
+  let destination;
+
+  try {
+    destination = new URL(destinationUrl);
+  } catch {
+    destination = null;
+  }
+
+  if (!email || !email.includes('@')) {
+    return json({ error: 'Enter the advertiser account email.' }, 400);
+  }
+  if (!businessName) {
+    return json({ error: 'Enter the business name.' }, 400);
+  }
+  if (!destination || !['http:', 'https:'].includes(destination.protocol)) {
+    return json({ error: 'Enter a full destination link, starting with https://.' }, 400);
+  }
+  if (!locationSlug) {
+    return json({ error: 'Choose a BeSeen location.' }, 400);
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id,email,full_name')
+    .ilike('email', email)
+    .maybeSingle();
+
+  if (profileError) {
+    return json({ error: 'Could not look up that account.' }, 500);
+  }
+  if (!profile) {
+    return json({
+      error: 'No BeSeen account uses that email yet. Have them create an account and sign in once, then add them here.'
+    }, 404);
+  }
+
+  const { data: location, error: locationError } = await supabase
+    .from('locations')
+    .select('id,slug,name')
+    .eq('slug', locationSlug)
+    .maybeSingle();
+
+  if (locationError || !location) {
+    return json({ error: 'That BeSeen location was not found.' }, 404);
+  }
+
+  const { data: existing } = await supabase
+    .from('campaigns')
+    .select('id,tracking_code,status')
+    .eq('advertiser_id', profile.id)
+    .eq('location_id', location.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let trackingCode = existing?.tracking_code;
+
+  if (existing?.id) {
+    const { error } = await supabase.from('campaigns').update({
+      name: `${businessName} — ${location.name}`.slice(0, 180),
+      landing_url: destination.href,
+      status: 'live',
+      updated_at: new Date().toISOString()
+    }).eq('id', existing.id);
+    if (error) return json({ error: 'Could not update the existing campaign.' }, 500);
+  } else {
+    trackingCode = `${location.slug}-${randomBytes(8).toString('hex')}`.slice(0, 80);
+    const { error } = await supabase.from('campaigns').insert({
+      advertiser_id: profile.id,
+      location_id: location.id,
+      name: `${businessName} — ${location.name}`.slice(0, 180),
+      tracking_code: trackingCode,
+      landing_url: destination.href,
+      status: 'live'
+    });
+    if (error) return json({ error: 'Could not create the tracked campaign.' }, 500);
+  }
+
+  await supabase.from('subscription_intakes').insert({
+    user_id: profile.id,
+    business_name: businessName,
+    business_type: 'Existing advertiser',
+    campaign_details: 'Added by the BeSeen owner for an ad already in the field.',
+    creative_choice: 'beseen_create',
+    plan: 'gold',
+    location_slugs: [location.slug],
+    qr_destination_url: destination.href,
+    status: 'paid'
+  });
+
+  const origin = new URL(request.url).origin;
+  return json({
+    ok: true,
+    trackingUrl: `${origin}/api/qr?c=${encodeURIComponent(trackingCode)}`,
+    businessName,
+    locationName: location.name
+  }, existing?.id ? 200 : 201);
 }

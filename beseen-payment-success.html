@@ -1096,8 +1096,20 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-demo-note">Live business data will populate here as billing, campaigns, QR tracking, hosts, and device check-ins are connected.</div>
 </section>
 <section class="bscc-page" data-cc-page="advertisers">
-<div class="bscc-heading"><div><h1>Advertisers</h1><p>Every paying account, subscription tier, campaign, billing state, and contact record.</p></div><button class="bscc-action" type="button">+ Add Advertiser</button></div>
+<div class="bscc-heading"><div><h1>Advertisers</h1><p>Every paying account, subscription tier, campaign, billing state, and contact record.</p></div><button class="bscc-action" id="bsccAddAdvertiser" type="button">+ Add Advertiser</button></div>
 <div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Location(s)</th><th>Creative</th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="6">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
+<div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
+  <h3>Add an advertiser</h3>
+  <p class="desc">Use an email that has already signed in to BeSeen. This creates a live tracked QR for one location. It does not start a Stripe checkout.</p>
+  <div class="bscc-formgrid">
+    <div class="bscc-field"><label for="bsccAdvEmail">Account email</label><input id="bsccAdvEmail" type="email" autocomplete="off" placeholder="name@business.com"/></div>
+    <div class="bscc-field"><label for="bsccAdvBusiness">Business name</label><input id="bsccAdvBusiness" placeholder="Business name"/></div>
+    <div class="bscc-field wide"><label for="bsccAdvUrl">Link the QR should open</label><input id="bsccAdvUrl" type="url" placeholder="https://"/></div>
+    <div class="bscc-field"><label for="bsccAdvLocation">Location</label><select id="bsccAdvLocation"></select></div>
+  </div>
+  <div class="bscc-form-actions"><button class="bscc-action" id="bsccSaveAdvertiser" type="button">Save advertiser</button></div>
+  <div class="bscc-message" id="bsccAddAdvertiserMessage"></div>
+</div>
 </section>
 
 <section class="bscc-page" data-cc-page="accounts">
@@ -2537,6 +2549,39 @@ async function loadOwnerAdvertisers(){
     console.error(err);
   }
 }
+
+
+document.getElementById('bsccAddAdvertiser')?.addEventListener('click',async()=>{
+  const panel=document.getElementById('bsccAddAdvertiserPanel');
+  if(!panel) return;
+  const open=panel.hidden;
+  panel.hidden=!open;
+  if(!open) return;
+  cmsMessage('bsccAddAdvertiserMessage','');
+  const select=document.getElementById('bsccAdvLocation');
+  if(!select || select.options.length) return;
+  try{
+    const data=await ownerApi('/api/admin-locations');
+    const rows=data.locations||[];
+    select.innerHTML=rows.length?rows.map(loc=>`<option value="${esc(loc.slug)}">${esc(loc.name||loc.slug)}</option>`).join(''):'<option value="">Add a location first</option>';
+  }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
+});
+document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=>{
+  const btn=document.getElementById('bsccSaveAdvertiser');
+  const email=document.getElementById('bsccAdvEmail')?.value.trim();
+  const businessName=document.getElementById('bsccAdvBusiness')?.value.trim();
+  const destinationUrl=document.getElementById('bsccAdvUrl')?.value.trim();
+  const locationSlug=document.getElementById('bsccAdvLocation')?.value;
+  if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
+  cmsMessage('bsccAddAdvertiserMessage','');
+  try{
+    const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlug})});
+    cmsMessage('bsccAddAdvertiserMessage',`Advertiser added. Tracking link: ${data.trackingUrl}`);
+    await loadOwnerAdvertisers();
+    if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
+  }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
+  finally{ if(btn){ btn.disabled=false; btn.textContent='Save advertiser'; } }
+});
 
 async function loadOwnerAccounts(){
   if(currentRole!=='owner') return;

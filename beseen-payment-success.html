@@ -1848,6 +1848,7 @@ body.host-info-open #hostInfo{display:block}
 
     function openLocationPage(key){
       renderLocation(key);
+      document.body.classList.remove('portal-open','host-open','host-info-open');
       document.body.classList.add('location-page-open');
       if(locationNav) locationNav.classList.remove('open');
       if(locationsView) locationsView.scrollTop = 0;

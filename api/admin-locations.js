@@ -17,12 +17,18 @@ async function requireStaff(request, supabase) {
 const cleanSlug=v=>String(v||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
 const int=v=>Math.max(0,Math.round(Number(v)||0));
 function fields(body) {
-  return {
+  const values = {
     name:String(body.name||'').trim().slice(0,160), slug:cleanSlug(body.slug||body.name), city:String(body.city||'').trim().slice(0,120),
     status:['live','future','paused'].includes(body.status)?body.status:'future', visibility:['public','platinum','private'].includes(body.visibility)?body.visibility:'private',
     short_description:String(body.short_description||'').trim().slice(0,300), description:String(body.description||'').trim().slice(0,4000), image_url:String(body.image_url||'').trim().slice(0,1500),
     device_count:int(body.device_count), gold_price_cents:int(body.gold_price_cents), premium_price_cents:int(body.premium_price_cents), platinum_price_cents:int(body.platinum_price_cents)
   };
+  if (`${values.slug} ${values.name}`.toLowerCase().includes('billboard')) {
+    values.gold_price_cents = 110000;
+    values.premium_price_cents = 110000;
+    values.platinum_price_cents = 110000;
+  }
+  return values;
 }
 async function ensureStripePrices(existing, values) {
   if (!stripe) return {};

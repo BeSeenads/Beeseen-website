@@ -281,7 +281,7 @@
     .location-nav.open .chev{transform:rotate(180deg)}
     .location-menu{
       position:absolute;top:calc(100% + 12px);left:0;transform:translateY(-6px);
-      width:325px;max-height:70vh;overflow-y:auto;padding:9px;background:rgba(7,27,68,.98);border:1px solid rgba(255,255,255,.12);
+      width:380px;max-height:70vh;overflow-y:auto;padding:9px;background:rgba(7,27,68,.98);border:1px solid rgba(255,255,255,.12);
       box-shadow:0 24px 70px rgba(0,0,0,.35);border-radius:18px;opacity:0;visibility:hidden;
       transition:.2s ease;backdrop-filter:blur(18px);z-index:200
     }
@@ -387,6 +387,12 @@
     #locations .location-toolbar{display:none!important}
     .location-panel{margin-bottom:0}
     .location-nav{display:block!important}
+    .location-menu-intro{padding:10px 13px 2px;color:#d5e4ff;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+    .plans.single{grid-template-columns:minmax(0,520px)}
+    .ad-rules{margin:0 18px 8px;padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+    .ad-rules h4{margin:0 0 8px;font-size:18px}
+    .ad-rules ul{margin:0;padding-left:18px;color:#d5e2f8;display:grid;gap:8px;font-size:15px;line-height:1.4}
+    @media(max-width:700px){.ad-rules{margin:0 12px 8px}}
     @media(max-width:900px){
       #locations{top:66px;padding-top:30px}
       .location-page-top{align-items:flex-start;flex-direction:column}
@@ -877,7 +883,7 @@ body.host-info-open #hostInfo{display:block}
   .bscc-top h2{font-size:24px;margin:0;letter-spacing:-.04em}.bscc-top p{margin:4px 0 0;color:#7893c2;font-size:11px}.bscc-top-actions{display:flex;align-items:center;gap:8px}.bscc-status{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:950;padding:8px 10px;border-radius:999px;background:rgba(63,203,126,.12);border:1px solid rgba(63,203,126,.2);color:#8ce0ad}.bscc-top-btn{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:white;border-radius:10px;padding:10px 12px;font-size:11px;font-weight:850;cursor:pointer}
   .bscc-content{padding:28px 30px 55px;max-width:1500px;margin:auto}.bscc-page{display:none}.bscc-page.active{display:block}
   .bscc-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:21px}.bscc-heading h1{font-size:38px;margin:0;letter-spacing:-.055em}.bscc-heading p{color:#8ca2c9;margin:5px 0 0;max-width:680px;line-height:1.55}.bscc-action{border:0;background:linear-gradient(135deg,#ff3155,#ff5570);color:white;border-radius:999px;padding:12px 16px;font-weight:950;font-size:11px;cursor:pointer;box-shadow:0 10px 26px rgba(255,49,85,.2)}
-  .bscc-statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.bscc-stat{padding:20px;border-radius:18px;background:#0b2149;border:1px solid rgba(255,255,255,.08)}.bscc-stat .lab{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:#7792c2;font-weight:950}.bscc-stat strong{display:block;font-size:29px;margin:9px 0 4px;letter-spacing:-.04em}.bscc-stat small{color:#91a8ce;font-size:10px}.bscc-up{color:#82ddab!important}
+  .bscc-statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}.bscc-stat{padding:20px;border-radius:18px;background:#0b2149;border:1px solid rgba(255,255,255,.08)}.bscc-stat .lab{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:#7792c2;font-weight:950}.bscc-stat strong{display:block;font-size:29px;margin:9px 0 4px;letter-spacing:-.04em}.bscc-stat small{color:#91a8ce;font-size:10px}.bscc-up{color:#82ddab!important}
   .bscc-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:13px;margin-bottom:13px}.bscc-card{background:#091f45;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px}.bscc-card h3{font-size:16px;margin:0 0 3px}.bscc-card .desc{color:#7891bc;font-size:10px;margin:0 0 17px}.bscc-minirows{display:grid;gap:9px}.bscc-minirow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.035)}.bscc-minirow strong{font-size:11px}.bscc-minirow span{font-size:10px;color:#8fa5cb}.bscc-badge{padding:5px 7px;border-radius:999px;background:rgba(62,120,255,.12);color:#91b4ff!important;border:1px solid rgba(72,124,255,.18);font-size:9px!important;font-weight:900}.bscc-badge.red{background:rgba(255,60,90,.11);color:#ff94a6!important;border-color:rgba(255,60,90,.18)}.bscc-badge.green{background:rgba(59,198,118,.11);color:#86dca8!important;border-color:rgba(59,198,118,.18)}
   .bscc-tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.07);border-radius:17px}.bscc-table{width:100%;border-collapse:collapse;min-width:760px}.bscc-table th,.bscc-table td{text-align:left;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px}.bscc-table th{color:#718dbd;text-transform:uppercase;letter-spacing:.11em;font-size:8px;background:rgba(255,255,255,.025)}.bscc-table td{color:#c9d7ef}.bscc-table td strong{color:white}.bscc-table tr:last-child td{border-bottom:0}
   .bscc-panelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.bscc-panel{min-height:180px;padding:20px;border-radius:19px;background:#091f45;border:1px solid rgba(255,255,255,.08)}.bscc-panel .icon{width:37px;height:37px;border-radius:11px;display:grid;place-items:center;background:rgba(61,112,255,.13);color:#8cacff;margin-bottom:25px}.bscc-panel h3{margin:0 0 7px;font-size:17px}.bscc-panel p{margin:0;color:#8298bf;font-size:10px;line-height:1.55}.bscc-panel strong{display:block;margin-top:16px;font-size:12px;color:#dbe6fb}
@@ -1179,6 +1185,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-stat"><div class="lab">Active subscriptions</div><strong id="bsccActiveSubscriptions">—</strong><small>Loaded from Supabase + Stripe sync</small></div>
 <div class="bscc-stat"><div class="lab">Live campaigns</div><strong id="bsccLiveCampaigns">—</strong><small>Real campaigns only</small></div>
 <div class="bscc-stat"><div class="lab">Tracked QR scans</div><strong id="bsccQrScans">—</strong><small class="bscc-up">Recorded campaign events only</small></div>
+<div class="bscc-stat"><div class="lab">Continued as guest</div><strong id="bsccGuestContinues">—</strong><small>Each browser counted once</small></div>
 </div>
 <div class="bscc-grid">
 <div class="bscc-card"><h3>What needs your attention</h3><p class="desc">Only real alerts will appear here after the related workflows are connected.</p><div class="bscc-minirows">
@@ -1261,7 +1268,8 @@ body.host-info-open #hostInfo{display:block}
         <input id="bsccLocStatus" type="hidden" value="future"/><input id="bsccLocVisibility" type="hidden" value="platinum"/>
         <div class="bscc-field wide"><label>Short description</label><input id="bsccLocShort" placeholder="High-traffic café placement with countertop displays"/></div>
         <div class="bscc-field wide"><label>Full location description</label><textarea id="bsccLocDescription" placeholder="Explain where the displays are and why advertisers would want this placement."></textarea></div>
-        <div class="bscc-field wide"><label>Location photo</label><input id="bsccLocImageFile" type="file" accept="image/*"/><input id="bsccLocImage" type="hidden"/><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">Upload the main photo for this location. BeSeen stores it in Supabase Storage and uses it as the location hero image.</small></div>
+        <div class="bscc-field wide"><label>Not allowed at this location</label><textarea id="bsccLocBlocked" placeholder="One business type per line. Example: Other hookah lounges&#10;Car washes&#10;Tobacco shops"></textarea><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">This is the only list visitors see on the location page. Leave it blank to hide the section.</small></div>
+        <div class="bscc-field wide"><label>Location photo</label><input id="bsccLocImageFile" type="file" accept="image/*"/><input id="bsccLocImage" type="hidden"/><div id="bsccLocPhotoPreview" hidden style="margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:#07152f;max-width:460px"><img id="bsccLocPhotoImg" alt="Current location photo" style="display:block;width:100%;height:220px;object-fit:cover"/></div><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">This is the photo visitors see. Choose a new picture to replace it, then save the location.</small></div>
         <div class="bscc-field"><label>Gold monthly price</label><input id="bsccLocGold" type="number" min="0" step="1" value="200"/></div>
         <div class="bscc-field"><label>Premium monthly price</label><input id="bsccLocPremium" type="number" min="0" step="1" value="250"/></div>
         <div class="bscc-field"><label>Platinum monthly price</label><input id="bsccLocPlatinum" type="number" min="0" step="1" value="300"/></div>
@@ -1291,7 +1299,8 @@ body.host-info-open #hostInfo{display:block}
 <div class="location-nav" id="locationNav">
 <button class="location-trigger" id="locationTrigger" type="button">Locations <span class="chev">▼</span></button>
 <div class="location-menu" id="locationMenu">
-<button class="live-location active" data-location="exclusive" type="button">Exclusive Hookah Lounge<small>Available now • subscriptions + photos</small></button>
+<div class="location-menu-intro">Every live location and its monthly price</div>
+<button class="live-location active" data-location="exclusive" type="button">Exclusive Hookah Lounge<small>Dearborn • from $200/mo</small></button>
 <div class="location-menu-label">Subscriber access</div>
 <button class="private-location-teaser" data-private-locations type="button">Future location<span>🔒</span><small>See the next placement before everyone else</small></button>
 </div>
@@ -1408,6 +1417,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="preview-note">Package pricing below applies to advertising at Exclusive Hookah Lounge.</div>
 </div>
 </div>
+<div class="ad-rules" id="exclusiveAdRules" hidden></div>
 <div class="plans" id="locationPlans"><article class="plan gold"><div class="plan-tag">15-Display Coverage</div><h4>Gold</h4><div class="plan-price">$200 <span>/ month</span></div><ul><li>Your ad is displayed across 15 different tablets throughout the lounge</li><li>Consistent exposure while guests sit, socialize, and move around the venue</li><li>Standard 5-second ad rotation</li><li>Includes private Campaign Center + Creative/QR Hub access</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Gold" href="#">Subscribe — $200/mo</a></article><article class="plan premium featured"><div class="plan-tag">Most Popular</div><h4>Premium</h4><div class="plan-price">$250 <span>/ month</span></div><ul><li>Longer 9-second display time instead of 5 seconds</li><li>More frequent exposure and stronger visibility</li><li>Displayed throughout the Exclusive lounge network</li><li>Includes QR scan and campaign performance analytics</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Premium" href="#">Subscribe — $250/mo</a></article><article class="plan platinum"><div class="plan-tag">Maximum Exposure</div><h4>Platinum</h4><div class="plan-price">$300 <span>/ month</span></div><ul><li>Your ad appears after every 2 ads</li><li>Longer 9-second display time instead of 5 seconds</li><li>Maximum visibility and repeated exposure throughout the lounge</li><li>Includes full lead attribution + early access to private placements</li></ul><a class="plan-btn checkout-preview" data-location="exclusive" data-plan="Platinum" href="#">Subscribe — $300/mo</a></article></div><div class="checkout-secure-note">Secure monthly checkout through <strong>Stripe</strong> • Your BeSeen access updates automatically after payment</div><div class="add-location-trigger-wrap"><button class="add-location-trigger multi-location-open" data-location="exclusive" type="button">＋ Add Another Location — $50 Off/mo</button></div>
 </div>
 
@@ -1416,13 +1426,15 @@ body.host-info-open #hostInfo{display:block}
     <div class="location-gallery" id="dynamicLocationGallery"><div class="dynamic-location-placeholder" id="dynamicLocationPlaceholder">BeSeen Location<br><small style="font-weight:700;opacity:.65;margin-top:8px">Add a hero image from the Owner Control Center</small></div><img alt="BeSeen advertising location" class="dynamic-location-image" id="dynamicLocationImage" style="display:none"/></div>
     <div class="location-copy"><div class="location-kicker">BeSeen Advertising Location</div><h3 id="dynamicLocationName">BeSeen Location</h3><p id="dynamicLocationDescription"></p><div class="location-meta" id="dynamicLocationMeta"></div><a class="btn btn-primary" href="#dynamicLocationPlans">See subscription options ↓</a><div class="preview-note" id="dynamicLocationNote"></div></div>
   </div>
+  <div class="ad-rules" id="dynamicAdRules" hidden></div>
   <div class="plans" id="dynamicLocationPlans">
+    <article class="plan featured" id="dynamicSinglePlan" hidden><div class="plan-tag">Street billboard</div><h4>Be seen by everyone passing by</h4><div class="plan-price" id="dynamicSinglePrice">$1,100 <span>/ month</span></div><ul><li>Your ad sits on a real digital billboard, facing the road</li><li>Drivers and people walking by see your business every day</li><li>One placement, on all month, for a single price</li><li>Built to stop attention before they ever walk inside</li></ul><a class="plan-btn checkout-preview dynamic-checkout" id="dynamicSingleCheckout" data-plan="Gold" href="#">Get the billboard — $1,100/mo</a></article>
     <article class="plan gold"><div class="plan-tag">Location Coverage</div><h4>Gold</h4><div class="plan-price" id="dynamicGoldPrice">$200 <span>/ month</span></div><ul><li>Advertising across the selected BeSeen location</li><li>Standard campaign rotation</li><li>Private Campaign Center + Creative/QR Hub access</li></ul><a class="plan-btn checkout-preview dynamic-checkout" data-plan="Gold" href="#">Subscribe</a></article>
     <article class="plan premium featured"><div class="plan-tag">More Visibility</div><h4>Premium</h4><div class="plan-price" id="dynamicPremiumPrice">$250 <span>/ month</span></div><ul><li>Stronger rotation and visibility</li><li>Performance analytics access</li><li>Campaign reporting inside your private account</li></ul><a class="plan-btn checkout-preview dynamic-checkout" data-plan="Premium" href="#">Subscribe</a></article>
     <article class="plan platinum"><div class="plan-tag">Maximum Exposure</div><h4>Platinum</h4><div class="plan-price" id="dynamicPlatinumPrice">$300 <span>/ month</span></div><ul><li>Highest BeSeen placement priority</li><li>Full lead attribution tools</li><li>Early access to private placements</li></ul><a class="plan-btn checkout-preview dynamic-checkout" data-plan="Platinum" href="#">Subscribe</a></article>
   </div>
   <div class="checkout-secure-note">Secure monthly checkout through <strong>Stripe</strong> • Location and subscription access update from Supabase automatically</div>
-  <div class="add-location-trigger-wrap"><button class="add-location-trigger multi-location-open" type="button">＋ Add Another Location — $50 Off/mo</button></div>
+  <div class="add-location-trigger-wrap" id="dynamicAddLocation"><button class="add-location-trigger multi-location-open" type="button">＋ Add Another Location — $50 Off/mo</button></div>
 </div>
 </div>
 </section>
@@ -1818,8 +1830,46 @@ body.host-info-open #hostInfo{display:block}
     let publicLocations = {};
     let activeLocationSlug = 'exclusive';
 
+    const adRuleMark='\n[[ad-rules]]\n';
+    const adBlockMark='\n[[not-allowed]]\n';
+    function splitLocationCopy(text){
+      const raw=String(text||'');
+      const at=raw.indexOf(adRuleMark);
+      if(at<0) return {description:raw.trim(), allowed:'', blocked:''};
+      const rest=raw.slice(at+adRuleMark.length);
+      const parts=rest.split(adBlockMark);
+      return {description:raw.slice(0,at).trim(), allowed:(parts[0]||'').trim(), blocked:(parts[1]||'').trim()};
+    }
+    function joinLocationCopy(description, allowed, blocked){
+      const base=String(description||'').trim();
+      const block=String(blocked||'').trim();
+      if(!block) return base;
+      return base+adRuleMark+String(allowed||'').trim()+adBlockMark+block;
+    }
+    function isSinglePriceLocation(loc){
+      return `${loc?.slug||''} ${loc?.name||''}`.toLowerCase().includes('billboard');
+    }
+    window.splitLocationCopy=splitLocationCopy;
+    window.joinLocationCopy=joinLocationCopy;
     function moneyFromCents(cents, fallback){
-      const n=Number(cents); return Number.isFinite(n) && n>0 ? '$'+Math.round(n/100) : '$'+fallback;
+      const n=Number(cents); const dollars=Number.isFinite(n)&&n>0?Math.round(n/100):fallback; return '$'+Number(dollars).toLocaleString('en-US');
+    }
+    function menuPriceLabel(loc){
+      if(isSinglePriceLocation(loc)) return '$1,100/mo';
+      return 'from '+moneyFromCents(loc?.gold_price_cents,200)+'/mo';
+    }
+    function renderAdRules(el){
+      if(!el) return;
+      const loc=el.id==='exclusiveAdRules' ? publicLocations.exclusive : null;
+      const copy=splitLocationCopy(loc?.description||el.dataset.rules||'');
+      const lines=String(copy.blocked||'').split('\n').map(line=>line.trim()).filter(Boolean);
+      el.replaceChildren();
+      if(!lines.length){ el.hidden=true; return; }
+      el.hidden=false;
+      const title=document.createElement('h4'); title.textContent='Not allowed at this location'; el.appendChild(title);
+      const ul=document.createElement('ul');
+      lines.forEach(line=>{ const li=document.createElement('li'); li.textContent=line; ul.appendChild(li); });
+      el.appendChild(ul);
     }
     function fillDynamicLocation(loc){
       if(!loc) return;
@@ -1829,13 +1879,24 @@ body.host-info-open #hostInfo{display:block}
       const img=document.getElementById('dynamicLocationImage');
       const placeholder=document.getElementById('dynamicLocationPlaceholder');
       const note=document.getElementById('dynamicLocationNote');
+      const copy=splitLocationCopy(loc.description);
+      const single=isSinglePriceLocation(loc);
       if(name) name.textContent=loc.name||'BeSeen Location';
-      if(desc) desc.textContent=loc.description||loc.short_description||'A BeSeen advertising placement designed to put local brands in front of more people.';
-      if(meta){ meta.innerHTML=''; [loc.city, Number(loc.device_count)>0 ? `${loc.device_count} displays / units` : null, 'BeSeen network placement'].filter(Boolean).forEach(v=>{ const span=document.createElement('span'); span.className='meta-pill'; span.textContent=v; meta.appendChild(span); }); }
+      if(desc) desc.textContent=copy.description||loc.short_description||'A BeSeen advertising placement designed to put local brands in front of more people.';
+      if(meta){ meta.innerHTML=''; [loc.city, Number(loc.device_count)>0 ? `${loc.device_count} displays / units` : null, single?'Seen by passing traffic':null].filter(Boolean).forEach(v=>{ const span=document.createElement('span'); span.className='meta-pill'; span.textContent=v; meta.appendChild(span); }); }
       if(img && placeholder){ if(loc.image_url){ img.src=loc.image_url; img.style.display='block'; placeholder.style.display='none'; } else { img.removeAttribute('src'); img.style.display='none'; placeholder.style.display='grid'; } }
-      if(note) note.textContent=`Package pricing below applies to advertising at ${loc.name||'this location'}.`;
+      if(note) note.textContent=single?'$1,100 a month puts your ad on the billboard, where passing traffic sees it.':`Package pricing below applies to advertising at ${loc.name||'this location'}.`;
+      const rules=document.getElementById('dynamicAdRules'); if(rules){ rules.dataset.rules=loc.description||''; renderAdRules(rules); }
+      const plans=document.getElementById('dynamicLocationPlans'); if(plans) plans.classList.toggle('single', single);
+      plans?.querySelectorAll('article').forEach(article=>{ article.hidden = article.id==='dynamicSinglePlan' ? !single : single; });
+      const addWrap=document.getElementById('dynamicAddLocation'); if(addWrap) addWrap.hidden=single;
+      if(single){
+        const price=document.getElementById('dynamicSinglePrice'); if(price) price.innerHTML='$1,100 <span>/ month</span>';
+        const btn=document.getElementById('dynamicSingleCheckout'); if(btn){ btn.dataset.location=loc.slug; btn.dataset.plan='Gold'; btn.textContent='Get the billboard — $1,100/mo'; }
+        return;
+      }
       const prices={Gold:['dynamicGoldPrice',loc.gold_price_cents,200],Premium:['dynamicPremiumPrice',loc.premium_price_cents,250],Platinum:['dynamicPlatinumPrice',loc.platinum_price_cents,300]};
-      Object.entries(prices).forEach(([plan,[id,cents,fallback]])=>{ const el=document.getElementById(id); const val=moneyFromCents(cents,fallback); if(el) el.innerHTML=`${val} <span>/ month</span>`; const btn=dynamicLocationPanel?.querySelector(`[data-plan="${plan}"]`); if(btn){ btn.dataset.location=loc.slug; btn.textContent=`Subscribe — ${val}/mo`; } });
+      Object.entries(prices).forEach(([plan,[id,cents,fallback]])=>{ const el=document.getElementById(id); const val=moneyFromCents(cents,fallback); if(el) el.innerHTML=`${val} <span>/ month</span>`; const btn=dynamicLocationPanel?.querySelector(`article.plan.${plan.toLowerCase()} .plan-btn`); if(btn){ btn.dataset.location=loc.slug; btn.textContent=`Subscribe — ${val}/mo`; } });
     }
 
     function renderLocation(key){
@@ -1844,9 +1905,12 @@ body.host-info-open #hostInfo{display:block}
       if(locationPanels.exclusive) locationPanels.exclusive.style.display = dynamic ? 'none' : (key==='exclusive'?'block':'none');
       if(dynamicLocationPanel) dynamicLocationPanel.style.display = dynamic ? 'block' : 'none';
       if(dynamic) fillDynamicLocation(dynamic);
+      const exclusivePhoto=document.getElementById('galleryMain');
+      if(exclusivePhoto && publicLocations.exclusive?.image_url) exclusivePhoto.src=publicLocations.exclusive.image_url;
       if(locationSelect) locationSelect.value = key;
       if(locationPageTitle) locationPageTitle.textContent = dynamic?.name || locationNames[key] || 'BeSeen Location';
-      if(locationPageSubtitle) locationPageSubtitle.textContent = dynamic?.short_description || 'Photos, display setup, and subscription options for this BeSeen advertising location.';
+      if(locationPageSubtitle) locationPageSubtitle.textContent = isSinglePriceLocation(dynamic||{}) ? 'Your ad on the billboard. $1,100 a month.' : (dynamic?.short_description || 'Photos, display setup, and subscription options for this BeSeen advertising location.');
+      renderAdRules(document.getElementById('exclusiveAdRules'));
       if(locationMenu){ locationMenu.querySelectorAll('button[data-location]').forEach(btn => btn.classList.toggle('active', btn.dataset.location === key)); }
     }
 
@@ -1861,7 +1925,7 @@ body.host-info-open #hostInfo{display:block}
         if(locationMenu){
           const privateLabel=locationMenu.querySelector('.location-menu-label');
           locationMenu.querySelectorAll('button[data-location]').forEach(b=>b.remove());
-          data.locations.forEach(loc=>{ const b=document.createElement('button'); b.type='button'; b.className='live-location'; b.dataset.location=loc.slug; b.innerHTML=`${loc.name}<small>${loc.city?loc.city+' • ':''}available now • subscriptions</small>`; locationMenu.insertBefore(b,privateLabel); });
+          data.locations.forEach(loc=>{ const b=document.createElement('button'); b.type='button'; b.className='live-location'; b.dataset.location=loc.slug; const place=loc.city?loc.city+' • ':''; b.innerHTML=`${loc.name}<small>${place}${menuPriceLabel(loc)}</small>`; locationMenu.insertBefore(b,privateLabel); });
         }
         if(locationSelect){ locationSelect.innerHTML=''; data.locations.forEach(loc=>{ const o=document.createElement('option'); o.value=loc.slug; o.textContent=loc.name; locationSelect.appendChild(o); }); }
         const hash=location.hash.match(/^#location-([a-z0-9-]+)$/i);
@@ -1880,6 +1944,7 @@ body.host-info-open #hostInfo{display:block}
     let multiLocationAnchor='exclusive';
 
     function multiPlanPriceCents(loc,plan){
+      if(isSinglePriceLocation(loc)) return 110000;
       const key={Gold:'gold_price_cents',Premium:'premium_price_cents',Platinum:'platinum_price_cents'}[plan] || 'gold_price_cents';
       const fallback={Gold:20000,Premium:25000,Platinum:30000}[plan] || 20000;
       return Number(loc?.[key] ?? fallback);
@@ -1898,10 +1963,11 @@ body.host-info-open #hostInfo{display:block}
       multiLocationChoices.innerHTML='';
       rows.forEach((loc,index)=>{
         const regular=multiPlanPriceCents(loc,multiLocationPlan);
-        const extra=Math.max(0,regular-5000);
+        const extra=isSinglePriceLocation(loc)?regular:Math.max(0,regular-5000);
+        const priceLabel=isSinglePriceLocation(loc)?`${multiMoney(regular)}/mo`:`${multiMoney(regular)} first • ${multiMoney(extra)} additional`;
         const label=document.createElement('label');
         label.className='multi-location-choice';
-        label.innerHTML=`<span class="multi-location-choice-left"><input type="checkbox" value="${loc.slug}" ${selectedBefore.has(loc.slug)?'checked':''}><span><strong>${loc.name}</strong><small>${loc.city?loc.city+' • ':''}Live BeSeen location</small></span></span><span class="multi-location-choice-price">${multiMoney(regular)} first • ${multiMoney(extra)} additional</span>`;
+        label.innerHTML=`<span class="multi-location-choice-left"><input type="checkbox" value="${loc.slug}" ${selectedBefore.has(loc.slug)?'checked':''}><span><strong>${loc.name}</strong><small>${loc.city?loc.city+' • ':''}Live BeSeen location</small></span></span><span class="multi-location-choice-price">${priceLabel}</span>`;
         multiLocationChoices.appendChild(label);
       });
       if(rows.length===1){
@@ -1918,7 +1984,7 @@ body.host-info-open #hostInfo{display:block}
       let total=0, savings=0;
       const lines=selected.map((loc,index)=>{
         const regular=multiPlanPriceCents(loc,multiLocationPlan);
-        const discount=index>0?Math.min(5000,regular):0;
+        const discount=isSinglePriceLocation(loc)?0:(index>0?Math.min(5000,regular):0);
         const billed=regular-discount; total+=billed; savings+=discount;
         return `<div class="multi-location-summary-row"><span>${loc.name}${index>0?' <span class="multi-location-save">−$50</span>':''}</span><strong>${multiMoney(billed)}/mo</strong></div>`;
       }).join('');
@@ -2742,14 +2808,14 @@ function locationModeLabel(loc={}){
 }
 function clearLocationEditor(){
   const set=(id,v='')=>{const el=document.getElementById(id); if(el) el.value=v};
-  set('bsccLocationId');set('bsccLocName');set('bsccLocCity');set('bsccLocSlug');set('bsccLocDevices','0');set('bsccLocMode','teaser');set('bsccLocStatus','future');set('bsccLocVisibility','platinum');set('bsccLocShort');set('bsccLocDescription');set('bsccLocImage'); const imageFile=document.getElementById('bsccLocImageFile'); if(imageFile) imageFile.value=''; set('bsccLocGold','200');set('bsccLocPremium','250');set('bsccLocPlatinum','300');
+  set('bsccLocationId');set('bsccLocName');set('bsccLocCity');set('bsccLocSlug');set('bsccLocDevices','0');set('bsccLocMode','teaser');set('bsccLocStatus','future');set('bsccLocVisibility','platinum');set('bsccLocShort');set('bsccLocDescription');set('bsccLocBlocked');set('bsccLocImage'); const imageFile=document.getElementById('bsccLocImageFile'); if(imageFile) imageFile.value=''; showLocationPhoto(''); set('bsccLocGold','200');set('bsccLocPremium','250');set('bsccLocPlatinum','300');
   applyLocationMode('teaser');
   const title=document.getElementById('bsccLocationEditorTitle'); if(title) title.textContent='Add a location';
   const del=document.getElementById('bsccDeleteLocation'); if(del) del.style.display='none'; cmsMessage('bsccLocationEditorMessage','');
 }
 function editOwnerLocation(id){
   const loc=ownerLocations.find(x=>x.id===id); if(!loc) return; const set=(eid,v='')=>{const el=document.getElementById(eid); if(el) el.value=v??''};
-  set('bsccLocationId',loc.id);set('bsccLocName',loc.name);set('bsccLocCity',loc.city);set('bsccLocSlug',loc.slug);set('bsccLocDevices',loc.device_count||0);set('bsccLocStatus',loc.status||'future');set('bsccLocVisibility',loc.visibility||'private');set('bsccLocMode',locationModeFromRecord(loc));set('bsccLocShort',loc.short_description);set('bsccLocDescription',loc.description);set('bsccLocImage',loc.image_url);set('bsccLocGold',Math.round((loc.gold_price_cents||0)/100));set('bsccLocPremium',Math.round((loc.premium_price_cents||0)/100));set('bsccLocPlatinum',Math.round((loc.platinum_price_cents||0)/100));
+  set('bsccLocationId',loc.id);set('bsccLocName',loc.name);set('bsccLocCity',loc.city);set('bsccLocSlug',loc.slug);set('bsccLocDevices',loc.device_count||0);set('bsccLocStatus',loc.status||'future');set('bsccLocVisibility',loc.visibility||'private');set('bsccLocMode',locationModeFromRecord(loc));set('bsccLocShort',loc.short_description);const locCopy=window.splitLocationCopy?window.splitLocationCopy(loc.description):{description:loc.description||'',blocked:''};set('bsccLocDescription',locCopy.description);set('bsccLocBlocked',locCopy.blocked);set('bsccLocImage',loc.image_url); showLocationPhoto(loc.image_url||'');set('bsccLocGold',Math.round((loc.gold_price_cents||0)/100));set('bsccLocPremium',Math.round((loc.premium_price_cents||0)/100));set('bsccLocPlatinum',Math.round((loc.platinum_price_cents||0)/100));
   const title=document.getElementById('bsccLocationEditorTitle'); if(title) title.textContent='Edit '+(loc.name||'location');
   const del=document.getElementById('bsccDeleteLocation'); if(del) del.style.display=loc.slug==='exclusive'?'none':'inline-block';
   document.getElementById('bsccLocationEditor')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -2770,8 +2836,20 @@ document.getElementById('bsccLocMode')?.addEventListener('change',e=>applyLocati
 function readLocationForm(){
   const val=id=>document.getElementById(id)?.value?.trim()||''; const dollars=id=>Math.max(0,Math.round((Number(document.getElementById(id)?.value)||0)*100));
   applyLocationMode(val('bsccLocMode')||'teaser');
-  return {id:val('bsccLocationId'),name:val('bsccLocName'),city:val('bsccLocCity'),slug:slugify(val('bsccLocSlug')||val('bsccLocName')),device_count:Math.max(0,Number(document.getElementById('bsccLocDevices')?.value)||0),status:val('bsccLocStatus')||'future',visibility:val('bsccLocVisibility')||'private',short_description:val('bsccLocShort'),description:val('bsccLocDescription'),image_url:val('bsccLocImage'),gold_price_cents:dollars('bsccLocGold'),premium_price_cents:dollars('bsccLocPremium'),platinum_price_cents:dollars('bsccLocPlatinum')};
+  return {id:val('bsccLocationId'),name:val('bsccLocName'),city:val('bsccLocCity'),slug:slugify(val('bsccLocSlug')||val('bsccLocName')),device_count:Math.max(0,Number(document.getElementById('bsccLocDevices')?.value)||0),status:val('bsccLocStatus')||'future',visibility:val('bsccLocVisibility')||'private',short_description:val('bsccLocShort'),description:window.joinLocationCopy?window.joinLocationCopy(val('bsccLocDescription'),'',val('bsccLocBlocked')):val('bsccLocDescription'),image_url:val('bsccLocImage'),gold_price_cents:dollars('bsccLocGold'),premium_price_cents:dollars('bsccLocPremium'),platinum_price_cents:dollars('bsccLocPlatinum')};
 }
+function showLocationPhoto(url){
+  const wrap=document.getElementById('bsccLocPhotoPreview');
+  const img=document.getElementById('bsccLocPhotoImg');
+  if(!wrap||!img) return;
+  if(!url){ wrap.hidden=true; img.removeAttribute('src'); return; }
+  img.src=url; wrap.hidden=false;
+}
+document.getElementById('bsccLocImageFile')?.addEventListener('change',()=>{
+  const file=document.getElementById('bsccLocImageFile')?.files?.[0];
+  if(!file) return;
+  showLocationPhoto(URL.createObjectURL(file));
+});
 async function uploadLocationPhotoIfNeeded(payload){
   const input=document.getElementById('bsccLocImageFile');
   const file=input?.files?.[0]; if(!file) return payload;
@@ -2834,7 +2912,7 @@ async function loadOwnerMetrics(){
     const data=await ownerApi('/api/analytics?scope=admin'); const m=data.metrics||{};
     setText('bsccMrr',new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((m.mrr_cents||0)/100));
     setText('bsccActiveSubscriptions',m.active_subscriptions??0); setText('bsccLiveCampaigns',m.live_campaigns??0);
-    setText('bsccQrScans',m.qr_scans??0); setText('bsccLiveLocations',`${m.live_locations??0} public`);
+    setText('bsccQrScans',m.qr_scans??0); setText('bsccGuestContinues',m.guest_continues??0); setText('bsccLiveLocations',`${m.live_locations??0} public`);
     setText('bsccFutureLocations',`${m.future_locations??0} private`);
     setText('bsccCampaignLiveCount',`${m.live_campaigns??0} campaigns`);
     setText('bsccAnalyticsQr',m.qr_scans??0); setText('bsccAnalyticsVisits',m.landing_visits??0);

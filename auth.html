@@ -412,7 +412,7 @@ select{
         Sign in to manage your advertising, or create a new account in seconds.
       </div>
 
-      <a class="guest" href="/index.html" onclick="sessionStorage.setItem('beseen_guest','1')">Continue as guest</a>
+      <a class="guest" id="continueGuest" href="/index.html">Continue as guest</a>
 
       <div class="tabs">
         <button class="tab active" data-tab="login">Sign In</button>
@@ -571,6 +571,20 @@ select{
 
 import { createClient }
 from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+document.getElementById('continueGuest')?.addEventListener('click', () => {
+  try { sessionStorage.setItem('beseen_guest', '1'); } catch (error) {}
+  try {
+    if (localStorage.getItem('beseen_guest_counted') === '1') return;
+    localStorage.setItem('beseen_guest_counted', '1');
+  } catch (error) {}
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ event: 'guest_continue' }),
+    keepalive: true
+  }).catch(() => {});
+});
 
 
 /* -------------------------

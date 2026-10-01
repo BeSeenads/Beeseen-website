@@ -28,6 +28,12 @@ function getServerSupabase() {
   });
 }
 
+function isBillboardLocation(loc) {
+  return `${loc?.slug || ''} ${loc?.name || ''}`
+    .toLowerCase()
+    .includes('billboard');
+}
+
 function cleanSlug(value) {
   return String(value || '')
     .toLowerCase()
@@ -544,6 +550,21 @@ export async function POST(request) {
       const loc of
       orderedLocations
     ) {
+      if (isBillboardLocation(loc)) {
+        lineItems.push({
+          quantity: 1,
+          price_data: {
+            currency: 'usd',
+            unit_amount: 110000,
+            recurring: { interval: 'month' },
+            product_data: {
+              name: `BeSeen — ${loc.name}`
+            }
+          }
+        });
+        continue;
+      }
+
       let priceId =
         loc[priceColumn] ||
         null;
@@ -609,10 +630,13 @@ export async function POST(request) {
 
     const discountedLocations =
       orderedLocations.filter(
-        (_, index) =>
-          existingLocationCount >
-            0 ||
-          index > 0
+        (loc, index) =>
+          !isBillboardLocation(loc) &&
+          (
+            existingLocationCount >
+              0 ||
+            index > 0
+          )
       );
 
     const totalDiscountCents =

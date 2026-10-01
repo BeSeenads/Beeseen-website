@@ -242,8 +242,16 @@ async function staffAnalytics(role,supabase){
     mrrCents += Number(row.custom_price_cents)||0;
   }
 
+  let guestContinues=0;
+  const {count:guestCount,error:guestError}=await supabase
+    .from('billing_events')
+    .select('*',{count:'exact',head:true})
+    .eq('event_type','guest_continue');
+  if(!guestError) guestContinues=guestCount||0;
+
   return json({metrics:{
     mrr_cents:mrrCents,
+    guest_continues:guestContinues,
     active_subscriptions:activeSubscriptions||0,
     live_campaigns:liveCampaigns||0,
     qr_scans:qrScans||0,
@@ -253,6 +261,19 @@ async function staffAnalytics(role,supabase){
     live_locations:liveLocations||0,
     future_locations:futureLocations||0
   }});
+}
+
+export async function POST(request){
+  const supabase=db();
+  if(!supabase) return json({error:'Analytics are not configured.'},503);
+  const body=await request.json().catch(()=>({}));
+  if(body.event!=='guest_continue') return json({error:'Unknown event.'},400);
+  const {error}=await supabase.from('billing_events').insert({
+    event_type:'guest_continue',
+    details:{source:'continue_as_guest'}
+  });
+  if(error) return json({error:'Could not record that guest visit.'},500);
+  return json({ok:true});
 }
 
 export async function GET(request){

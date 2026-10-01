@@ -388,7 +388,9 @@
     .location-panel{margin-bottom:0}
     .location-nav{display:block!important}
     .location-menu-intro{padding:10px 13px 2px;color:#d5e4ff;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
-    .plans.single{grid-template-columns:minmax(0,520px)}
+    .plans.single{display:none}
+    #dynamicLocationPanel.single-offer .location-copy > a.btn{display:none}
+    .location-copy > .plan{margin-top:8px}
     .ad-rules{margin:0 18px 8px;padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
     .ad-rules h4{margin:0 0 8px;font-size:18px}
     .ad-rules ul{margin:0;padding-left:18px;color:#d5e2f8;display:grid;gap:8px;font-size:15px;line-height:1.4}
@@ -1890,6 +1892,11 @@ body.host-info-open #hostInfo{display:block}
       const plans=document.getElementById('dynamicLocationPlans'); if(plans) plans.classList.toggle('single', single);
       plans?.querySelectorAll('article').forEach(article=>{ article.hidden = article.id==='dynamicSinglePlan' ? !single : single; });
       const addWrap=document.getElementById('dynamicAddLocation'); if(addWrap) addWrap.hidden=single;
+      document.getElementById('dynamicLocationPanel')?.classList.toggle('single-offer', single);
+      const singlePlan=document.getElementById('dynamicSinglePlan');
+      const copyColumn=document.querySelector('#dynamicLocationPanel .location-copy');
+      if(single && copyColumn && singlePlan) copyColumn.appendChild(singlePlan);
+      else if(plans && singlePlan) plans.insertBefore(singlePlan, plans.firstElementChild);
       if(single){
         const price=document.getElementById('dynamicSinglePrice'); if(price) price.innerHTML='$1,100 <span>/ month</span>';
         const btn=document.getElementById('dynamicSingleCheckout'); if(btn){ btn.dataset.location=loc.slug; btn.dataset.plan='Gold'; btn.textContent='Get the billboard — $1,100/mo'; }

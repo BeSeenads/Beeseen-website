@@ -243,6 +243,24 @@ select{
       cursor:not-allowed;
     }
 
+    .guest{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:48px;
+      margin-top:16px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      font-weight:850;
+      font-size:15px;
+      text-decoration:none;
+    }
+
+    .guest:hover{background:#f5f8fd}
+
     .feedback{
       margin-top:14px;
       font-size:13px;
@@ -393,6 +411,8 @@ select{
       <div class="sub">
         Sign in to manage your advertising, or create a new account in seconds.
       </div>
+
+      <a class="guest" href="/index.html" onclick="sessionStorage.setItem('beseen_guest','1')">Continue as guest</a>
 
       <div class="tabs">
         <button class="tab active" data-tab="login">Sign In</button>

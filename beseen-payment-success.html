@@ -2915,7 +2915,18 @@ document.getElementById('bsauthCreateDemo')?.addEventListener('click',async()=>{
   if(error) setFeedback(error.message); else setFeedback('Account created. Check your email to confirm your account, then sign in.');
 });
 
-document.getElementById('bsChangeAccount')?.addEventListener('click',()=>{ control?.classList.remove('show'); gate?.classList.remove('hidden'); showForm('login'); });
+document.getElementById('bsChangeAccount')?.addEventListener('click',async()=>{
+  try{ sessionStorage.removeItem('beseen_guest'); }catch(error){}
+  try{ if(supabase) await supabase.auth.signOut(); }catch(error){ console.warn(error); }
+  try{
+    [localStorage, sessionStorage].forEach(store=>{
+      const keys=[];
+      for(let i=0;i<store.length;i++) keys.push(store.key(i));
+      keys.forEach(key=>{ if(key && key.startsWith('sb-') && key.endsWith('-auth-token')) store.removeItem(key); });
+    });
+  }catch(error){}
+  window.location.replace('/auth.html');
+});
 openControl?.addEventListener('click',()=>openControlCenter(currentRole,true));
 document.getElementById('bsccViewWebsite')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); });
 document.getElementById('bsccRefreshQrLibrary')?.addEventListener('click',loadOwnerQrLibrary);
@@ -3015,8 +3026,13 @@ initAuth();
     return false;
   }
 
+  function continueAsGuest() {
+    try { return sessionStorage.getItem('beseen_guest') === '1'; }
+    catch (error) { return false; }
+  }
+
   function redirectIfLoggedOut() {
-    if (!hasSupabaseSession()) {
+    if (!hasSupabaseSession() && !continueAsGuest()) {
       window.location.replace('/auth.html');
     }
   }

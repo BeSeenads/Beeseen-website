@@ -36,7 +36,8 @@ try {
 
   const { data } = await supabase.auth.getSession();
 
-  if (data?.session) {
+  const guest = sessionStorage.getItem('beseen_guest') === '1';
+  if (data?.session || guest) {
     window.location.replace('/index.html');
   } else {
     window.location.replace('/auth.html');

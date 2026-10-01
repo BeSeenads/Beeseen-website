@@ -75,6 +75,38 @@ function cleanSlug(value) {
     .replace(/[^a-z0-9-]/g, '');
 }
 
+async function createManualAdvertiser(supabase, businessName) {
+  const email = `manual.${randomBytes(8).toString('hex')}@advertisers.beseen.invalid`;
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    email_confirm: true,
+    user_metadata: { full_name: businessName }
+  });
+  const id = data?.user?.id;
+  if (error || !id) return null;
+
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', id)
+    .maybeSingle();
+
+  const saved = existing
+    ? await supabase.from('profiles').update({
+      email: null,
+      full_name: businessName,
+      updated_at: new Date().toISOString()
+    }).eq('id', id)
+    : await supabase.from('profiles').insert({
+      id,
+      full_name: businessName,
+      role: 'member'
+    });
+
+  if (saved.error) return null;
+  return { id, email: null, full_name: businessName };
+}
+
 function cleanPlan(value) {
   const plan = String(value || '').toLowerCase();
 
@@ -1487,22 +1519,24 @@ export async function POST(request) {
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
   const locationSlug = cleanSlug(body.locationSlug);
   const monthlyCents = Math.round(Number(body.monthlyAmount) * 100);
-  let destination;
+  let destination = null;
 
-  try {
-    destination = new URL(destinationUrl);
-  } catch {
-    destination = null;
+  if (destinationUrl) {
+    try {
+      destination = new URL(destinationUrl);
+    } catch {
+      destination = null;
+    }
   }
 
-  if (!email || !email.includes('@')) {
-    return json({ error: 'Enter the advertiser account email.' }, 400);
+  if (email && !email.includes('@')) {
+    return json({ error: 'Enter a valid account email, or leave it blank.' }, 400);
   }
   if (!businessName) {
     return json({ error: 'Enter the business name.' }, 400);
   }
-  if (!destination || !['http:', 'https:'].includes(destination.protocol)) {
-    return json({ error: 'Enter a full destination link, starting with https://.' }, 400);
+  if (destinationUrl && (!destination || !['http:', 'https:'].includes(destination.protocol))) {
+    return json({ error: 'Enter a full destination link, starting with https://, or leave it blank.' }, 400);
   }
   if (!locationSlug) {
     return json({ error: 'Choose a BeSeen location.' }, 400);
@@ -1511,14 +1545,25 @@ export async function POST(request) {
     return json({ error: 'Enter the monthly amount they pay, at least $1.' }, 400);
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('id,email,full_name')
-    .ilike('email', email)
-    .maybeSingle();
+  const landingUrl = destination ? destination.href : null;
+  let profile = null;
+  let profileError = null;
+
+  if (email) {
+    const lookup = await supabase
+      .from('profiles')
+      .select('id,email,full_name')
+      .ilike('email', email)
+      .maybeSingle();
+    profile = lookup.data;
+    profileError = lookup.error;
+  } else {
+    profile = await createManualAdvertiser(supabase, businessName);
+    if (!profile) profileError = { message: 'manual advertiser was not created' };
+  }
 
   if (profileError) {
-    return json({ error: 'Could not look up that account.' }, 500);
+    return json({ error: email ? 'Could not look up that account.' : 'Could not save this advertiser without an account email.' }, 500);
   }
   if (!profile) {
     return json({
@@ -1550,7 +1595,7 @@ export async function POST(request) {
   if (existing?.id) {
     const { error } = await supabase.from('campaigns').update({
       name: `${businessName} — ${location.name}`.slice(0, 180),
-      landing_url: destination.href,
+      landing_url: landingUrl,
       status: 'live',
       updated_at: new Date().toISOString()
     }).eq('id', existing.id);
@@ -1562,7 +1607,7 @@ export async function POST(request) {
       location_id: location.id,
       name: `${businessName} — ${location.name}`.slice(0, 180),
       tracking_code: trackingCode,
-      landing_url: destination.href,
+      landing_url: landingUrl,
       status: 'live'
     });
     if (error) return json({ error: 'Could not create the tracked campaign.' }, 500);
@@ -1576,7 +1621,7 @@ export async function POST(request) {
     creative_choice: 'beseen_create',
     plan: 'gold',
     location_slugs: [location.slug],
-    qr_destination_url: destination.href,
+    qr_destination_url: landingUrl,
     status: 'paid'
   });
 
@@ -1615,6 +1660,7 @@ export async function POST(request) {
     businessName,
     locationName: location.name,
     monthlyAmountCents: monthlyCents,
+    destinationSet: Boolean(landingUrl),
     revenueRecorded
   }, existing?.id ? 200 : 201);
 }

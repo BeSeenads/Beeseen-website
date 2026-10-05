@@ -1193,7 +1193,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-stat"><div class="lab">Tracked QR scans</div><strong id="bsccQrScans">—</strong><small class="bscc-up">Recorded campaign events only</small></div>
 <div class="bscc-stat"><div class="lab">Continued as guest</div><strong id="bsccGuestContinues">—</strong><small>Each browser counted once</small></div>
 </div>
-<div class="bscc-card" style="margin-top:16px"><h3>Revenue by location</h3><p class="desc">Monthly amount recorded for each location. Enter the percent that location's owner takes, then Save. You keep is what remains after that split.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Advertisers</th><th>Monthly revenue</th><th>Owner split</th><th>You keep</th></tr></thead><tbody id="bsccLocationRevenueBody"><tr><td colspan="5">Location revenue will appear here after the overview loads.</td></tr></tbody></table></div></div>
+<div class="bscc-card" style="margin-top:16px"><h3>Revenue by location</h3><p class="desc">Locations stay in the order you set with the arrows. Enter the percent that location's owner takes, then Save. You keep is what remains after that split.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Advertisers</th><th>Monthly revenue</th><th>Owner split</th><th>You keep</th></tr></thead><tbody id="bsccLocationRevenueBody"><tr><td colspan="5">Location revenue will appear here after the overview loads.</td></tr></tbody></table></div></div>
 <div class="bscc-grid">
 <div class="bscc-card"><h3>What needs your attention</h3><p class="desc">Only real alerts will appear here after the related workflows are connected.</p><div class="bscc-minirows">
 <div class="bscc-minirow"><div><strong>No live alerts yet</strong><span>Campaign approvals, host leads, billing issues, and device alerts will populate from real data.</span></div><span class="bscc-badge green">Clear</span></div>
@@ -1260,7 +1260,7 @@ body.host-info-open #hostInfo{display:block}
   <div class="bscc-heading"><div><h1>Location Manager</h1><p>Add <strong>Future Teasers</strong> to the Platinum/FOMO section or publish <strong>Live Locations</strong> to the public website — without editing code.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="bscc-secondary" id="bsccPreviewFomo" type="button">Preview Platinum FOMO</button><button class="bscc-action" id="bsccNewLocation" type="button">+ Add Location</button></div></div>
   <div class="bscc-manager-grid">
     <div class="bscc-card">
-      <h3>Your BeSeen locations</h3><p class="desc">Stored in Supabase. A <strong>Future Teaser</strong> appears in Platinum Private Placements. A <strong>Live Public Location</strong> appears in the public Locations menu with subscriptions.</p>
+      <h3>Your BeSeen locations</h3><p class="desc">Use the arrows to set the order. That same order is used on the overview and in the public Locations menu.</p>
       <div id="bsccLocationsList"><div class="bscc-location-row"><div class="bscc-location-name"><strong>Exclusive Hookah Lounge</strong><span>exclusive • Live</span></div><span class="bscc-pill public">Public</span><span>15 displays</span><span>Stripe</span><div class="row-actions"><button class="bscc-secondary" type="button">Edit</button></div></div></div>
       <div class="bscc-message" id="bsccLocationsMessage"></div>
     </div>
@@ -2948,10 +2948,22 @@ async function loadOwnerLocations(){
   const list=document.getElementById('bsccLocationsList'); if(list) list.innerHTML='<div class="bscc-location-row"><div>Loading locations…</div></div>'; cmsMessage('bsccLocationsMessage','');
   try{
     const data=await ownerApi('/api/admin-locations'); ownerLocations=data.locations||[];
-    if(list) list.innerHTML=ownerLocations.map(loc=>`<div class="bscc-location-row"><div class="bscc-location-name"><strong>${esc(loc.name)}</strong><span>${esc(loc.slug)} • ${esc(loc.city||'No city')}</span></div><span class="bscc-pill ${locationModeFromRecord(loc)==='live'?'public':''} ${locationModeFromRecord(loc)==='teaser'?'future':''}">${esc(locationModeLabel(loc))}</span><span>${Number(loc.device_count||0)} units</span><div class="row-actions"><button class="bscc-secondary" data-edit-location="${esc(loc.id)}" type="button">Edit</button></div></div>`).join('') || '<div class="bscc-location-row"><div>No locations yet. Add your first location.</div></div>';
+    if(list) list.innerHTML=ownerLocations.map((loc,index)=>`<div class="bscc-location-row"><div class="bscc-location-name"><strong>${esc(loc.name)}</strong><span>${esc(loc.slug)} • ${esc(loc.city||'No city')}</span></div><span class="bscc-pill ${locationModeFromRecord(loc)==='live'?'public':''} ${locationModeFromRecord(loc)==='teaser'?'future':''}">${esc(locationModeLabel(loc))}</span><span>${Number(loc.device_count||0)} units</span><div class="row-actions"><button class="bscc-secondary" type="button" data-move-location="${esc(loc.id)}" data-direction="up" ${index===0?'disabled':''} aria-label="Move ${esc(loc.name)} up">Up</button><button class="bscc-secondary" type="button" data-move-location="${esc(loc.id)}" data-direction="down" ${index===ownerLocations.length-1?'disabled':''} aria-label="Move ${esc(loc.name)} down">Down</button><button class="bscc-secondary" data-edit-location="${esc(loc.id)}" type="button">Edit</button></div></div>`).join('') || '<div class="bscc-location-row"><div>No locations yet. Add your first location.</div></div>';
   }catch(err){ if(list) list.innerHTML='<div class="bscc-location-row"><div>Could not load locations.</div></div>'; cmsMessage('bsccLocationsMessage',err.message,true); }
 }
-document.getElementById('bsccLocationsList')?.addEventListener('click',e=>{ const b=e.target.closest('[data-edit-location]'); if(b) editOwnerLocation(b.dataset.editLocation); });
+document.getElementById('bsccLocationsList')?.addEventListener('click',e=>{ const move=e.target.closest('[data-move-location]'); if(move){ moveLocation(move.dataset.moveLocation, move.dataset.direction, 'manager'); return; } const b=e.target.closest('[data-edit-location]'); if(b) editOwnerLocation(b.dataset.editLocation); });
+async function moveLocation(id,direction,source){
+  const ids=source==='overview'?[...document.querySelectorAll('#bsccLocationRevenueBody [data-location-row]')].map(row=>row.dataset.locationRow):(ownerLocations||[]).map(loc=>loc.id);
+  const index=ids.indexOf(id);
+  const target=direction==='up'?index-1:index+1;
+  if(index<0||target<0||target>=ids.length) return;
+  const next=ids.slice();
+  [next[index],next[target]]=[next[target],next[index]];
+  try{
+    await ownerApi('/api/analytics',{method:'POST',body:JSON.stringify({event:'location_order',locationIds:next})});
+    await Promise.all([loadOwnerLocations(), loadOwnerMetrics()]);
+  }catch(err){ cmsMessage('bsccLocationsMessage',err.message,true); }
+}
 document.getElementById('bsccNewLocation')?.addEventListener('click',()=>{ clearLocationEditor(); document.getElementById('bsccLocationEditor')?.scrollIntoView({behavior:'smooth',block:'start'}); });
 document.getElementById('bsccResetLocation')?.addEventListener('click',clearLocationEditor);
 document.getElementById('bsccLocName')?.addEventListener('input',e=>{ const slug=document.getElementById('bsccLocSlug'); if(slug && !document.getElementById('bsccLocationId')?.value) slug.value=slugify(e.target.value); });
@@ -3058,9 +3070,9 @@ async function loadOwnerMetrics(){
       const total=revenueRows.reduce((sum,row)=>sum+(Number(row.monthly_cents)||0),0);
       const takenTotal=revenueRows.reduce((sum,row)=>sum+(Number(row.split_cents)||0),0);
       const yoursTotal=revenueRows.reduce((sum,row)=>sum+(Number(row.yours_cents)||0),0);
-      const body=revenueRows.map(row=>{
+      const body=revenueRows.map((row,index)=>{
         const percent=Number(row.split_percent)||0;
-        return `<tr><td><strong>${esc(row.name||'Location')}</strong></td><td>${Number(row.advertisers)||0}</td><td>${locationMoney(row.monthly_cents)}</td><td><span style="display:flex;gap:6px;align-items:center"><input data-split-input="${esc(row.id)}" data-revenue-cents="${Number(row.monthly_cents)||0}" value="${esc(String(percent))}" type="text" inputmode="decimal" autocomplete="off" aria-label="Owner split percent" style="width:72px;font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff"><span>%</span><button class="bscc-secondary" type="button" data-save-split="${esc(row.id)}">Save</button></span><span data-split-taken="${esc(row.id)}" style="display:block;margin-top:6px;color:#7892bd">${locationMoney(row.split_cents)} to the owner</span></td><td data-yours="${esc(row.id)}">${locationMoney(row.yours_cents)}</td></tr>`;
+        return `<tr data-location-row="${esc(row.id)}"><td><span style="display:flex;gap:6px;align-items:center"><button class="bscc-secondary" type="button" data-move-location="${esc(row.id)}" data-direction="up" ${index===0?'disabled':''} aria-label="Move ${esc(row.name||'location')} up">Up</button><button class="bscc-secondary" type="button" data-move-location="${esc(row.id)}" data-direction="down" ${index===revenueRows.length-1?'disabled':''} aria-label="Move ${esc(row.name||'location')} down">Down</button><strong>${esc(row.name||'Location')}</strong></span></td><td>${Number(row.advertisers)||0}</td><td>${locationMoney(row.monthly_cents)}</td><td><span style="display:flex;gap:6px;align-items:center"><input data-split-input="${esc(row.id)}" data-revenue-cents="${Number(row.monthly_cents)||0}" value="${esc(String(percent))}" type="text" inputmode="decimal" autocomplete="off" aria-label="Owner split percent" style="width:72px;font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff"><span>%</span><button class="bscc-secondary" type="button" data-save-split="${esc(row.id)}">Save</button></span><span data-split-taken="${esc(row.id)}" style="display:block;margin-top:6px;color:#7892bd">${locationMoney(row.split_cents)} to the owner</span></td><td data-yours="${esc(row.id)}">${locationMoney(row.yours_cents)}</td></tr>`;
       }).join('');
       revenueBody.innerHTML=body?`${body}<tr><td><strong>Total</strong></td><td></td><td><strong id="bsccSplitRevenueTotal">${locationMoney(total)}</strong></td><td><strong id="bsccSplitTakenTotal">${locationMoney(takenTotal)}</strong></td><td><strong id="bsccYoursTotal">${locationMoney(yoursTotal)}</strong></td></tr>`:'<tr><td colspan="5">No locations yet.</td></tr>';
     }
@@ -3098,6 +3110,8 @@ document.getElementById('bsccLocationRevenueBody')?.addEventListener('input',e=>
   if(input) paintLocationSplit(input);
 });
 document.getElementById('bsccLocationRevenueBody')?.addEventListener('click',async e=>{
+  const move=e.target.closest('[data-move-location]');
+  if(move){ moveLocation(move.dataset.moveLocation, move.dataset.direction, 'overview'); return; }
   const btn=e.target.closest('[data-save-split]');
   if(!btn) return;
   const input=document.querySelector(`[data-split-input="${CSS.escape(btn.dataset.saveSplit)}"]`);

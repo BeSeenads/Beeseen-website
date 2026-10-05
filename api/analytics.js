@@ -274,7 +274,7 @@ async function staffAnalytics(role,supabase){
     supabase.from('subscription_locations')
       .select('user_id,location_id,billed_price_cents,status')
       .in('status',['active','trialing','past_due']),
-    supabase.from('locations').select('id,name').order('name'),
+    supabase.from('locations').select('id,name,sort_order').order('sort_order',{ascending:true}).order('name',{ascending:true}),
     supabase.from('billing_events')
       .select('details,created_at')
       .eq('event_type','location_owner_split')
@@ -319,9 +319,10 @@ async function staffAnalytics(role,supabase){
       advertisers:row.users.size,
       split_percent:splitPercent,
       split_cents:splitCents,
-      yours_cents:monthly-splitCents
+      yours_cents:monthly-splitCents,
+      sort_order:Number(loc.sort_order)||0
     };
-  }).sort((a,b)=>b.monthly_cents-a.monthly_cents||String(a.name).localeCompare(String(b.name)));
+  }).sort((a,b)=>a.sort_order-b.sort_order||String(a.name).localeCompare(String(b.name)));
 
   let guestContinues=0;
   const {count:guestCount,error:guestError}=await supabase
@@ -348,6 +349,24 @@ export async function POST(request){
   const supabase=db();
   if(!supabase) return json({error:'Analytics are not configured.'},503);
   const body=await request.json().catch(()=>({}));
+  if(body.event==='location_order'){
+    const user=await getUser(request,supabase);
+    if(!user) return json({error:'Sign in required.'},401);
+    const access=await getProfileAccess(user.id,supabase);
+    if(!['owner','admin'].includes(access.role)) return json({error:'BeSeen staff access required.'},403);
+    const locationIds=[...new Set((Array.isArray(body.locationIds)?body.locationIds:[]).map(id=>String(id||'').trim()).filter(Boolean))];
+    const {data:existing,error:readError}=await supabase.from('locations').select('id');
+    if(readError) return json({error:'Could not load locations.'},500);
+    const known=new Set((existing||[]).map(row=>row.id));
+    if(!locationIds.length||locationIds.length!==known.size||locationIds.some(id=>!known.has(id))){
+      return json({error:'The location list changed. Refresh and try the move again.'},400);
+    }
+    for(let index=0;index<locationIds.length;index+=1){
+      const {error}=await supabase.from('locations').update({sort_order:(index+1)*10,updated_at:new Date().toISOString()}).eq('id',locationIds[index]);
+      if(error) return json({error:'Could not save the location order.'},500);
+    }
+    return json({ok:true});
+  }
   if(body.event==='location_split'){
     const user=await getUser(request,supabase);
     if(!user) return json({error:'Sign in required.'},401);

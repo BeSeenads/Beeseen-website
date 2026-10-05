@@ -1519,6 +1519,10 @@ export async function POST(request) {
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
   const locationSlug = cleanSlug(body.locationSlug);
   const monthlyCents = Math.round(Number(String(body.monthlyAmount ?? '').replace(/[$,\s]/g, '')) * 100);
+  const paymentStartedRaw = String(body.paymentStarted || '').trim();
+  const paymentStarted = /^\d{4}-\d{2}-\d{2}$/.test(paymentStartedRaw) && !Number.isNaN(new Date(`${paymentStartedRaw}T12:00:00Z`).getTime())
+    ? paymentStartedRaw
+    : '';
   let destination = null;
 
   if (destinationUrl) {
@@ -1543,6 +1547,9 @@ export async function POST(request) {
   }
   if (!Number.isFinite(monthlyCents) || monthlyCents < 100) {
     return json({ error: 'Enter the monthly amount they pay, at least $1.' }, 400);
+  }
+  if (paymentStartedRaw && !paymentStarted) {
+    return json({ error: 'Choose a valid payment start date.' }, 400);
   }
 
   const landingUrl = destination ? destination.href : null;
@@ -1642,7 +1649,7 @@ export async function POST(request) {
 
   const { data: billingRow } = await supabase
     .from('billing_overrides')
-    .select('id,stripe_subscription_id')
+    .select('id,stripe_subscription_id,owner_note')
     .eq('user_id', profile.id)
     .eq('location_slug', location.slug)
     .maybeSingle();
@@ -1650,6 +1657,8 @@ export async function POST(request) {
   let revenueRecorded = false;
   let revenueError = '';
   if (!billingRow?.stripe_subscription_id) {
+    const existingStarted = String(billingRow?.owner_note || '').match(/\|\s*started:(\d{4}-\d{2}-\d{2})/)?.[1] || '';
+    const startedOn = paymentStarted || existingStarted;
     const billingValues = {
       user_id: profile.id,
       location_id: location.id,
@@ -1660,7 +1669,7 @@ export async function POST(request) {
       custom_price_active: true,
       billing_source: 'cash',
       migration_status: 'none',
-      owner_note: `Manual advertiser: ${businessName}`.slice(0, 500),
+      owner_note: `Manual advertiser: ${businessName}${startedOn ? ` | started:${startedOn}` : ''}`.slice(0, 500),
       updated_at: new Date().toISOString()
     };
     let billingWrite = billingRow?.id

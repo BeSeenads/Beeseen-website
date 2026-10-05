@@ -2755,8 +2755,8 @@ async function loadOwnerAdvertisers(){
       const locations=(a.locations||[]).length ? (a.locations||[]).map(esc).join(', ') : '—';
       const creative=a.creative_choice==='own_ad'?'Uploaded own ad':a.creative_choice==='beseen_create'?'BeSeen creating ad':'—';
       const monthly=advertiserMoney(a.monthly_cents);
-      const billing=monthly?`${monthly.toLocaleString('en-US',{style:'currency',currency:'USD'})}/mo`:`<span style="color:#ffadbb">Not in revenue</span>`;
       const name=a.business_name||a.subscriber_name||'this advertiser';
+      const billing=monthly?`${monthly.toLocaleString('en-US',{style:'currency',currency:'USD'})}/mo`:(a.manual&&a.location_slug?`<span style="display:flex;gap:6px;align-items:center"><input data-revenue-input="${esc(a.id)}" type="text" inputmode="decimal" autocomplete="off" placeholder="1100" aria-label="Monthly amount" style="width:92px;font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff"><button class="bscc-secondary" type="button" data-add-revenue="${esc(a.id)}" data-name="${esc(name)}" data-location="${esc(a.location_slug)}">Add</button></span>`:esc(a.billing_status||'inactive'));
       const remove=a.manual?`<button class="bscc-secondary" type="button" data-delete-advertiser="${esc(a.id)}" data-name="${esc(name)}">Delete</button>`:'';
       return `<tr><td>${subscriber}</td><td>${business}</td><td>${esc(String(a.plan||'none').toUpperCase())}</td><td>${billing}</td><td>${locations}</td><td>${esc(creative)}</td><td>${remove}</td></tr>`;
     }).join('') || '<tr><td colspan="7">No paying subscribers yet.</td></tr>';
@@ -2815,6 +2815,26 @@ document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=
   finally{ advertiserSaveInFlight=false; if(btn){ btn.disabled=false; btn.textContent='Save advertiser'; } }
 });
 document.getElementById('bsccAdvertisersBody')?.addEventListener('click',async(e)=>{
+  const addBtn=e.target.closest('[data-add-revenue]');
+  if(addBtn){
+    const input=document.querySelector(`[data-revenue-input="${CSS.escape(addBtn.dataset.addRevenue)}"]`);
+    const monthlyAmount=input?.value.trim()||'';
+    const amount=Number(String(monthlyAmount).replace(/[$,\s]/g,''));
+    if(!(amount>=1)){ cmsMessage('bsccAddAdvertiserMessage','Enter the monthly amount, like 1100.',true); return; }
+    addBtn.disabled=true;
+    try{
+      const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email:'',businessName:addBtn.dataset.name,destinationUrl:'',locationSlug:addBtn.dataset.location,monthlyAmount})});
+      if(!data.revenueRecorded) throw new Error(data.revenueError||'The monthly amount was not added to revenue.');
+      const price=(Number(data.monthlyAmountCents||0)/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+      cmsMessage('bsccAddAdvertiserMessage',`${addBtn.dataset.name} is now ${price}/month in revenue.`);
+      await loadOwnerAdvertisers();
+      if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
+    }catch(err){
+      cmsMessage('bsccAddAdvertiserMessage',err.message,true);
+      addBtn.disabled=false;
+    }
+    return;
+  }
   const btn=e.target.closest('[data-delete-advertiser]');
   if(!btn) return;
   const name=btn.dataset.name||'this advertiser';

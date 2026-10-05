@@ -170,17 +170,25 @@ async function staffAdvertisers(role,supabase){
   const campaignLocationIds=[...new Set((campaignPlaces||[]).map(row=>row.location_id).filter(Boolean))];
   let campaignLocationNames=new Map();
   if(campaignLocationIds.length){
-    const {data:campaignLocationRows,error}=await supabase.from('locations').select('id,name').in('id',campaignLocationIds);
+    const {data:campaignLocationRows,error}=await supabase.from('locations').select('id,name,slug').in('id',campaignLocationIds);
     if(error) return json({error:'Could not load subscriber locations.'},500);
     campaignLocationNames=new Map((campaignLocationRows||[]).map(row=>[row.id,row.name]));
+    var campaignLocationSlugs=new Map((campaignLocationRows||[]).map(row=>[row.id,row.slug]));
   }
   const campaignLocations=new Map();
+  const campaignSlugs=new Map();
   for(const row of (campaignPlaces||[])){
     const name=campaignLocationNames.get(row.location_id);
+    const slug=campaignLocationSlugs?.get(row.location_id);
     if(!row.advertiser_id||!name) continue;
     const list=campaignLocations.get(row.advertiser_id)||[];
     list.push(name);
     campaignLocations.set(row.advertiser_id,list);
+    if(slug){
+      const slugs=campaignSlugs.get(row.advertiser_id)||[];
+      slugs.push(slug);
+      campaignSlugs.set(row.advertiser_id,slugs);
+    }
   }
 
   const advertisers=(profiles||[]).map(p=>{
@@ -201,6 +209,7 @@ async function staffAdvertisers(role,supabase){
       billing_status:p.subscription_status||'inactive',
       monthly_cents:monthlyByUser.get(p.id)||0,
       manual:!p.email || String(p.email).toLowerCase().endsWith('@advertisers.beseen.invalid'),
+      location_slug:(campaignSlugs.get(p.id)||[])[0] || userSubs[0]?.location_slug || null,
       locations:locationNames,
       subscribed_at:intake?.created_at||p.created_at
     };

@@ -310,6 +310,10 @@
       min-width:300px;background:#091c47;color:#fff;border:1px solid rgba(255,255,255,.15);
       border-radius:13px;padding:13px 42px 13px 14px;font-weight:750;outline:none
     }
+    .location-quote{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:14px}
+    .location-quote-choices{display:flex;flex-wrap:wrap;gap:10px}
+    .location-quote-choices[hidden]{display:none}
+    .future-private-card .location-quote .btn{padding:10px 14px;font-size:13px}
     .location-panel{
       border:1px solid rgba(255,255,255,.10);border-radius:28px;background:rgba(255,255,255,.035);
       overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.20)
@@ -1429,7 +1433,7 @@ body.host-info-open #hostInfo{display:block}
 <h3>Exclusive Hookah Lounge</h3>
 <p>BeSeen displays are strategically placed throughout Exclusive Hookah Lounge—not limited to booth tables. Many units also function as portable charging stations, giving customers a reason to stay close to and interact with the displays throughout their visit. That creates natural, repeated exposure for your ad in a busy social setting.</p>
 <div class="location-meta"><span class="meta-pill">15 displays across the lounge</span><span class="meta-pill">Portable charging stations</span><span class="meta-pill">Repeated visibility throughout the night</span></div>
-<a class="btn btn-primary" href="#locationPlans">See subscription options ↓</a>
+<a class="btn btn-primary" href="#locationPlans">See subscription options ↓</a><div class="location-quote" data-quote-name="Exclusive Hookah Lounge"><button class="btn btn-secondary" type="button" data-quote-toggle>Get a Quote</button><div class="location-quote-choices" hidden><a class="btn btn-primary" data-quote-text href="sms:+13139798989">Text 313-979-8989</a><a class="btn btn-secondary" href="tel:+13137223344">Call 313-722-3344</a></div></div>
 <div class="preview-note">Package pricing below applies to advertising at Exclusive Hookah Lounge.</div>
 </div>
 </div>
@@ -1440,7 +1444,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="location-panel" id="dynamicLocationPanel" style="display:none">
   <div class="location-hero">
     <div class="location-gallery" id="dynamicLocationGallery"><div class="dynamic-location-placeholder" id="dynamicLocationPlaceholder">BeSeen Location<br><small style="font-weight:700;opacity:.65;margin-top:8px">Add a hero image from the Owner Control Center</small></div><img alt="BeSeen advertising location" class="dynamic-location-image" id="dynamicLocationImage" style="display:none"/></div>
-    <div class="location-copy"><div class="location-kicker">BeSeen Advertising Location</div><h3 id="dynamicLocationName">BeSeen Location</h3><p id="dynamicLocationDescription"></p><div class="location-meta" id="dynamicLocationMeta"></div><a class="btn btn-primary" href="#dynamicLocationPlans">See subscription options ↓</a><div class="preview-note" id="dynamicLocationNote"></div></div>
+    <div class="location-copy"><div class="location-kicker">BeSeen Advertising Location</div><h3 id="dynamicLocationName">BeSeen Location</h3><p id="dynamicLocationDescription"></p><div class="location-meta" id="dynamicLocationMeta"></div><a class="btn btn-primary" href="#dynamicLocationPlans">See subscription options ↓</a><div class="location-quote" data-quote-name="this BeSeen location"><button class="btn btn-secondary" type="button" data-quote-toggle>Get a Quote</button><div class="location-quote-choices" hidden><a class="btn btn-primary" data-quote-text href="sms:+13139798989">Text 313-979-8989</a><a class="btn btn-secondary" href="tel:+13137223344">Call 313-722-3344</a></div></div><div class="preview-note" id="dynamicLocationNote"></div></div>
   </div>
   <div class="ad-rules" id="dynamicAdRules" hidden></div>
   <div class="plans" id="dynamicLocationPlans">
@@ -1606,7 +1610,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="portal-page-content">
 <div class="portal-page-head"><div><h3>Private Placements</h3><p>See upcoming BeSeen inventory before those locations are shown on the public website.</p></div><span class="portal-access-chip">Platinum Access</span></div>
 <div class="future-private-grid" id="privatePlacementsGrid">
-<div class="future-private-card"><small>Future BeSeen placement</small><h4 class="private-location-name" data-name="Private location">Private location • Hidden</h4><p>Platinum advertisers get early access to future BeSeen placements before public release.</p></div>
+<div class="future-private-card"><small>Future BeSeen placement</small><h4 class="private-location-name" data-name="Private location">Private location • Hidden</h4><p>Platinum advertisers get early access to future BeSeen placements before public release.</p><div class="location-quote" data-quote-name="a future BeSeen placement"><button class="btn btn-secondary" type="button" data-quote-toggle>Get a Quote</button><div class="location-quote-choices" hidden><a class="btn btn-primary" data-quote-text href="sms:+13139798989">Text 313-979-8989</a><a class="btn btn-secondary" href="tel:+13137223344">Call 313-722-3344</a></div></div></div>
 <div class="future-private-card"><small>Owner-managed teaser</small><h4>More locations coming soon</h4><p>Future teasers added from the Owner Location Manager will appear here automatically.</p></div>
 </div>
 </div>
@@ -1953,11 +1957,33 @@ body.host-info-open #hostInfo{display:block}
       if(exclusivePhoto && publicLocations.exclusive?.image_url) exclusivePhoto.src=publicLocations.exclusive.image_url;
       if(locationSelect) locationSelect.value = key;
       if(locationPageTitle) locationPageTitle.textContent = dynamic?.name || locationNames[key] || 'BeSeen Location';
+      const exclusiveQuote=document.querySelector('#exclusivePanel [data-quote-name]');
+      if(exclusiveQuote) exclusiveQuote.dataset.quoteName=publicLocations.exclusive?.name || locationNames.exclusive || 'Exclusive Hookah Lounge';
+      const dynamicQuote=document.querySelector('#dynamicLocationPanel [data-quote-name]');
+      if(dynamicQuote) dynamicQuote.dataset.quoteName=dynamic?.name || 'this BeSeen location';
       if(locationPageSubtitle) locationPageSubtitle.textContent = isSinglePriceLocation(dynamic||{}) ? (isBillboardLocation(dynamic) ? 'Your ad on the billboard. $1,100 a month.' : `${moneyFromCents(singlePriceCents(dynamic),0)} a month.`) : (dynamic?.short_description || 'Photos, display setup, and subscription options for this BeSeen advertising location.');
       renderAdRules(document.getElementById('exclusiveAdRules'));
       if(locationMenu){ locationMenu.querySelectorAll('button[data-location]').forEach(btn => btn.classList.toggle('active', btn.dataset.location === key)); }
     }
 
+
+    document.addEventListener('click',e=>{
+      const toggle=e.target.closest('[data-quote-toggle]');
+      if(!toggle) return;
+      const box=toggle.closest('[data-quote-name]');
+      const choices=box?.querySelector('.location-quote-choices');
+      if(!choices) return;
+      const opening=choices.hidden;
+      document.querySelectorAll('.location-quote-choices').forEach(el=>{ el.hidden=true; });
+      if(!opening) return;
+      const name=box.dataset.quoteName || 'this BeSeen location';
+      const textLink=choices.querySelector('[data-quote-text]');
+      if(textLink){
+        const body=encodeURIComponent(`Hi BeSeen, I would like a quote for advertising at ${name}.`);
+        textLink.href=`sms:+13139798989?&body=${body}`;
+      }
+      choices.hidden=false;
+    });
     async function loadPublicLocations(){
       try{
         const res=await fetch('/api/locations',{headers:{'accept':'application/json'}});
@@ -2195,7 +2221,7 @@ body.host-info-open #hostInfo{display:block}
           return;
         }
         const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        grid.innerHTML=items.map(loc=>`<div class="future-private-card"><small>Future placement${loc.city?' • '+safe(loc.city):''}</small><h4 class="private-location-name" data-name="${safe(loc.name)}">${safe(loc.name)}</h4><p>${safe(loc.short_description||loc.description||'Early-access BeSeen placement details available to Platinum advertisers.')}</p></div>`).join('');
+        grid.innerHTML=items.map(loc=>`<div class="future-private-card"><small>Future placement${loc.city?' • '+safe(loc.city):''}</small><h4 class="private-location-name" data-name="${safe(loc.name)}">${safe(loc.name)}</h4><p>${safe(loc.short_description||loc.description||'Early-access BeSeen placement details available to Platinum advertisers.')}</p><div class="location-quote" data-quote-name="${safe(loc.name)}"><button class="btn btn-secondary" type="button" data-quote-toggle>Get a Quote</button><div class="location-quote-choices" hidden><a class="btn btn-primary" data-quote-text href="sms:+13139798989">Text 313-979-8989</a><a class="btn btn-secondary" href="tel:+13137223344">Call 313-722-3344</a></div></div></div>`).join('');
       }catch(err){ console.warn('Private placements could not be loaded.',err); }
     }
 

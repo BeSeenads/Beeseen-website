@@ -1341,9 +1341,7 @@ body.host-info-open #hostInfo{display:block}
 <h1>BE <span>SEEN.</span></h1>
 <p>We help local businesses stand out with sharp creative, digital advertising, promotional displays, and campaigns designed to put your brand in front of more people.</p>
 <div class="buttons">
-<a class="btn btn-primary" href="#contact">Get More Exposure →</a>
-<a class="btn btn-secondary" href="tel:+13136990107">Call 313-699-0107</a>
-<a class="btn btn-secondary" href="tel:+13137223344">Call 313-722-3344</a>
+<a class="btn btn-primary" href="#contact">Contact Us</a>
 </div>
 <p class="micro">Simple. Bold. Easy to notice.</p>
 </div>
@@ -2140,7 +2138,7 @@ body.host-info-open #hostInfo{display:block}
     });
 
     document.querySelectorAll('.brand, .navlinks a[href^="#"]').forEach(link => {
-      if(link.closest('.location-nav')) return;
+      if(link.id === 'startAdvertising' || link.closest('.location-nav')) return;
       link.addEventListener('click', (e) => {
         if(!document.body.classList.contains('location-page-open')) return;
         const target = link.getAttribute('href');

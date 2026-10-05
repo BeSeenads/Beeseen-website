@@ -959,7 +959,12 @@ body.host-info-open #hostInfo{display:block}
   .bscc-manager-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr);gap:14px;align-items:start}
   .bscc-location-row{display:grid;grid-template-columns:minmax(180px,1.4fr) .7fr .7fr .55fr auto;gap:10px;align-items:center;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
   .bscc-location-row:last-child{border-bottom:0}
+  .bscc-location-name{display:flex;align-items:center;gap:10px}
   .bscc-location-name strong{display:block;font-size:12px;color:white}.bscc-location-name span{display:block;font-size:9px;color:#7d94bd;margin-top:4px}
+  .bscc-drag{width:28px;height:32px;padding:0;border:0;border-radius:8px;background:transparent;color:#9eb4d8;display:inline-flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:grab;touch-action:none;flex:0 0 auto}
+  .bscc-drag i{display:block;width:16px;height:2px;border-radius:2px;background:currentColor;pointer-events:none}
+  .bscc-drag:active{cursor:grabbing}
+  tr.is-dragging td,.bscc-location-row.is-dragging{background:rgba(55,108,255,.14)}
   .bscc-pill{display:inline-flex;padding:6px 8px;border-radius:999px;background:rgba(64,117,255,.12);border:1px solid rgba(64,117,255,.18);font-size:9px;font-weight:900;color:#a8c0ff;text-transform:capitalize}
   .bscc-pill.public{background:rgba(62,200,124,.1);border-color:rgba(62,200,124,.18);color:#90dfb0}
   .bscc-pill.future{background:rgba(255,183,60,.10);border-color:rgba(255,183,60,.18);color:#ffd08a}
@@ -1193,7 +1198,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-stat"><div class="lab">Tracked QR scans</div><strong id="bsccQrScans">—</strong><small class="bscc-up">Recorded campaign events only</small></div>
 <div class="bscc-stat"><div class="lab">Continued as guest</div><strong id="bsccGuestContinues">—</strong><small>Each browser counted once</small></div>
 </div>
-<div class="bscc-card" style="margin-top:16px"><h3>Revenue by location</h3><p class="desc">Locations stay in the order you set with the arrows. Enter the percent that location's owner takes, then Save. You keep is what remains after that split.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Advertisers</th><th>Monthly revenue</th><th>Owner split</th><th>You keep</th></tr></thead><tbody id="bsccLocationRevenueBody"><tr><td colspan="5">Location revenue will appear here after the overview loads.</td></tr></tbody></table></div></div>
+<div class="bscc-card" style="margin-top:16px"><h3>Revenue by location</h3><p class="desc">Hold the two lines and drag a location into the order you want. Enter the percent that location's owner takes, then Save. You keep is what remains after that split.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Advertisers</th><th>Monthly revenue</th><th>Owner split</th><th>You keep</th></tr></thead><tbody id="bsccLocationRevenueBody"><tr><td colspan="5">Location revenue will appear here after the overview loads.</td></tr></tbody></table></div></div>
 <div class="bscc-grid">
 <div class="bscc-card"><h3>What needs your attention</h3><p class="desc">Only real alerts will appear here after the related workflows are connected.</p><div class="bscc-minirows">
 <div class="bscc-minirow"><div><strong>No live alerts yet</strong><span>Campaign approvals, host leads, billing issues, and device alerts will populate from real data.</span></div><span class="bscc-badge green">Clear</span></div>
@@ -1260,7 +1265,7 @@ body.host-info-open #hostInfo{display:block}
   <div class="bscc-heading"><div><h1>Location Manager</h1><p>Add <strong>Future Teasers</strong> to the Platinum/FOMO section or publish <strong>Live Locations</strong> to the public website — without editing code.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="bscc-secondary" id="bsccPreviewFomo" type="button">Preview Platinum FOMO</button><button class="bscc-action" id="bsccNewLocation" type="button">+ Add Location</button></div></div>
   <div class="bscc-manager-grid">
     <div class="bscc-card">
-      <h3>Your BeSeen locations</h3><p class="desc">Use the arrows to set the order. That same order is used on the overview and in the public Locations menu.</p>
+      <h3>Your BeSeen locations</h3><p class="desc">Hold the two lines and drag a location into place. That order is used here, on the overview, and in the public Locations menu.</p>
       <div id="bsccLocationsList"><div class="bscc-location-row"><div class="bscc-location-name"><strong>Exclusive Hookah Lounge</strong><span>exclusive • Live</span></div><span class="bscc-pill public">Public</span><span>15 displays</span><span>Stripe</span><div class="row-actions"><button class="bscc-secondary" type="button">Edit</button></div></div></div>
       <div class="bscc-message" id="bsccLocationsMessage"></div>
     </div>
@@ -2948,22 +2953,57 @@ async function loadOwnerLocations(){
   const list=document.getElementById('bsccLocationsList'); if(list) list.innerHTML='<div class="bscc-location-row"><div>Loading locations…</div></div>'; cmsMessage('bsccLocationsMessage','');
   try{
     const data=await ownerApi('/api/admin-locations'); ownerLocations=data.locations||[];
-    if(list) list.innerHTML=ownerLocations.map((loc,index)=>`<div class="bscc-location-row"><div class="bscc-location-name"><strong>${esc(loc.name)}</strong><span>${esc(loc.slug)} • ${esc(loc.city||'No city')}</span></div><span class="bscc-pill ${locationModeFromRecord(loc)==='live'?'public':''} ${locationModeFromRecord(loc)==='teaser'?'future':''}">${esc(locationModeLabel(loc))}</span><span>${Number(loc.device_count||0)} units</span><div class="row-actions"><button class="bscc-secondary" type="button" data-move-location="${esc(loc.id)}" data-direction="up" ${index===0?'disabled':''} aria-label="Move ${esc(loc.name)} up">Up</button><button class="bscc-secondary" type="button" data-move-location="${esc(loc.id)}" data-direction="down" ${index===ownerLocations.length-1?'disabled':''} aria-label="Move ${esc(loc.name)} down">Down</button><button class="bscc-secondary" data-edit-location="${esc(loc.id)}" type="button">Edit</button></div></div>`).join('') || '<div class="bscc-location-row"><div>No locations yet. Add your first location.</div></div>';
+    if(list) list.innerHTML=ownerLocations.map(loc=>`<div class="bscc-location-row" data-location-id="${esc(loc.id)}"><div class="bscc-location-name"><button class="bscc-drag" type="button" data-drag-handle aria-label="Drag ${esc(loc.name)} to reorder"><i></i><i></i></button><div><strong>${esc(loc.name)}</strong><span>${esc(loc.slug)} • ${esc(loc.city||'No city')}</span></div></div><span class="bscc-pill ${locationModeFromRecord(loc)==='live'?'public':''} ${locationModeFromRecord(loc)==='teaser'?'future':''}">${esc(locationModeLabel(loc))}</span><span>${Number(loc.device_count||0)} units</span><div class="row-actions"><button class="bscc-secondary" data-edit-location="${esc(loc.id)}" type="button">Edit</button></div></div>`).join('') || '<div class="bscc-location-row"><div>No locations yet. Add your first location.</div></div>';
   }catch(err){ if(list) list.innerHTML='<div class="bscc-location-row"><div>Could not load locations.</div></div>'; cmsMessage('bsccLocationsMessage',err.message,true); }
 }
-document.getElementById('bsccLocationsList')?.addEventListener('click',e=>{ const move=e.target.closest('[data-move-location]'); if(move){ moveLocation(move.dataset.moveLocation, move.dataset.direction, 'manager'); return; } const b=e.target.closest('[data-edit-location]'); if(b) editOwnerLocation(b.dataset.editLocation); });
-async function moveLocation(id,direction,source){
-  const ids=source==='overview'?[...document.querySelectorAll('#bsccLocationRevenueBody [data-location-row]')].map(row=>row.dataset.locationRow):(ownerLocations||[]).map(loc=>loc.id);
-  const index=ids.indexOf(id);
-  const target=direction==='up'?index-1:index+1;
-  if(index<0||target<0||target>=ids.length) return;
-  const next=ids.slice();
-  [next[index],next[target]]=[next[target],next[index]];
-  try{
-    await ownerApi('/api/analytics',{method:'POST',body:JSON.stringify({event:'location_order',locationIds:next})});
-    await Promise.all([loadOwnerLocations(), loadOwnerMetrics()]);
-  }catch(err){ cmsMessage('bsccLocationsMessage',err.message,true); }
+document.getElementById('bsccLocationsList')?.addEventListener('click',e=>{ const b=e.target.closest('[data-edit-location]'); if(b) editOwnerLocation(b.dataset.editLocation); });
+let locationDrag=null;
+function locationOrderIds(list){ return [...list.children].map(row=>row.dataset.locationRow||row.dataset.locationId).filter(Boolean); }
+function onLocationDragStart(e){
+  const handle=e.target.closest('[data-drag-handle]');
+  if(!handle) return;
+  const row=handle.closest('tr[data-location-row], .bscc-location-row[data-location-id]');
+  if(!row||!row.parentElement) return;
+  if(e.button!=null && e.button!==0) return;
+  e.preventDefault();
+  try{ handle.setPointerCapture(e.pointerId); }catch(_){}
+  locationDrag={pointerId:e.pointerId,row,list:row.parentElement,start:locationOrderIds(row.parentElement).join('|')};
+  row.classList.add('is-dragging');
 }
+function onLocationDragMove(e){
+  if(!locationDrag||e.pointerId!==locationDrag.pointerId) return;
+  e.preventDefault();
+  const rows=[...locationDrag.list.children].filter(row=>row.dataset.locationRow||row.dataset.locationId);
+  let placed=false;
+  for(const candidate of rows){
+    if(candidate===locationDrag.row) continue;
+    const box=candidate.getBoundingClientRect();
+    if(e.clientY<box.top+box.height/2){ locationDrag.list.insertBefore(locationDrag.row,candidate); placed=true; break; }
+  }
+  if(!placed){
+    const last=rows[rows.length-1];
+    if(last&&last!==locationDrag.row) last.after(locationDrag.row);
+  }
+}
+async function onLocationDragEnd(e){
+  if(!locationDrag||e.pointerId!==locationDrag.pointerId) return;
+  const {row,list,start}=locationDrag;
+  row.classList.remove('is-dragging');
+  locationDrag=null;
+  const ids=locationOrderIds(list);
+  if(!ids.length||ids.join('|')===start) return;
+  try{
+    await ownerApi('/api/analytics',{method:'POST',body:JSON.stringify({event:'location_order',locationIds:ids})});
+    await Promise.all([loadOwnerLocations(), typeof loadOwnerMetrics==='function'?loadOwnerMetrics():null]);
+  }catch(err){
+    cmsMessage('bsccLocationsMessage',err.message,true);
+    await Promise.all([loadOwnerLocations(), typeof loadOwnerMetrics==='function'?loadOwnerMetrics():null]);
+  }
+}
+document.addEventListener('pointerdown', onLocationDragStart);
+document.addEventListener('pointermove', onLocationDragMove, {passive:false});
+document.addEventListener('pointerup', onLocationDragEnd);
+document.addEventListener('pointercancel', onLocationDragEnd);
 document.getElementById('bsccNewLocation')?.addEventListener('click',()=>{ clearLocationEditor(); document.getElementById('bsccLocationEditor')?.scrollIntoView({behavior:'smooth',block:'start'}); });
 document.getElementById('bsccResetLocation')?.addEventListener('click',clearLocationEditor);
 document.getElementById('bsccLocName')?.addEventListener('input',e=>{ const slug=document.getElementById('bsccLocSlug'); if(slug && !document.getElementById('bsccLocationId')?.value) slug.value=slugify(e.target.value); });
@@ -3070,9 +3110,9 @@ async function loadOwnerMetrics(){
       const total=revenueRows.reduce((sum,row)=>sum+(Number(row.monthly_cents)||0),0);
       const takenTotal=revenueRows.reduce((sum,row)=>sum+(Number(row.split_cents)||0),0);
       const yoursTotal=revenueRows.reduce((sum,row)=>sum+(Number(row.yours_cents)||0),0);
-      const body=revenueRows.map((row,index)=>{
+      const body=revenueRows.map(row=>{
         const percent=Number(row.split_percent)||0;
-        return `<tr data-location-row="${esc(row.id)}"><td><span style="display:flex;gap:6px;align-items:center"><button class="bscc-secondary" type="button" data-move-location="${esc(row.id)}" data-direction="up" ${index===0?'disabled':''} aria-label="Move ${esc(row.name||'location')} up">Up</button><button class="bscc-secondary" type="button" data-move-location="${esc(row.id)}" data-direction="down" ${index===revenueRows.length-1?'disabled':''} aria-label="Move ${esc(row.name||'location')} down">Down</button><strong>${esc(row.name||'Location')}</strong></span></td><td>${Number(row.advertisers)||0}</td><td>${locationMoney(row.monthly_cents)}</td><td><span style="display:flex;gap:6px;align-items:center"><input data-split-input="${esc(row.id)}" data-revenue-cents="${Number(row.monthly_cents)||0}" value="${esc(String(percent))}" type="text" inputmode="decimal" autocomplete="off" aria-label="Owner split percent" style="width:72px;font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff"><span>%</span><button class="bscc-secondary" type="button" data-save-split="${esc(row.id)}">Save</button></span><span data-split-taken="${esc(row.id)}" style="display:block;margin-top:6px;color:#7892bd">${locationMoney(row.split_cents)} to the owner</span></td><td data-yours="${esc(row.id)}">${locationMoney(row.yours_cents)}</td></tr>`;
+        return `<tr data-location-row="${esc(row.id)}"><td><span style="display:flex;gap:8px;align-items:center"><button class="bscc-drag" type="button" data-drag-handle aria-label="Drag ${esc(row.name||'location')} to reorder"><i></i><i></i></button><strong>${esc(row.name||'Location')}</strong></span></td><td>${Number(row.advertisers)||0}</td><td>${locationMoney(row.monthly_cents)}</td><td><span style="display:flex;gap:6px;align-items:center"><input data-split-input="${esc(row.id)}" data-revenue-cents="${Number(row.monthly_cents)||0}" value="${esc(String(percent))}" type="text" inputmode="decimal" autocomplete="off" aria-label="Owner split percent" style="width:72px;font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff"><span>%</span><button class="bscc-secondary" type="button" data-save-split="${esc(row.id)}">Save</button></span><span data-split-taken="${esc(row.id)}" style="display:block;margin-top:6px;color:#7892bd">${locationMoney(row.split_cents)} to the owner</span></td><td data-yours="${esc(row.id)}">${locationMoney(row.yours_cents)}</td></tr>`;
       }).join('');
       revenueBody.innerHTML=body?`${body}<tr><td><strong>Total</strong></td><td></td><td><strong id="bsccSplitRevenueTotal">${locationMoney(total)}</strong></td><td><strong id="bsccSplitTakenTotal">${locationMoney(takenTotal)}</strong></td><td><strong id="bsccYoursTotal">${locationMoney(yoursTotal)}</strong></td></tr>`:'<tr><td colspan="5">No locations yet.</td></tr>';
     }
@@ -3110,8 +3150,6 @@ document.getElementById('bsccLocationRevenueBody')?.addEventListener('input',e=>
   if(input) paintLocationSplit(input);
 });
 document.getElementById('bsccLocationRevenueBody')?.addEventListener('click',async e=>{
-  const move=e.target.closest('[data-move-location]');
-  if(move){ moveLocation(move.dataset.moveLocation, move.dataset.direction, 'overview'); return; }
   const btn=e.target.closest('[data-save-split]');
   if(!btn) return;
   const input=document.querySelector(`[data-split-input="${CSS.escape(btn.dataset.saveSplit)}"]`);

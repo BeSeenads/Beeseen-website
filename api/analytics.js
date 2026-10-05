@@ -219,6 +219,16 @@ async function staffAdvertisers(role,supabase){
       subscribed_at:intake?.created_at||p.created_at
     };
   });
+  const subscriptionDay=row=>{
+    if(row.payment_started) return row.payment_started;
+    const day=String(row.subscribed_at||'').slice(0,10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(day)?day:'9999-99-99';
+  };
+  advertisers.sort((a,b)=>{
+    const byDate=subscriptionDay(a).localeCompare(subscriptionDay(b));
+    if(byDate) return byDate;
+    return String(a.business_name||a.subscriber_name||'').localeCompare(String(b.business_name||b.subscriber_name||''));
+  });
   return json({advertisers});
 }
 

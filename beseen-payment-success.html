@@ -941,6 +941,8 @@ body.host-info-open #hostInfo{display:block}
   .bscc-formgrid .wide{grid-column:1/-1}
   .bscc-field{display:grid;gap:6px}
   .bscc-field[hidden]{display:none}
+  .bscc-card[hidden]{display:none !important}
+  #bsccAdvMonthly{font-size:16px}
   .bscc-field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#7892c1;font-weight:950}
   .bscc-field input,.bscc-field select,.bscc-field textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.11);background:#071a3a;color:#edf3ff;border-radius:12px;padding:12px 13px;font:inherit;font-size:11px;outline:none}
   .bscc-field textarea{min-height:92px;resize:vertical}
@@ -1208,14 +1210,14 @@ body.host-info-open #hostInfo{display:block}
 </section>
 <section class="bscc-page" data-cc-page="advertisers">
 <div class="bscc-heading"><div><h1>Advertisers</h1><p>Every paying account, subscription tier, campaign, billing state, and contact record.</p></div><button class="bscc-action" id="bsccAddAdvertiser" type="button">+ Add Advertiser</button></div>
-<div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Location(s)</th><th>Creative</th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="6">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
+<div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Location(s)</th><th>Creative</th><th></th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="7">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
 <div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
   <h3>Add an advertiser</h3>
   <p class="desc">Business name, monthly amount, and location are required. Email and the QR website are optional. A blank email still records the advertiser. A blank website still creates a tracking link, counts scans, and can be filled in later. This does not start a Stripe checkout.</p>
   <div class="bscc-formgrid">
     <div class="bscc-field"><label for="bsccAdvEmail">Account email (optional)</label><input id="bsccAdvEmail" type="email" autocomplete="off" placeholder="name@business.com"/></div>
     <div class="bscc-field"><label for="bsccAdvBusiness">Business name</label><input id="bsccAdvBusiness" placeholder="Business name"/></div>
-    <div class="bscc-field"><label for="bsccAdvMonthly">Monthly amount they pay</label><input id="bsccAdvMonthly" type="number" min="1" step="0.01" inputmode="decimal" placeholder="200"/></div>
+    <div class="bscc-field wide"><label for="bsccAdvMonthly">Monthly amount they pay</label><input id="bsccAdvMonthly" type="text" inputmode="decimal" autocomplete="off" placeholder="1100"/></div>
     <div class="bscc-field wide"><label for="bsccAdvUrl">Link the QR should open (optional)</label><input id="bsccAdvUrl" type="url" placeholder="https://"/></div>
     <div class="bscc-field"><label for="bsccAdvLocation">Location</label><select id="bsccAdvLocation"></select></div>
   </div>
@@ -2735,10 +2737,14 @@ async function ownerApi(path, options={}){
 function esc(value){ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function dateLabel(value){ if(!value) return '—'; const d=new Date(value); return Number.isNaN(d.getTime())?'—':d.toLocaleDateString(); }
 
+function advertiserMoney(cents){
+  const n=Number(cents)||0;
+  return n>0?n/100:0;
+}
 async function loadOwnerAdvertisers(){
   if(!['owner','admin'].includes(currentRole)) return;
   const body=document.getElementById('bsccAdvertisersBody');
-  if(body) body.innerHTML='<tr><td colspan="6">Loading live subscribers…</td></tr>';
+  if(body) body.innerHTML='<tr><td colspan="7">Loading live subscribers…</td></tr>';
   try{
     const data=await ownerApi('/api/analytics?scope=advertisers');
     if(!body) return;
@@ -2748,10 +2754,14 @@ async function loadOwnerAdvertisers(){
       const business=`<strong>${esc(a.business_name||'—')}</strong>${a.business_type?`<br><span style="color:#7892bd">${esc(a.business_type)}</span>`:''}`;
       const locations=(a.locations||[]).length ? (a.locations||[]).map(esc).join(', ') : '—';
       const creative=a.creative_choice==='own_ad'?'Uploaded own ad':a.creative_choice==='beseen_create'?'BeSeen creating ad':'—';
-      return `<tr><td>${subscriber}</td><td>${business}</td><td>${esc(String(a.plan||'none').toUpperCase())}</td><td>${esc(a.billing_status||'inactive')}</td><td>${locations}</td><td>${esc(creative)}</td></tr>`;
-    }).join('') || '<tr><td colspan="6">No paying subscribers yet.</td></tr>';
+      const monthly=advertiserMoney(a.monthly_cents);
+      const billing=monthly?`${monthly.toLocaleString('en-US',{style:'currency',currency:'USD'})}/mo`:`<span style="color:#ffadbb">Not in revenue</span>`;
+      const name=a.business_name||a.subscriber_name||'this advertiser';
+      const remove=a.manual?`<button class="bscc-secondary" type="button" data-delete-advertiser="${esc(a.id)}" data-name="${esc(name)}">Delete</button>`:'';
+      return `<tr><td>${subscriber}</td><td>${business}</td><td>${esc(String(a.plan||'none').toUpperCase())}</td><td>${billing}</td><td>${locations}</td><td>${esc(creative)}</td><td>${remove}</td></tr>`;
+    }).join('') || '<tr><td colspan="7">No paying subscribers yet.</td></tr>';
   }catch(err){
-    if(body) body.innerHTML='<tr><td colspan="6">Could not load subscribers.</td></tr>';
+    if(body) body.innerHTML='<tr><td colspan="7">Could not load subscribers.</td></tr>';
     console.error(err);
   }
 }
@@ -2772,25 +2782,54 @@ document.getElementById('bsccAddAdvertiser')?.addEventListener('click',async()=>
     select.innerHTML=rows.length?rows.map(loc=>`<option value="${esc(loc.slug)}">${esc(loc.name||loc.slug)}</option>`).join(''):'<option value="">Add a location first</option>';
   }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
 });
+let advertiserSaveInFlight=false;
 document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=>{
+  if(advertiserSaveInFlight) return;
   const btn=document.getElementById('bsccSaveAdvertiser');
   const email=document.getElementById('bsccAdvEmail')?.value.trim();
   const businessName=document.getElementById('bsccAdvBusiness')?.value.trim();
   const destinationUrl=document.getElementById('bsccAdvUrl')?.value.trim();
   const locationSlug=document.getElementById('bsccAdvLocation')?.value;
   const monthlyAmount=document.getElementById('bsccAdvMonthly')?.value.trim();
+  const amount=Number(String(monthlyAmount||'').replace(/[$,\s]/g,''));
+  if(!businessName){ cmsMessage('bsccAddAdvertiserMessage','Enter the business name.',true); return; }
+  if(!locationSlug){ cmsMessage('bsccAddAdvertiserMessage','Choose a location.',true); return; }
+  if(!(amount>=1)){ cmsMessage('bsccAddAdvertiserMessage','Enter the monthly amount they pay, like 1100.',true); return; }
+  advertiserSaveInFlight=true;
   if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   cmsMessage('bsccAddAdvertiserMessage','');
   try{
     const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlug,monthlyAmount})});
     const dollars=Number(data.monthlyAmountCents||0)/100;
     const price=Number.isFinite(dollars)&&dollars>0?dollars.toLocaleString('en-US',{style:'currency',currency:'USD'}):'';
-    const revenue=data.revenueRecorded&&price?` ${price}/month is now included in monthly revenue.`:' This location is already billed in Stripe, so that payment is already in monthly revenue.';
-    cmsMessage('bsccAddAdvertiserMessage',`Advertiser added.${revenue} Tracking link: ${data.trackingUrl}${data.destinationSet?'':' Destination link was left blank, so scans are counted until you add a website.'}`);
+    if(data.revenueRecorded&&price){
+      cmsMessage('bsccAddAdvertiserMessage',`Advertiser added. ${price}/month is now included in monthly revenue. Tracking link: ${data.trackingUrl}${data.destinationSet?'':' Destination link was left blank, so scans are counted until you add a website.'}`);
+      ['bsccAdvEmail','bsccAdvBusiness','bsccAdvUrl','bsccAdvMonthly'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    }else{
+      cmsMessage('bsccAddAdvertiserMessage',data.revenueError||'The advertiser is saved, but the monthly amount was not added to revenue. Save this same business again to retry the price.',true);
+    }
     await loadOwnerAdvertisers();
+    if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
     if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
   }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
-  finally{ if(btn){ btn.disabled=false; btn.textContent='Save advertiser'; } }
+  finally{ advertiserSaveInFlight=false; if(btn){ btn.disabled=false; btn.textContent='Save advertiser'; } }
+});
+document.getElementById('bsccAdvertisersBody')?.addEventListener('click',async(e)=>{
+  const btn=e.target.closest('[data-delete-advertiser]');
+  if(!btn) return;
+  const name=btn.dataset.name||'this advertiser';
+  if(!confirm(`Remove ${name}?\n\nThey leave the advertiser list, and their monthly amount comes out of revenue.`)) return;
+  btn.disabled=true;
+  try{
+    await ownerApi('/api/admin-accounts',{method:'DELETE',body:JSON.stringify({userId:btn.dataset.deleteAdvertiser})});
+    cmsMessage('bsccAddAdvertiserMessage',`${name} was removed.`);
+    await loadOwnerAdvertisers();
+    if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
+    if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
+  }catch(err){
+    cmsMessage('bsccAddAdvertiserMessage',err.message,true);
+    btn.disabled=false;
+  }
 });
 
 async function loadOwnerAccounts(){

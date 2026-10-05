@@ -1518,7 +1518,7 @@ export async function POST(request) {
   const businessName = String(body.businessName || '').trim().slice(0, 160);
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
   const locationSlug = cleanSlug(body.locationSlug);
-  const monthlyCents = Math.round(Number(body.monthlyAmount) * 100);
+  const monthlyCents = Math.round(Number(String(body.monthlyAmount ?? '').replace(/[$,\s]/g, '')) * 100);
   let destination = null;
 
   if (destinationUrl) {
@@ -1558,8 +1558,23 @@ export async function POST(request) {
     profile = lookup.data;
     profileError = lookup.error;
   } else {
-    profile = await createManualAdvertiser(supabase, businessName);
-    if (!profile) profileError = { message: 'manual advertiser was not created' };
+    const namePattern = businessName.replace(/[%_\\]/g, '\\$&');
+    const existingManual = await supabase
+      .from('profiles')
+      .select('id,email,full_name')
+      .ilike('full_name', namePattern)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    const reusable = (existingManual.data || []).find(row => {
+      const rowEmail = String(row.email || '').toLowerCase();
+      return !rowEmail || rowEmail.endsWith('@advertisers.beseen.invalid');
+    });
+    if (existingManual.error) profileError = existingManual.error;
+    else if (reusable) profile = reusable;
+    else {
+      profile = await createManualAdvertiser(supabase, businessName);
+      if (!profile) profileError = { message: 'manual advertiser was not created' };
+    }
   }
 
   if (profileError) {
@@ -1633,8 +1648,9 @@ export async function POST(request) {
     .maybeSingle();
 
   let revenueRecorded = false;
+  let revenueError = '';
   if (!billingRow?.stripe_subscription_id) {
-    const { error: billingError } = await supabase.from('billing_overrides').upsert({
+    const billingValues = {
       user_id: profile.id,
       location_id: location.id,
       location_slug: location.slug,
@@ -1646,11 +1662,19 @@ export async function POST(request) {
       migration_status: 'recorded',
       owner_note: `Manual advertiser: ${businessName}`.slice(0, 500),
       updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,location_slug' });
-    if (billingError) {
-      return json({ error: 'The advertiser was saved, but the monthly amount could not be added to revenue.' }, 500);
+    };
+    let billingWrite = billingRow?.id
+      ? await supabase.from('billing_overrides').update(billingValues).eq('id', billingRow.id)
+      : await supabase.from('billing_overrides').insert(billingValues);
+    if (billingWrite.error?.code === '23505') {
+      billingWrite = await supabase.from('billing_overrides').update(billingValues).eq('user_id', profile.id).eq('location_slug', location.slug);
     }
-    revenueRecorded = true;
+    if (billingWrite.error) {
+      console.error('manual advertiser revenue', billingWrite.error);
+      revenueError = 'The advertiser is saved, but the monthly amount was not added to revenue. Save this same business again to retry the price.';
+    } else {
+      revenueRecorded = true;
+    }
   }
 
   const origin = new URL(request.url).origin;
@@ -1661,6 +1685,41 @@ export async function POST(request) {
     locationName: location.name,
     monthlyAmountCents: monthlyCents,
     destinationSet: Boolean(landingUrl),
-    revenueRecorded
+    revenueRecorded,
+    revenueError
   }, existing?.id ? 200 : 201);
+}
+
+export async function DELETE(request) {
+  const supabase = db();
+  if (!supabase) return json({ error: 'Supabase server access is not configured.' }, 503);
+  const auth = await requireOwner(request, supabase);
+  if (auth.error) return auth.error;
+
+  const body = await request.json().catch(() => ({}));
+  const userId = String(body.userId || '').trim();
+  if (!userId) return json({ error: 'Choose an advertiser to remove.' }, 400);
+  if (userId === auth.user.id) return json({ error: 'You cannot remove your own owner account.' }, 400);
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id,email,full_name,role,stripe_subscription_id')
+    .eq('id', userId)
+    .maybeSingle();
+  if (profileError || !profile) return json({ error: 'That advertiser was not found.' }, 404);
+  if (profile.role === 'owner' || profile.role === 'admin') {
+    return json({ error: 'Staff accounts cannot be removed from the advertiser list.' }, 400);
+  }
+  if (profile.stripe_subscription_id) {
+    return json({ error: 'This advertiser has a Stripe subscription. Cancel that billing before removing them.' }, 400);
+  }
+  const email = String(profile.email || '').toLowerCase();
+  const manual = !email || email.endsWith('@advertisers.beseen.invalid');
+  if (!manual) {
+    return json({ error: 'Only advertisers added from this screen, without a BeSeen login, can be removed here.' }, 400);
+  }
+
+  const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+  if (deleteError) return json({ error: 'Could not remove that advertiser.' }, 500);
+  return json({ ok: true });
 }

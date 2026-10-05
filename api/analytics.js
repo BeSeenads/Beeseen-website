@@ -264,19 +264,41 @@ async function staffAnalytics(role,supabase){
     }
   }
 
-  const [{data:manualBilling},{data:liveCampaignRows}] = await Promise.all([
+  const [{data:manualBilling},{data:liveCampaignRows},{data:stripeLocations},{data:allLocations}] = await Promise.all([
     supabase.from('billing_overrides')
       .select('custom_price_cents,user_id,location_id,owner_note')
       .eq('custom_price_active',true)
       .is('stripe_subscription_id',null)
       .like('owner_note','Manual advertiser:%'),
-    supabase.from('campaigns').select('advertiser_id,location_id').eq('status','live')
+    supabase.from('campaigns').select('advertiser_id,location_id').eq('status','live'),
+    supabase.from('subscription_locations')
+      .select('user_id,location_id,billed_price_cents,status')
+      .in('status',['active','trialing','past_due']),
+    supabase.from('locations').select('id,name').order('name')
   ]);
   const liveCampaignKeys=new Set((liveCampaignRows||[]).map(row=>`${row.advertiser_id}:${row.location_id}`));
+  const revenueByLocation=new Map();
+  const addLocationRevenue=(locationId,userId,cents)=>{
+    const amount=Number(cents)||0;
+    if(!locationId||amount<=0) return;
+    const current=revenueByLocation.get(locationId)||{cents:0,users:new Set()};
+    current.cents+=amount;
+    if(userId) current.users.add(userId);
+    revenueByLocation.set(locationId,current);
+  };
+  for(const row of (stripeLocations||[])){
+    addLocationRevenue(row.location_id,row.user_id,row.billed_price_cents);
+  }
   for(const row of (manualBilling||[])){
     if(!liveCampaignKeys.has(`${row.user_id}:${row.location_id}`)) continue;
-    mrrCents += Number(row.custom_price_cents)||0;
+    const amount=Number(row.custom_price_cents)||0;
+    mrrCents += amount;
+    addLocationRevenue(row.location_id,row.user_id,amount);
   }
+  const locationRevenue=(allLocations||[]).map(loc=>{
+    const row=revenueByLocation.get(loc.id)||{cents:0,users:new Set()};
+    return {name:loc.name||'Location',monthly_cents:row.cents,advertisers:row.users.size};
+  }).sort((a,b)=>b.monthly_cents-a.monthly_cents||String(a.name).localeCompare(String(b.name)));
 
   let guestContinues=0;
   const {count:guestCount,error:guestError}=await supabase
@@ -296,7 +318,7 @@ async function staffAnalytics(role,supabase){
     attributed_leads:formSubmits||0,
     live_locations:liveLocations||0,
     future_locations:futureLocations||0
-  }});
+  },location_revenue:locationRevenue});
 }
 
 export async function POST(request){

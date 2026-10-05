@@ -1193,6 +1193,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-stat"><div class="lab">Tracked QR scans</div><strong id="bsccQrScans">—</strong><small class="bscc-up">Recorded campaign events only</small></div>
 <div class="bscc-stat"><div class="lab">Continued as guest</div><strong id="bsccGuestContinues">—</strong><small>Each browser counted once</small></div>
 </div>
+<div class="bscc-card" style="margin-top:16px"><h3>Revenue by location</h3><p class="desc">Monthly amount recorded for each location. The highest earning locations are listed first.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Advertisers</th><th>Monthly revenue</th></tr></thead><tbody id="bsccLocationRevenueBody"><tr><td colspan="3">Location revenue will appear here after the overview loads.</td></tr></tbody></table></div></div>
 <div class="bscc-grid">
 <div class="bscc-card"><h3>What needs your attention</h3><p class="desc">Only real alerts will appear here after the related workflows are connected.</p><div class="bscc-minirows">
 <div class="bscc-minirow"><div><strong>No live alerts yet</strong><span>Campaign approvals, host leads, billing issues, and device alerts will populate from real data.</span></div><span class="bscc-badge green">Clear</span></div>
@@ -3051,6 +3052,14 @@ async function loadOwnerMetrics(){
     setText('bsccCampaignLiveCount',`${m.live_campaigns??0} campaigns`);
     setText('bsccAnalyticsQr',m.qr_scans??0); setText('bsccAnalyticsVisits',m.landing_visits??0);
     setText('bsccAnalyticsPhone',m.phone_clicks??0); setText('bsccAnalyticsLeads',m.attributed_leads??0);
+    const revenueBody=document.getElementById('bsccLocationRevenueBody');
+    const revenueRows=data.location_revenue||[];
+    const revenueMoney=cents=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((Number(cents)||0)/100);
+    if(revenueBody){
+      const total=revenueRows.reduce((sum,row)=>sum+(Number(row.monthly_cents)||0),0);
+      const body=revenueRows.map(row=>`<tr><td><strong>${esc(row.name||'Location')}</strong></td><td>${Number(row.advertisers)||0}</td><td>${revenueMoney(row.monthly_cents)}</td></tr>`).join('');
+      revenueBody.innerHTML=body?`${body}<tr><td><strong>Total</strong></td><td></td><td><strong>${revenueMoney(total)}</strong></td></tr>`:'<tr><td colspan="3">No locations yet.</td></tr>';
+    }
   }catch(err){ console.warn('Owner metrics unavailable',err); }
 }
 

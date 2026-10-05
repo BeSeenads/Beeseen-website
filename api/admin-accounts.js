@@ -1658,8 +1658,8 @@ export async function POST(request) {
       standard_price_cents: monthlyCents,
       custom_price_cents: monthlyCents,
       custom_price_active: true,
-      billing_source: 'manual',
-      migration_status: 'recorded',
+      billing_source: 'cash',
+      migration_status: 'none',
       owner_note: `Manual advertiser: ${businessName}`.slice(0, 500),
       updated_at: new Date().toISOString()
     };

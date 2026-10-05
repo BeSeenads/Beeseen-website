@@ -137,7 +137,7 @@ async function staffAdvertisers(role,supabase){
       .select('user_id,location_slug,plan,status')
       .in('user_id',ids),
     supabase.from('billing_overrides')
-      .select('user_id,custom_price_cents,custom_price_active,billing_source,stripe_subscription_id')
+      .select('user_id,custom_price_cents,custom_price_active,billing_source,stripe_subscription_id,owner_note')
       .in('user_id',ids)
   ]);
   if(intakeError) return json({error:'Could not load subscriber business information.'},500);
@@ -145,7 +145,8 @@ async function staffAdvertisers(role,supabase){
   if(billingListError) return json({error:'Could not load advertiser payments.'},500);
   const monthlyByUser=new Map();
   for(const row of (manualBilling||[])){
-    if(row.stripe_subscription_id || row.billing_source!=='manual' || !row.custom_price_active) continue;
+    const manualNote=String(row.owner_note||'').startsWith('Manual advertiser:');
+    if(row.stripe_subscription_id || !row.custom_price_active || !manualNote) continue;
     monthlyByUser.set(row.user_id,(monthlyByUser.get(row.user_id)||0)+ (Number(row.custom_price_cents)||0));
   }
 
@@ -241,10 +242,10 @@ async function staffAnalytics(role,supabase){
 
   const [{data:manualBilling},{data:liveCampaignRows}] = await Promise.all([
     supabase.from('billing_overrides')
-      .select('custom_price_cents,user_id,location_id')
-      .eq('billing_source','manual')
+      .select('custom_price_cents,user_id,location_id,owner_note')
       .eq('custom_price_active',true)
-      .is('stripe_subscription_id',null),
+      .is('stripe_subscription_id',null)
+      .like('owner_note','Manual advertiser:%'),
     supabase.from('campaigns').select('advertiser_id,location_id').eq('status','live')
   ]);
   const liveCampaignKeys=new Set((liveCampaignRows||[]).map(row=>`${row.advertiser_id}:${row.location_id}`));

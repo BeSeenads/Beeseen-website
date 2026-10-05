@@ -264,7 +264,7 @@ async function staffAnalytics(role,supabase){
     }
   }
 
-  const [{data:manualBilling},{data:liveCampaignRows},{data:stripeLocations},{data:allLocations}] = await Promise.all([
+  const [{data:manualBilling},{data:liveCampaignRows},{data:stripeLocations},{data:allLocations},{data:splitEvents}] = await Promise.all([
     supabase.from('billing_overrides')
       .select('custom_price_cents,user_id,location_id,owner_note')
       .eq('custom_price_active',true)
@@ -274,8 +274,20 @@ async function staffAnalytics(role,supabase){
     supabase.from('subscription_locations')
       .select('user_id,location_id,billed_price_cents,status')
       .in('status',['active','trialing','past_due']),
-    supabase.from('locations').select('id,name').order('name')
+    supabase.from('locations').select('id,name').order('name'),
+    supabase.from('billing_events')
+      .select('details,created_at')
+      .eq('event_type','location_owner_split')
+      .order('created_at',{ascending:false})
+      .limit(1000)
   ]);
+  const splitByLocation=new Map();
+  for(const event of (splitEvents||[])){
+    const id=String(event.details?.location_id||'');
+    if(!id||splitByLocation.has(id)) continue;
+    const percent=Number(event.details?.split_percent);
+    if(Number.isFinite(percent)&&percent>=0&&percent<=100) splitByLocation.set(id,Math.round(percent*100)/100);
+  }
   const liveCampaignKeys=new Set((liveCampaignRows||[]).map(row=>`${row.advertiser_id}:${row.location_id}`));
   const revenueByLocation=new Map();
   const addLocationRevenue=(locationId,userId,cents)=>{
@@ -297,7 +309,18 @@ async function staffAnalytics(role,supabase){
   }
   const locationRevenue=(allLocations||[]).map(loc=>{
     const row=revenueByLocation.get(loc.id)||{cents:0,users:new Set()};
-    return {name:loc.name||'Location',monthly_cents:row.cents,advertisers:row.users.size};
+    const monthly=row.cents;
+    const splitPercent=splitByLocation.get(loc.id)||0;
+    const splitCents=Math.round(monthly*splitPercent/100);
+    return {
+      id:loc.id,
+      name:loc.name||'Location',
+      monthly_cents:monthly,
+      advertisers:row.users.size,
+      split_percent:splitPercent,
+      split_cents:splitCents,
+      yours_cents:monthly-splitCents
+    };
   }).sort((a,b)=>b.monthly_cents-a.monthly_cents||String(a.name).localeCompare(String(b.name)));
 
   let guestContinues=0;
@@ -325,6 +348,26 @@ export async function POST(request){
   const supabase=db();
   if(!supabase) return json({error:'Analytics are not configured.'},503);
   const body=await request.json().catch(()=>({}));
+  if(body.event==='location_split'){
+    const user=await getUser(request,supabase);
+    if(!user) return json({error:'Sign in required.'},401);
+    const access=await getProfileAccess(user.id,supabase);
+    if(!['owner','admin'].includes(access.role)) return json({error:'BeSeen staff access required.'},403);
+    const locationId=String(body.locationId||'').trim();
+    const raw=Number(String(body.splitPercent??'').replace(/[%\s,]/g,''));
+    if(!locationId) return json({error:'Choose a location.'},400);
+    if(!Number.isFinite(raw)||raw<0||raw>100) return json({error:'Enter an owner split from 0 to 100 percent.'},400);
+    const splitPercent=Math.round(raw*100)/100;
+    const {data:location,error:locationError}=await supabase.from('locations').select('id').eq('id',locationId).maybeSingle();
+    if(locationError||!location) return json({error:'That location was not found.'},404);
+    const {error}=await supabase.from('billing_events').insert({
+      user_id:user.id,
+      event_type:'location_owner_split',
+      details:{location_id:locationId,split_percent:splitPercent}
+    });
+    if(error) return json({error:'Could not save that split.'},500);
+    return json({ok:true,split_percent:splitPercent});
+  }
   if(body.event!=='guest_continue') return json({error:'Unknown event.'},400);
   const {error}=await supabase.from('billing_events').insert({
     event_type:'guest_continue',

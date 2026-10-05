@@ -144,10 +144,14 @@ async function staffAdvertisers(role,supabase){
   if(subsError) return json({error:'Could not load subscriber locations.'},500);
   if(billingListError) return json({error:'Could not load advertiser payments.'},500);
   const monthlyByUser=new Map();
+  const startedByUser=new Map();
   for(const row of (manualBilling||[])){
     const manualNote=String(row.owner_note||'').startsWith('Manual advertiser:');
     if(row.stripe_subscription_id || !row.custom_price_active || !manualNote) continue;
     monthlyByUser.set(row.user_id,(monthlyByUser.get(row.user_id)||0)+ (Number(row.custom_price_cents)||0));
+    const started=String(row.owner_note||'').match(/\|\s*started:(\d{4}-\d{2}-\d{2})/)?.[1];
+    const previous=startedByUser.get(row.user_id);
+    if(started && (!previous || started<previous)) startedByUser.set(row.user_id,started);
   }
 
   const latestIntake=new Map();
@@ -208,6 +212,7 @@ async function staffAdvertisers(role,supabase){
       plan:p.subscription||userSubs[0]?.plan||'none',
       billing_status:p.subscription_status||'inactive',
       monthly_cents:monthlyByUser.get(p.id)||0,
+      payment_started:startedByUser.get(p.id)||null,
       manual:!p.email || String(p.email).toLowerCase().endsWith('@advertisers.beseen.invalid'),
       location_slug:(campaignSlugs.get(p.id)||[])[0] || userSubs[0]?.location_slug || null,
       locations:locationNames,

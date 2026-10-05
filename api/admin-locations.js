@@ -45,6 +45,9 @@ async function ensureStripePrices(existing, values) {
       const price=await stripe.prices.create({product:productId,unit_amount:amount,currency:'usd',recurring:{interval:'month'},nickname:`${values.name} — ${plan[0].toUpperCase()+plan.slice(1)}`,metadata:{beseen_location_slug:values.slug,beseen_plan:plan}});
       out[`stripe_price_${plan}`]=price.id;
       if(oldPrice) { try { await stripe.prices.update(oldPrice,{active:false}); } catch {} }
+    } else if(amount===0 && oldPrice) {
+      try { await stripe.prices.update(oldPrice,{active:false}); } catch {}
+      out[`stripe_price_${plan}`]=null;
     }
   }
   return out;

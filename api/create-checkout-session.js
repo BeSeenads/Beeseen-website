@@ -34,6 +34,14 @@ function isBillboardLocation(loc) {
     .includes('billboard');
 }
 
+function isOnePriceLocation(loc) {
+  if (isBillboardLocation(loc)) return true;
+  const gold = Number(loc?.gold_price_cents) || 0;
+  const premium = Number(loc?.premium_price_cents) || 0;
+  const platinum = Number(loc?.platinum_price_cents) || 0;
+  return gold > 0 && premium === 0 && platinum === 0;
+}
+
 function cleanSlug(value) {
   return String(value || '')
     .toLowerCase()
@@ -358,7 +366,7 @@ export async function POST(request) {
       await supabase
         .from('locations')
         .select(
-          `id,slug,name,status,visibility,gold_price_cents,premium_price_cents,platinum_price_cents,${priceColumn}`
+          'id,slug,name,status,visibility,gold_price_cents,premium_price_cents,platinum_price_cents,stripe_price_gold,stripe_price_premium,stripe_price_platinum'
         )
         .in(
           'slug',
@@ -565,6 +573,24 @@ export async function POST(request) {
         continue;
       }
 
+      if (isOnePriceLocation(loc)) {
+        const onePriceId = loc.stripe_price_gold || null;
+        if (!onePriceId) {
+          return json(
+            {
+              error:
+                `Stripe pricing for ${loc.name} is not configured yet.`
+            },
+            400
+          );
+        }
+        lineItems.push({
+          price: onePriceId,
+          quantity: 1
+        });
+        continue;
+      }
+
       let priceId =
         loc[priceColumn] ||
         null;
@@ -631,7 +657,7 @@ export async function POST(request) {
     const discountedLocations =
       orderedLocations.filter(
         (loc, index) =>
-          !isBillboardLocation(loc) &&
+          !isOnePriceLocation(loc) &&
           (
             existingLocationCount >
               0 ||

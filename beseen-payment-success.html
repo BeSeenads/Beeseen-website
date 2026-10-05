@@ -940,6 +940,7 @@ body.host-info-open #hostInfo{display:block}
   .bscc-formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .bscc-formgrid .wide{grid-column:1/-1}
   .bscc-field{display:grid;gap:6px}
+  .bscc-field[hidden]{display:none}
   .bscc-field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#7892c1;font-weight:950}
   .bscc-field input,.bscc-field select,.bscc-field textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.11);background:#071a3a;color:#edf3ff;border-radius:12px;padding:12px 13px;font:inherit;font-size:11px;outline:none}
   .bscc-field textarea{min-height:92px;resize:vertical}
@@ -1270,9 +1271,10 @@ body.host-info-open #hostInfo{display:block}
         <div class="bscc-field wide"><label>Full location description</label><textarea id="bsccLocDescription" placeholder="Explain where the displays are and why advertisers would want this placement."></textarea></div>
         <div class="bscc-field wide"><label>Not allowed at this location</label><textarea id="bsccLocBlocked" placeholder="One business type per line. Example: Other hookah lounges&#10;Car washes&#10;Tobacco shops"></textarea><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">This is the only list visitors see on the location page. Leave it blank to hide the section.</small></div>
         <div class="bscc-field wide"><label>Location photo</label><input id="bsccLocImageFile" type="file" accept="image/*"/><input id="bsccLocImage" type="hidden"/><div id="bsccLocPhotoPreview" hidden style="margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:#07152f;max-width:460px"><img id="bsccLocPhotoImg" alt="Current location photo" style="display:block;width:100%;height:220px;object-fit:cover"/></div><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">This is the photo visitors see. Choose a new picture to replace it, then save the location.</small></div>
-        <div class="bscc-field"><label>Gold monthly price</label><input id="bsccLocGold" type="number" min="0" step="1" value="200"/></div>
-        <div class="bscc-field"><label>Premium monthly price</label><input id="bsccLocPremium" type="number" min="0" step="1" value="250"/></div>
-        <div class="bscc-field"><label>Platinum monthly price</label><input id="bsccLocPlatinum" type="number" min="0" step="1" value="300"/></div>
+        <div class="bscc-field wide"><label>Pricing</label><select id="bsccLocPriceMode"><option value="three">Gold, Premium, and Platinum</option><option value="one">One monthly price</option></select><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">One monthly price shows a single offer on the location page.</small></div>
+        <div class="bscc-field" id="bsccLocGoldWrap"><label id="bsccLocGoldLabel">Gold monthly price</label><input id="bsccLocGold" type="number" min="0" step="1" value="200"/></div>
+        <div class="bscc-field" id="bsccLocPremiumWrap"><label>Premium monthly price</label><input id="bsccLocPremium" type="number" min="0" step="1" value="250"/></div>
+        <div class="bscc-field" id="bsccLocPlatinumWrap"><label>Platinum monthly price</label><input id="bsccLocPlatinum" type="number" min="0" step="1" value="300"/></div>
       </div>
       <div class="bscc-connected"><span>Future teasers → Platinum FOMO</span><span>Live locations → Public menu</span><span>Saved in Supabase</span><span>Stripe prices auto-created</span></div>
       <div class="bscc-form-actions"><button class="bscc-action" id="bsccSaveLocation" type="button">Save Location</button><button class="bscc-secondary" id="bsccResetLocation" type="button">Clear</button><button class="bscc-danger" id="bsccDeleteLocation" type="button" style="display:none">Delete Location</button></div>
@@ -1848,16 +1850,28 @@ body.host-info-open #hostInfo{display:block}
       if(!block) return base;
       return base+adRuleMark+String(allowed||'').trim()+adBlockMark+block;
     }
-    function isSinglePriceLocation(loc){
+    function isBillboardLocation(loc){
       return `${loc?.slug||''} ${loc?.name||''}`.toLowerCase().includes('billboard');
+    }
+    function isSinglePriceLocation(loc){
+      if(isBillboardLocation(loc)) return true;
+      const gold=Number(loc?.gold_price_cents)||0;
+      const premium=Number(loc?.premium_price_cents)||0;
+      const platinum=Number(loc?.platinum_price_cents)||0;
+      return gold>0 && premium===0 && platinum===0;
+    }
+    function singlePriceCents(loc){
+      if(isBillboardLocation(loc)) return 110000;
+      return Number(loc?.gold_price_cents)||0;
     }
     window.splitLocationCopy=splitLocationCopy;
     window.joinLocationCopy=joinLocationCopy;
+    window.isSinglePriceLocation=isSinglePriceLocation;
     function moneyFromCents(cents, fallback){
       const n=Number(cents); const dollars=Number.isFinite(n)&&n>0?Math.round(n/100):fallback; return '$'+Number(dollars).toLocaleString('en-US');
     }
     function menuPriceLabel(loc){
-      if(isSinglePriceLocation(loc)) return '$1,100/mo';
+      if(isSinglePriceLocation(loc)) return moneyFromCents(singlePriceCents(loc), isBillboardLocation(loc)?1100:0)+'/mo';
       return 'from '+moneyFromCents(loc?.gold_price_cents,200)+'/mo';
     }
     function renderAdRules(el){
@@ -1885,16 +1899,32 @@ body.host-info-open #hostInfo{display:block}
       const single=isSinglePriceLocation(loc);
       if(name) name.textContent=loc.name||'BeSeen Location';
       if(desc) desc.textContent=copy.description||loc.short_description||'A BeSeen advertising placement designed to put local brands in front of more people.';
-      if(meta){ meta.innerHTML=''; [loc.city, Number(loc.device_count)>0 ? `${loc.device_count} displays / units` : null, single?'Seen by passing traffic':null].filter(Boolean).forEach(v=>{ const span=document.createElement('span'); span.className='meta-pill'; span.textContent=v; meta.appendChild(span); }); }
+      if(meta){ meta.innerHTML=''; [loc.city, Number(loc.device_count)>0 ? `${loc.device_count} displays / units` : null, isBillboardLocation(loc)?'Seen by passing traffic':null].filter(Boolean).forEach(v=>{ const span=document.createElement('span'); span.className='meta-pill'; span.textContent=v; meta.appendChild(span); }); }
       if(img && placeholder){ if(loc.image_url){ img.src=loc.image_url; img.style.display='block'; placeholder.style.display='none'; } else { img.removeAttribute('src'); img.style.display='none'; placeholder.style.display='grid'; } }
-      if(note) note.textContent=single?'$1,100 a month puts your ad on the billboard, where passing traffic sees it.':`Package pricing below applies to advertising at ${loc.name||'this location'}.`;
+      if(note) note.textContent=isBillboardLocation(loc)?'$1,100 a month puts your ad on the billboard, where passing traffic sees it.':(single?`${moneyFromCents(singlePriceCents(loc),0)} a month covers advertising at ${loc.name||'this location'}.`:`Package pricing below applies to advertising at ${loc.name||'this location'}.`);
       const rules=document.getElementById('dynamicAdRules'); if(rules){ rules.dataset.rules=loc.description||''; renderAdRules(rules); }
       const plans=document.getElementById('dynamicLocationPlans'); if(plans) plans.classList.toggle('single', single);
       plans?.querySelectorAll('article').forEach(article=>{ article.hidden = article.id==='dynamicSinglePlan' ? !single : single; });
       const addWrap=document.getElementById('dynamicAddLocation'); if(addWrap) addWrap.hidden=single;
+      document.getElementById('dynamicLocationPanel')?.classList.toggle('single-offer', single);
+      const singlePlan=document.getElementById('dynamicSinglePlan');
+      const copyColumn=document.querySelector('#dynamicLocationPanel .location-copy');
+      if(single && copyColumn && singlePlan) copyColumn.appendChild(singlePlan);
+      else if(plans && singlePlan) plans.insertBefore(singlePlan, plans.firstElementChild);
+      if(singlePlan) singlePlan.hidden=!single;
       if(single){
-        const price=document.getElementById('dynamicSinglePrice'); if(price) price.innerHTML='$1,100 <span>/ month</span>';
-        const btn=document.getElementById('dynamicSingleCheckout'); if(btn){ btn.dataset.location=loc.slug; btn.dataset.plan='Gold'; btn.textContent='Get the billboard — $1,100/mo'; }
+        const billboard=isBillboardLocation(loc);
+        const priceLabel=moneyFromCents(singlePriceCents(loc), billboard?1100:0);
+        const tag=singlePlan?.querySelector('.plan-tag');
+        const title=singlePlan?.querySelector('h4');
+        const list=singlePlan?.querySelector('ul');
+        if(tag) tag.textContent=billboard?'Street billboard':'One price';
+        if(title) title.textContent=billboard?'Be seen by everyone passing by':(loc.name||'This location');
+        if(list) list.innerHTML=billboard
+          ? '<li>Your ad sits on a real digital billboard, facing the road</li><li>Drivers and people walking by see your business every day</li><li>One placement, on all month, for a single price</li><li>Built to stop attention before they ever walk inside</li>'
+          : '<li>One monthly price for advertising at this location</li><li>Your ad runs here for the full month</li><li>No separate Gold, Premium, or Platinum choice</li>';
+        const price=document.getElementById('dynamicSinglePrice'); if(price) price.innerHTML=`${priceLabel} <span>/ month</span>`;
+        const btn=document.getElementById('dynamicSingleCheckout'); if(btn){ btn.dataset.location=loc.slug; btn.dataset.plan='Gold'; btn.textContent=billboard?`Get the billboard — ${priceLabel}/mo`:`Subscribe — ${priceLabel}/mo`; }
         return;
       }
       const prices={Gold:['dynamicGoldPrice',loc.gold_price_cents,200],Premium:['dynamicPremiumPrice',loc.premium_price_cents,250],Platinum:['dynamicPlatinumPrice',loc.platinum_price_cents,300]};
@@ -1911,7 +1941,7 @@ body.host-info-open #hostInfo{display:block}
       if(exclusivePhoto && publicLocations.exclusive?.image_url) exclusivePhoto.src=publicLocations.exclusive.image_url;
       if(locationSelect) locationSelect.value = key;
       if(locationPageTitle) locationPageTitle.textContent = dynamic?.name || locationNames[key] || 'BeSeen Location';
-      if(locationPageSubtitle) locationPageSubtitle.textContent = isSinglePriceLocation(dynamic||{}) ? 'Your ad on the billboard. $1,100 a month.' : (dynamic?.short_description || 'Photos, display setup, and subscription options for this BeSeen advertising location.');
+      if(locationPageSubtitle) locationPageSubtitle.textContent = isSinglePriceLocation(dynamic||{}) ? (isBillboardLocation(dynamic) ? 'Your ad on the billboard. $1,100 a month.' : `${moneyFromCents(singlePriceCents(dynamic),0)} a month.`) : (dynamic?.short_description || 'Photos, display setup, and subscription options for this BeSeen advertising location.');
       renderAdRules(document.getElementById('exclusiveAdRules'));
       if(locationMenu){ locationMenu.querySelectorAll('button[data-location]').forEach(btn => btn.classList.toggle('active', btn.dataset.location === key)); }
     }
@@ -1946,7 +1976,7 @@ body.host-info-open #hostInfo{display:block}
     let multiLocationAnchor='exclusive';
 
     function multiPlanPriceCents(loc,plan){
-      if(isSinglePriceLocation(loc)) return 110000;
+      if(isSinglePriceLocation(loc)) return singlePriceCents(loc);
       const key={Gold:'gold_price_cents',Premium:'premium_price_cents',Platinum:'platinum_price_cents'}[plan] || 'gold_price_cents';
       const fallback={Gold:20000,Premium:25000,Platinum:30000}[plan] || 20000;
       return Number(loc?.[key] ?? fallback);
@@ -2810,14 +2840,14 @@ function locationModeLabel(loc={}){
 }
 function clearLocationEditor(){
   const set=(id,v='')=>{const el=document.getElementById(id); if(el) el.value=v};
-  set('bsccLocationId');set('bsccLocName');set('bsccLocCity');set('bsccLocSlug');set('bsccLocDevices','0');set('bsccLocMode','teaser');set('bsccLocStatus','future');set('bsccLocVisibility','platinum');set('bsccLocShort');set('bsccLocDescription');set('bsccLocBlocked');set('bsccLocImage'); const imageFile=document.getElementById('bsccLocImageFile'); if(imageFile) imageFile.value=''; showLocationPhoto(''); set('bsccLocGold','200');set('bsccLocPremium','250');set('bsccLocPlatinum','300');
-  applyLocationMode('teaser');
+  set('bsccLocationId');set('bsccLocName');set('bsccLocCity');set('bsccLocSlug');set('bsccLocDevices','0');set('bsccLocMode','teaser');set('bsccLocStatus','future');set('bsccLocVisibility','platinum');set('bsccLocShort');set('bsccLocDescription');set('bsccLocBlocked');set('bsccLocImage'); const imageFile=document.getElementById('bsccLocImageFile'); if(imageFile) imageFile.value=''; showLocationPhoto(''); set('bsccLocPriceMode','three'); set('bsccLocGold','200');set('bsccLocPremium','250');set('bsccLocPlatinum','300');
+  applyLocationMode('teaser'); applyPriceMode('three');
   const title=document.getElementById('bsccLocationEditorTitle'); if(title) title.textContent='Add a location';
   const del=document.getElementById('bsccDeleteLocation'); if(del) del.style.display='none'; cmsMessage('bsccLocationEditorMessage','');
 }
 function editOwnerLocation(id){
   const loc=ownerLocations.find(x=>x.id===id); if(!loc) return; const set=(eid,v='')=>{const el=document.getElementById(eid); if(el) el.value=v??''};
-  set('bsccLocationId',loc.id);set('bsccLocName',loc.name);set('bsccLocCity',loc.city);set('bsccLocSlug',loc.slug);set('bsccLocDevices',loc.device_count||0);set('bsccLocStatus',loc.status||'future');set('bsccLocVisibility',loc.visibility||'private');set('bsccLocMode',locationModeFromRecord(loc));set('bsccLocShort',loc.short_description);const locCopy=window.splitLocationCopy?window.splitLocationCopy(loc.description):{description:loc.description||'',blocked:''};set('bsccLocDescription',locCopy.description);set('bsccLocBlocked',locCopy.blocked);set('bsccLocImage',loc.image_url); showLocationPhoto(loc.image_url||'');set('bsccLocGold',Math.round((loc.gold_price_cents||0)/100));set('bsccLocPremium',Math.round((loc.premium_price_cents||0)/100));set('bsccLocPlatinum',Math.round((loc.platinum_price_cents||0)/100));
+  set('bsccLocationId',loc.id);set('bsccLocName',loc.name);set('bsccLocCity',loc.city);set('bsccLocSlug',loc.slug);set('bsccLocDevices',loc.device_count||0);set('bsccLocStatus',loc.status||'future');set('bsccLocVisibility',loc.visibility||'private');set('bsccLocMode',locationModeFromRecord(loc));set('bsccLocShort',loc.short_description);const locCopy=window.splitLocationCopy?window.splitLocationCopy(loc.description):{description:loc.description||'',blocked:''};set('bsccLocDescription',locCopy.description);set('bsccLocBlocked',locCopy.blocked);set('bsccLocImage',loc.image_url); showLocationPhoto(loc.image_url||''); const onePrice=window.isSinglePriceLocation?window.isSinglePriceLocation(loc):((Number(loc.premium_price_cents)||0)===0&&(Number(loc.platinum_price_cents)||0)===0&&(Number(loc.gold_price_cents)||0)>0); set('bsccLocPriceMode',onePrice?'one':'three'); applyPriceMode(onePrice?'one':'three'); const shownCents=onePrice&&String(`${loc.slug||''} ${loc.name||''}`).toLowerCase().includes('billboard')?110000:(loc.gold_price_cents||0); set('bsccLocGold',Math.round(shownCents/100)); set('bsccLocPremium',onePrice?'':Math.round((loc.premium_price_cents||0)/100)); set('bsccLocPlatinum',onePrice?'':Math.round((loc.platinum_price_cents||0)/100));
   const title=document.getElementById('bsccLocationEditorTitle'); if(title) title.textContent='Edit '+(loc.name||'location');
   const del=document.getElementById('bsccDeleteLocation'); if(del) del.style.display=loc.slug==='exclusive'?'none':'inline-block';
   document.getElementById('bsccLocationEditor')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -2835,10 +2865,22 @@ document.getElementById('bsccNewLocation')?.addEventListener('click',()=>{ clear
 document.getElementById('bsccResetLocation')?.addEventListener('click',clearLocationEditor);
 document.getElementById('bsccLocName')?.addEventListener('input',e=>{ const slug=document.getElementById('bsccLocSlug'); if(slug && !document.getElementById('bsccLocationId')?.value) slug.value=slugify(e.target.value); });
 document.getElementById('bsccLocMode')?.addEventListener('change',e=>applyLocationMode(e.target.value));
+function applyPriceMode(mode){
+  const one=mode==='one';
+  const premium=document.getElementById('bsccLocPremiumWrap');
+  const platinum=document.getElementById('bsccLocPlatinumWrap');
+  const label=document.getElementById('bsccLocGoldLabel');
+  if(premium) premium.hidden=one;
+  if(platinum) platinum.hidden=one;
+  if(label) label.textContent=one?'Monthly price':'Gold monthly price';
+}
+document.getElementById('bsccLocPriceMode')?.addEventListener('change',e=>applyPriceMode(e.target.value));
+applyPriceMode(document.getElementById('bsccLocPriceMode')?.value||'three');
 function readLocationForm(){
   const val=id=>document.getElementById(id)?.value?.trim()||''; const dollars=id=>Math.max(0,Math.round((Number(document.getElementById(id)?.value)||0)*100));
   applyLocationMode(val('bsccLocMode')||'teaser');
-  return {id:val('bsccLocationId'),name:val('bsccLocName'),city:val('bsccLocCity'),slug:slugify(val('bsccLocSlug')||val('bsccLocName')),device_count:Math.max(0,Number(document.getElementById('bsccLocDevices')?.value)||0),status:val('bsccLocStatus')||'future',visibility:val('bsccLocVisibility')||'private',short_description:val('bsccLocShort'),description:window.joinLocationCopy?window.joinLocationCopy(val('bsccLocDescription'),'',val('bsccLocBlocked')):val('bsccLocDescription'),image_url:val('bsccLocImage'),gold_price_cents:dollars('bsccLocGold'),premium_price_cents:dollars('bsccLocPremium'),platinum_price_cents:dollars('bsccLocPlatinum')};
+  const onePrice=val('bsccLocPriceMode')==='one';
+  return {id:val('bsccLocationId'),name:val('bsccLocName'),city:val('bsccLocCity'),slug:slugify(val('bsccLocSlug')||val('bsccLocName')),device_count:Math.max(0,Number(document.getElementById('bsccLocDevices')?.value)||0),status:val('bsccLocStatus')||'future',visibility:val('bsccLocVisibility')||'private',short_description:val('bsccLocShort'),description:window.joinLocationCopy?window.joinLocationCopy(val('bsccLocDescription'),'',val('bsccLocBlocked')):val('bsccLocDescription'),image_url:val('bsccLocImage'),price_mode:onePrice?'one':'three',gold_price_cents:dollars('bsccLocGold'),premium_price_cents:onePrice?0:dollars('bsccLocPremium'),platinum_price_cents:onePrice?0:dollars('bsccLocPlatinum')};
 }
 function showLocationPhoto(url){
   const wrap=document.getElementById('bsccLocPhotoPreview');
@@ -2864,7 +2906,7 @@ async function uploadLocationPhotoIfNeeded(payload){
   return payload;
 }
 document.getElementById('bsccSaveLocation')?.addEventListener('click',async()=>{
-  let payload=readLocationForm(); if(!payload.name||!payload.slug){ cmsMessage('bsccLocationEditorMessage','Name and URL slug are required.',true); return; }
+  let payload=readLocationForm(); if(!payload.name||!payload.slug){ cmsMessage('bsccLocationEditorMessage','Name and URL slug are required.',true); return; } if(payload.price_mode==='one' && !(payload.gold_price_cents>0)){ cmsMessage('bsccLocationEditorMessage','Enter the monthly price.',true); return; }
   const btn=document.getElementById('bsccSaveLocation'); btn.disabled=true; btn.textContent='Saving…'; cmsMessage('bsccLocationEditorMessage','');
   try{ payload=await uploadLocationPhotoIfNeeded(payload); const method=payload.id?'PATCH':'POST'; await ownerApi('/api/admin-locations',{method,body:JSON.stringify(payload)}); const where=payload.status==='live'&&payload.visibility==='public'?'Live public location — now eligible for the public Locations menu and checkout.':payload.status==='future'&&payload.visibility==='platinum'?'Future teaser — now eligible for Platinum Private Placements / FOMO.':'Saved as a hidden Owner record.'; cmsMessage('bsccLocationEditorMessage','Saved. '+where); await loadOwnerLocations(); if(!payload.id) clearLocationEditor(); }
   catch(err){ cmsMessage('bsccLocationEditorMessage',err.message,true); }

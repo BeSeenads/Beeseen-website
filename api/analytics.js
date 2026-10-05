@@ -128,17 +128,26 @@ async function staffAdvertisers(role,supabase){
   const ids=(profiles||[]).map(p=>p.id);
   if(!ids.length) return json({advertisers:[]});
 
-  const [{data:intakes,error:intakeError},{data:subs,error:subsError}]=await Promise.all([
+  const [{data:intakes,error:intakeError},{data:subs,error:subsError},{data:manualBilling,error:billingListError}]=await Promise.all([
     supabase.from('subscription_intakes')
       .select('user_id,business_name,business_type,creative_choice,campaign_details,status,location_slugs,created_at')
       .in('user_id',ids)
       .order('created_at',{ascending:false}),
     supabase.from('subscription_locations')
       .select('user_id,location_slug,plan,status')
+      .in('user_id',ids),
+    supabase.from('billing_overrides')
+      .select('user_id,custom_price_cents,custom_price_active,billing_source,stripe_subscription_id')
       .in('user_id',ids)
   ]);
   if(intakeError) return json({error:'Could not load subscriber business information.'},500);
   if(subsError) return json({error:'Could not load subscriber locations.'},500);
+  if(billingListError) return json({error:'Could not load advertiser payments.'},500);
+  const monthlyByUser=new Map();
+  for(const row of (manualBilling||[])){
+    if(row.stripe_subscription_id || row.billing_source!=='manual' || !row.custom_price_active) continue;
+    monthlyByUser.set(row.user_id,(monthlyByUser.get(row.user_id)||0)+ (Number(row.custom_price_cents)||0));
+  }
 
   const latestIntake=new Map();
   for(const row of (intakes||[])){ if(!latestIntake.has(row.user_id)) latestIntake.set(row.user_id,row); }
@@ -189,6 +198,8 @@ async function staffAdvertisers(role,supabase){
       campaign_details:intake?.campaign_details||null,
       plan:p.subscription||userSubs[0]?.plan||'none',
       billing_status:p.subscription_status||'inactive',
+      monthly_cents:monthlyByUser.get(p.id)||0,
+      manual:!p.email || String(p.email).toLowerCase().endsWith('@advertisers.beseen.invalid'),
       locations:locationNames,
       subscribed_at:intake?.created_at||p.created_at
     };

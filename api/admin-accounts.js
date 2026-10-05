@@ -1517,7 +1517,11 @@ export async function POST(request) {
   const email = String(body.email || '').trim().toLowerCase();
   const businessName = String(body.businessName || '').trim().slice(0, 160);
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);
-  const locationSlug = cleanSlug(body.locationSlug);
+  const locationSlugs = [...new Set(
+    (Array.isArray(body.locationSlugs) ? body.locationSlugs : [body.locationSlug])
+      .map(cleanSlug)
+      .filter(Boolean)
+  )].slice(0, 20);
   const monthlyCents = Math.round(Number(String(body.monthlyAmount ?? '').replace(/[$,\s]/g, '')) * 100);
   const paymentStartedRaw = String(body.paymentStarted || '').trim();
   const paymentStarted = /^\d{4}-\d{2}-\d{2}$/.test(paymentStartedRaw) && !Number.isNaN(new Date(`${paymentStartedRaw}T12:00:00Z`).getTime())
@@ -1542,8 +1546,8 @@ export async function POST(request) {
   if (destinationUrl && (!destination || !['http:', 'https:'].includes(destination.protocol))) {
     return json({ error: 'Enter a full destination link, starting with https://, or leave it blank.' }, 400);
   }
-  if (!locationSlug) {
-    return json({ error: 'Choose a BeSeen location.' }, 400);
+  if (!locationSlugs.length) {
+    return json({ error: 'Choose at least one BeSeen location.' }, 400);
   }
   if (!Number.isFinite(monthlyCents) || monthlyCents < 100) {
     return json({ error: 'Enter the monthly amount they pay, at least $1.' }, 400);
@@ -1593,46 +1597,60 @@ export async function POST(request) {
     }, 404);
   }
 
-  const { data: location, error: locationError } = await supabase
+  const { data: locations, error: locationError } = await supabase
     .from('locations')
     .select('id,slug,name')
-    .eq('slug', locationSlug)
-    .maybeSingle();
+    .in('slug', locationSlugs);
 
-  if (locationError || !location) {
-    return json({ error: 'That BeSeen location was not found.' }, 404);
+  if (locationError) {
+    return json({ error: 'Could not load those BeSeen locations.' }, 500);
+  }
+  const locationBySlug = new Map((locations || []).map(row => [row.slug, row]));
+  const orderedLocations = locationSlugs.map(slug => locationBySlug.get(slug)).filter(Boolean);
+  if (orderedLocations.length !== locationSlugs.length) {
+    return json({ error: 'One of the selected BeSeen locations was not found.' }, 404);
   }
 
-  const { data: existing } = await supabase
-    .from('campaigns')
-    .select('id,tracking_code,status')
-    .eq('advertiser_id', profile.id)
-    .eq('location_id', location.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const origin = new URL(request.url).origin;
+  const trackingLinks = [];
+  let createdCampaign = false;
+  for (const location of orderedLocations) {
+    const { data: existing } = await supabase
+      .from('campaigns')
+      .select('id,tracking_code,status')
+      .eq('advertiser_id', profile.id)
+      .eq('location_id', location.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  let trackingCode = existing?.tracking_code;
-
-  if (existing?.id) {
-    const { error } = await supabase.from('campaigns').update({
-      name: `${businessName} — ${location.name}`.slice(0, 180),
-      landing_url: landingUrl,
-      status: 'live',
-      updated_at: new Date().toISOString()
-    }).eq('id', existing.id);
-    if (error) return json({ error: 'Could not update the existing campaign.' }, 500);
-  } else {
-    trackingCode = `${location.slug}-${randomBytes(8).toString('hex')}`.slice(0, 80);
-    const { error } = await supabase.from('campaigns').insert({
-      advertiser_id: profile.id,
-      location_id: location.id,
-      name: `${businessName} — ${location.name}`.slice(0, 180),
-      tracking_code: trackingCode,
-      landing_url: landingUrl,
-      status: 'live'
+    let trackingCode = existing?.tracking_code;
+    if (existing?.id) {
+      const { error } = await supabase.from('campaigns').update({
+        name: `${businessName} — ${location.name}`.slice(0, 180),
+        landing_url: landingUrl,
+        status: 'live',
+        updated_at: new Date().toISOString()
+      }).eq('id', existing.id);
+      if (error) return json({ error: 'Could not update the existing campaign.' }, 500);
+    } else {
+      trackingCode = `${location.slug}-${randomBytes(8).toString('hex')}`.slice(0, 80);
+      const { error } = await supabase.from('campaigns').insert({
+        advertiser_id: profile.id,
+        location_id: location.id,
+        name: `${businessName} — ${location.name}`.slice(0, 180),
+        tracking_code: trackingCode,
+        landing_url: landingUrl,
+        status: 'live'
+      });
+      if (error) return json({ error: 'Could not create the tracked campaign.' }, 500);
+      createdCampaign = true;
+    }
+    trackingLinks.push({
+      locationName: location.name,
+      locationSlug: location.slug,
+      trackingUrl: `${origin}/api/qr?c=${encodeURIComponent(trackingCode)}`
     });
-    if (error) return json({ error: 'Could not create the tracked campaign.' }, 500);
   }
 
   await supabase.from('subscription_intakes').insert({
@@ -1642,27 +1660,34 @@ export async function POST(request) {
     campaign_details: 'Added by the BeSeen owner for an ad already in the field.',
     creative_choice: 'beseen_create',
     plan: 'gold',
-    location_slugs: [location.slug],
+    location_slugs: orderedLocations.map(location => location.slug),
     qr_destination_url: landingUrl,
     status: 'paid'
   });
 
-  const { data: billingRow } = await supabase
+  const { data: billingRows } = await supabase
     .from('billing_overrides')
-    .select('id,stripe_subscription_id,owner_note')
-    .eq('user_id', profile.id)
-    .eq('location_slug', location.slug)
-    .maybeSingle();
+    .select('id,stripe_subscription_id,owner_note,location_slug,custom_price_cents')
+    .eq('user_id', profile.id);
+
+  const selectedSlugs = new Set(orderedLocations.map(location => location.slug));
+  const manualRows = (billingRows || []).filter(row =>
+    !row.stripe_subscription_id && String(row.owner_note || '').startsWith('Manual advertiser:')
+  );
+  const pricedSelected = manualRows.find(row => selectedSlugs.has(row.location_slug) && Number(row.custom_price_cents) > 0);
+  const pricedAnywhere = manualRows.find(row => Number(row.custom_price_cents) > 0);
+  const priceLocation = orderedLocations.find(location => location.slug === pricedSelected?.location_slug) || orderedLocations[0];
+  const billingRow = (billingRows || []).find(row => row.location_slug === priceLocation.slug) || null;
 
   let revenueRecorded = false;
   let revenueError = '';
   if (!billingRow?.stripe_subscription_id) {
-    const existingStarted = String(billingRow?.owner_note || '').match(/\|\s*started:(\d{4}-\d{2}-\d{2})/)?.[1] || '';
+    const existingStarted = String(billingRow?.owner_note || pricedAnywhere?.owner_note || '').match(/\|\s*started:(\d{4}-\d{2}-\d{2})/)?.[1] || '';
     const startedOn = paymentStarted || existingStarted;
     const billingValues = {
       user_id: profile.id,
-      location_id: location.id,
-      location_slug: location.slug,
+      location_id: priceLocation.id,
+      location_slug: priceLocation.slug,
       plan: 'gold',
       standard_price_cents: monthlyCents,
       custom_price_cents: monthlyCents,
@@ -1676,27 +1701,36 @@ export async function POST(request) {
       ? await supabase.from('billing_overrides').update(billingValues).eq('id', billingRow.id)
       : await supabase.from('billing_overrides').insert(billingValues);
     if (billingWrite.error?.code === '23505') {
-      billingWrite = await supabase.from('billing_overrides').update(billingValues).eq('user_id', profile.id).eq('location_slug', location.slug);
+      billingWrite = await supabase.from('billing_overrides').update(billingValues).eq('user_id', profile.id).eq('location_slug', priceLocation.slug);
     }
     if (billingWrite.error) {
       console.error('manual advertiser revenue', billingWrite.error);
       revenueError = 'The advertiser is saved, but the monthly amount was not added to revenue. Save this same business again to retry the price.';
     } else {
       revenueRecorded = true;
+      if (pricedAnywhere?.id && pricedAnywhere.location_slug !== priceLocation.slug) {
+        await supabase.from('billing_overrides').update({
+          custom_price_cents: 0,
+          standard_price_cents: 0,
+          custom_price_active: false,
+          updated_at: new Date().toISOString()
+        }).eq('id', pricedAnywhere.id);
+      }
     }
   }
 
-  const origin = new URL(request.url).origin;
   return json({
     ok: true,
-    trackingUrl: `${origin}/api/qr?c=${encodeURIComponent(trackingCode)}`,
+    trackingUrl: trackingLinks[0]?.trackingUrl || '',
+    trackingUrls: trackingLinks,
     businessName,
-    locationName: location.name,
+    locationName: orderedLocations.map(location => location.name).join(', '),
+    locationNames: orderedLocations.map(location => location.name),
     monthlyAmountCents: monthlyCents,
     destinationSet: Boolean(landingUrl),
     revenueRecorded,
     revenueError
-  }, existing?.id ? 200 : 201);
+  }, createdCampaign ? 201 : 200);
 }
 
 export async function DELETE(request) {

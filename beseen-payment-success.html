@@ -945,6 +945,9 @@ body.host-info-open #hostInfo{display:block}
   #bsccAdvMonthly,#bsccAdvStarted{font-size:16px}
   .bscc-field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#7892c1;font-weight:950}
   .bscc-field input,.bscc-field select,.bscc-field textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.11);background:#071a3a;color:#edf3ff;border-radius:12px;padding:12px 13px;font:inherit;font-size:11px;outline:none}
+  .bscc-location-picks{display:grid;gap:8px;max-height:240px;overflow:auto;padding:4px 2px}
+  .bscc-field .bscc-location-picks label{display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:650;color:#edf3ff}
+  .bscc-field .bscc-location-picks input{width:18px;height:18px;min-height:18px;padding:0;flex:0 0 auto;border-radius:4px}
   .bscc-field textarea{min-height:92px;resize:vertical}
   .bscc-field input:focus,.bscc-field select:focus,.bscc-field textarea:focus{border-color:#5d87ff;box-shadow:0 0 0 3px rgba(76,117,255,.12)}
   .bscc-form-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
@@ -1213,14 +1216,14 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Payment started</th><th>Location(s)</th><th>Creative</th><th></th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="8">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
 <div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
   <h3>Add an advertiser</h3>
-  <p class="desc">Business name, monthly amount, payment start date, and location are required. Email and the QR website are optional. A blank email still records the advertiser. A blank website still creates a tracking link, counts scans, and can be filled in later. This does not start a Stripe checkout.</p>
+  <p class="desc">Business name, monthly amount, payment start date, and at least one location are required. Email and the QR website are optional. A blank email still records the advertiser. A blank website still creates a tracking link, counts scans, and can be filled in later. This does not start a Stripe checkout.</p>
   <div class="bscc-formgrid">
     <div class="bscc-field"><label for="bsccAdvEmail">Account email (optional)</label><input id="bsccAdvEmail" type="email" autocomplete="off" placeholder="name@business.com"/></div>
     <div class="bscc-field"><label for="bsccAdvBusiness">Business name</label><input id="bsccAdvBusiness" placeholder="Business name"/></div>
     <div class="bscc-field"><label for="bsccAdvMonthly">Monthly amount they pay</label><input id="bsccAdvMonthly" type="text" inputmode="decimal" autocomplete="off" placeholder="1100"/></div>
     <div class="bscc-field"><label for="bsccAdvStarted">Payment started</label><input id="bsccAdvStarted" type="date"/></div>
     <div class="bscc-field wide"><label for="bsccAdvUrl">Link the QR should open (optional)</label><input id="bsccAdvUrl" type="url" placeholder="https://"/></div>
-    <div class="bscc-field"><label for="bsccAdvLocation">Location</label><select id="bsccAdvLocation"></select></div>
+    <div class="bscc-field wide"><label>Locations</label><div id="bsccAdvLocations" class="bscc-location-picks"></div><small style="display:block;margin-top:7px;color:#7892bd;line-height:1.45">Choose every location this advertiser is on. The monthly amount is their total payment, counted once.</small></div>
   </div>
   <div class="bscc-form-actions"><button class="bscc-action" id="bsccSaveAdvertiser" type="button">Save advertiser</button></div>
   <div class="bscc-message" id="bsccAddAdvertiserMessage"></div>
@@ -2777,12 +2780,13 @@ document.getElementById('bsccAddAdvertiser')?.addEventListener('click',async()=>
   panel.hidden=!open;
   if(!open) return;
   cmsMessage('bsccAddAdvertiserMessage','');
-  const select=document.getElementById('bsccAdvLocation');
-  if(!select || select.options.length) return;
+  const box=document.getElementById('bsccAdvLocations');
+  if(!box) return;
   try{
     const data=await ownerApi('/api/admin-locations');
     const rows=data.locations||[];
-    select.innerHTML=rows.length?rows.map(loc=>`<option value="${esc(loc.slug)}">${esc(loc.name||loc.slug)}</option>`).join(''):'<option value="">Add a location first</option>';
+    const checked=new Set([...box.querySelectorAll('input:checked')].map(input=>input.value));
+    box.innerHTML=rows.length?rows.map(loc=>`<label><input type="checkbox" value="${esc(loc.slug)}" ${checked.has(loc.slug)?'checked':''}><span>${esc(loc.name||loc.slug)}</span></label>`).join(''):'<span style="color:#7892bd">Add a location first</span>';
   }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
 });
 let advertiserSaveInFlight=false;
@@ -2792,24 +2796,28 @@ document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=
   const email=document.getElementById('bsccAdvEmail')?.value.trim();
   const businessName=document.getElementById('bsccAdvBusiness')?.value.trim();
   const destinationUrl=document.getElementById('bsccAdvUrl')?.value.trim();
-  const locationSlug=document.getElementById('bsccAdvLocation')?.value;
+  const locationSlugs=[...document.querySelectorAll('#bsccAdvLocations input:checked')].map(input=>input.value);
   const monthlyAmount=document.getElementById('bsccAdvMonthly')?.value.trim();
   const paymentStarted=document.getElementById('bsccAdvStarted')?.value||'';
   const amount=Number(String(monthlyAmount||'').replace(/[$,\s]/g,''));
   if(!businessName){ cmsMessage('bsccAddAdvertiserMessage','Enter the business name.',true); return; }
-  if(!locationSlug){ cmsMessage('bsccAddAdvertiserMessage','Choose a location.',true); return; }
+  if(!locationSlugs.length){ cmsMessage('bsccAddAdvertiserMessage','Choose at least one location.',true); return; }
   if(!(amount>=1)){ cmsMessage('bsccAddAdvertiserMessage','Enter the monthly amount they pay, like 1100.',true); return; }
   if(!paymentStarted){ cmsMessage('bsccAddAdvertiserMessage','Choose the date the payment started.',true); return; }
   advertiserSaveInFlight=true;
   if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   cmsMessage('bsccAddAdvertiserMessage','');
   try{
-    const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlug,monthlyAmount,paymentStarted})});
+    const data=await ownerApi('/api/admin-accounts',{method:'POST',body:JSON.stringify({email,businessName,destinationUrl,locationSlugs,monthlyAmount,paymentStarted})});
     const dollars=Number(data.monthlyAmountCents||0)/100;
     const price=Number.isFinite(dollars)&&dollars>0?dollars.toLocaleString('en-US',{style:'currency',currency:'USD'}):'';
     if(data.revenueRecorded&&price){
-      cmsMessage('bsccAddAdvertiserMessage',`Advertiser added. ${price}/month is now included in monthly revenue. Tracking link: ${data.trackingUrl}${data.destinationSet?'':' Destination link was left blank, so scans are counted until you add a website.'}`);
+      const places=(data.locationNames||[]).filter(Boolean);
+      const where=places.length?` at ${places.join(', ')}`:'';
+      const links=(data.trackingUrls||[]).map(row=>`${row.locationName}: ${row.trackingUrl}`).join(' | ');
+      cmsMessage('bsccAddAdvertiserMessage',`Advertiser added${where}. ${price}/month is now included in monthly revenue.${links?` Tracking: ${links}`:''}${data.destinationSet?'':' Destination link was left blank, so scans are counted until you add a website.'}`);
       ['bsccAdvEmail','bsccAdvBusiness','bsccAdvUrl','bsccAdvMonthly','bsccAdvStarted'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      document.querySelectorAll('#bsccAdvLocations input').forEach(input=>{ input.checked=false; });
     }else{
       cmsMessage('bsccAddAdvertiserMessage',data.revenueError||'The advertiser is saved, but the monthly amount was not added to revenue. Save this same business again to retry the price.',true);
     }

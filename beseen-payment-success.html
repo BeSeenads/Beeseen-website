@@ -273,10 +273,13 @@
 
     /* ===== Locations dropdown + location subscription preview ===== */
     .location-nav{position:relative}
+    .hero .location-nav{position:relative}
+    .hero:has(.location-nav.open){overflow:visible;z-index:30}
     .location-trigger{
-      display:flex;align-items:center;gap:7px;background:none;border:0;color:inherit;
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;background:none;border:0;color:inherit;
       font:inherit;font-weight:inherit;cursor:pointer;padding:10px 0
     }
+    .hero .location-trigger.btn{padding:14px 20px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#fff;font-weight:900;border-radius:999px}
     .location-trigger .chev{font-size:11px;transition:transform .2s ease}
     .location-nav.open .chev{transform:rotate(180deg)}
     .location-menu{
@@ -348,8 +351,8 @@
       .location-menu{left:0;right:auto;transform:translateY(-6px)}.location-nav.open .location-menu{transform:translateY(0)}
     }
     @media(max-width:680px){
-      .location-nav{display:none}
       .location-copy h3{font-size:36px}.location-gallery{min-height:300px}.thumb-btn{width:70px;height:50px}
+      .hero .location-menu{width:min(380px,calc(100vw - 36px))}
     }
 
 
@@ -390,7 +393,6 @@
     #locations .plan-price{color:#fff}
     #locations .location-toolbar{display:none!important}
     .location-panel{margin-bottom:0}
-    .location-nav{display:block!important}
     .location-menu-intro{padding:10px 13px 2px;color:#d5e4ff;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
     .plans.single{grid-template-columns:minmax(0,520px)}
     .ad-rules{margin:0 18px 8px;padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
@@ -1040,7 +1042,7 @@ body.host-info-open #hostInfo{display:block}
     background:#06142f;overflow:auto
   }
   body.phone-menu-open .navlinks > a,
-  body.phone-menu-open .location-trigger,
+  body.phone-menu-open .navlinks .location-trigger,
   body.phone-menu-open .navsignin,
   body.phone-menu-open .navcta{
     display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;
@@ -1048,18 +1050,19 @@ body.host-info-open #hostInfo{display:block}
     border:1px solid rgba(255,255,255,.1);font-size:16px;text-align:center
   }
   body.phone-menu-open .nav-actions{display:grid;gap:8px;width:100%;margin:0}
-  body.phone-menu-open .location-nav{width:100%}
-  body.phone-menu-open .location-menu{
+  body.phone-menu-open .navlinks .location-nav{width:100%}
+  body.phone-menu-open .navlinks .location-menu{
     position:static;opacity:1;visibility:visible;transform:none;display:none;
     width:100%;max-height:none;margin-top:8px;padding:8px;box-shadow:none
   }
-  body.phone-menu-open .location-nav.open .location-menu{display:grid}
+  body.phone-menu-open .navlinks .location-nav.open .location-menu{display:grid}
   .hero{min-height:0}
   .hero-inner{padding:28px 0 22px;gap:22px}
   .hero h1{font-size:54px;margin:14px 0 14px}
   .hero p{font-size:16px;margin:0 0 18px}
   .buttons{display:grid;grid-template-columns:1fr}
-  .buttons .btn{width:100%;min-height:52px;font-size:16px}
+  .buttons .btn,.buttons .location-nav{width:100%;min-height:52px;font-size:16px}
+  .buttons .location-trigger{width:100%}
   .visual{height:250px}
   .float-card.one{right:8px;top:8px}
   .float-card.two{left:8px;bottom:8px}
@@ -1314,15 +1317,6 @@ body.host-info-open #hostInfo{display:block}
 </a>
 <button class="phone-menu-btn" id="phoneMenuBtn" type="button" aria-expanded="false" aria-controls="siteNavLinks" aria-label="Open menu"><span></span><span></span><span></span></button>
 <div class="navlinks" id="siteNavLinks">
-<div class="location-nav" id="locationNav">
-<button class="location-trigger" id="locationTrigger" type="button">Locations <span class="chev">▼</span></button>
-<div class="location-menu" id="locationMenu">
-<div class="location-menu-intro">Every live location and its monthly price</div>
-<button class="live-location active" data-location="exclusive" type="button">Exclusive Hookah Lounge<small>Dearborn • from $200/mo</small></button>
-<div class="location-menu-label">Subscriber access</div>
-<button class="private-location-teaser" data-private-locations type="button">Future location<span>🔒</span><small>See the next placement before everyone else</small></button>
-</div>
-</div>
 <a class="access-link" href="#advertiser-access" id="accessTrigger">Advertiser Access <span class="access-lock">🔒</span></a>
 <a href="#host" id="hostTrigger">Host</a>
 <div class="nav-actions">
@@ -1341,6 +1335,15 @@ body.host-info-open #hostInfo{display:block}
 <h1>BE <span>SEEN.</span></h1>
 <p>We help local businesses stand out with sharp creative, digital advertising, promotional displays, and campaigns designed to put your brand in front of more people.</p>
 <div class="buttons">
+<div class="location-nav" id="locationNav">
+<button class="btn btn-secondary location-trigger" id="locationTrigger" type="button">Locations <span class="chev">▼</span></button>
+<div class="location-menu" id="locationMenu">
+<div class="location-menu-intro">Every live location and its monthly price</div>
+<button class="live-location active" data-location="exclusive" type="button">Exclusive Hookah Lounge<small>Dearborn • from $200/mo</small></button>
+<div class="location-menu-label">Subscriber access</div>
+<button class="private-location-teaser" data-private-locations type="button">Future location<span>🔒</span><small>See the next placement before everyone else</small></button>
+</div>
+</div>
 <a class="btn btn-primary" href="#contact">Contact Us</a>
 </div>
 <p class="micro">Simple. Bold. Easy to notice.</p>

@@ -2997,7 +2997,7 @@ async function loadOwnerDevices(){
   if(!['owner','admin'].includes(currentRole)) return;
   const summary=document.getElementById('bsccDeviceSummary');
   if(summary&&summary.textContent==='Checking screens…') summary.textContent='Checking screens…';
-  try{ renderOwnerDevices(await ownerApi('/api/devices')); }
+  try{ renderOwnerDevices(await ownerApi('/api/analytics?scope=devices')); }
   catch(err){
     if(summary) summary.textContent=err.message;
     const message=document.getElementById('bsccDeviceMessage');
@@ -3007,14 +3007,14 @@ async function loadOwnerDevices(){
 document.getElementById('bsccDevicePanel')?.addEventListener('click',()=>document.querySelector('.bscc-nav button[data-cc-page="devices"]')?.click());
 document.getElementById('bsccRefreshDevices')?.addEventListener('click',loadOwnerDevices);
 document.getElementById('bsccDeviceNewCode')?.addEventListener('click',async()=>{
-  try{ renderOwnerDevices(await ownerApi('/api/devices?captcha=1')); }
+  try{ renderOwnerDevices(await ownerApi('/api/analytics?scope=devices&captcha=1')); }
   catch(err){ const message=document.getElementById('bsccDeviceMessage'); if(message) message.textContent=err.message; }
 });
 document.getElementById('bsccDeviceConnectBtn')?.addEventListener('click',async()=>{
   const code=document.getElementById('bsccDeviceCode')?.value||'';
   const message=document.getElementById('bsccDeviceMessage');
   try{
-    const data=await ownerApi('/api/devices',{method:'POST',body:JSON.stringify({captchaId:adsCaptchaId,code})});
+    const data=await ownerApi('/api/analytics',{method:'POST',body:JSON.stringify({event:'device_connect',captchaId:adsCaptchaId,code})});
     const input=document.getElementById('bsccDeviceCode'); if(input) input.value='';
     renderOwnerDevices(data);
   }catch(err){ if(message) message.textContent=err.message; }

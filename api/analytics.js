@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { handleDeviceGet, handleDevicePost } from '../lib/ads-devices.js';
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
@@ -387,6 +388,7 @@ export async function POST(request){
     if(error) return json({error:'Could not save that split.'},500);
     return json({ok:true,split_percent:splitPercent});
   }
+  if(body.event==='device_connect') return handleDevicePost(request, body);
   if(body.event!=='guest_continue') return json({error:'Unknown event.'},400);
   const {error}=await supabase.from('billing_events').insert({
     event_type:'guest_continue',
@@ -404,6 +406,7 @@ export async function GET(request){
   const access=await getProfileAccess(user.id,supabase);
   const url=new URL(request.url);
   const scope=(url.searchParams.get('scope')||'user').toLowerCase();
+  if(scope==='devices') return handleDeviceGet(request);
   if(scope==='advertisers') return staffAdvertisers(access.role,supabase);
   return scope==='admin' ? staffAnalytics(access.role,supabase) : userAnalytics(user,access,supabase);
 }

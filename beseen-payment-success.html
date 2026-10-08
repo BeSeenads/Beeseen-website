@@ -1220,7 +1220,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-panelgrid">
 <div class="bscc-panel"><div class="icon">◎</div><h3>Advertiser Accounts</h3><p>See every customer, plan, billing status, active location, contact information, and next renewal.</p><strong id="bsccAdvertiserSummary">Live accounts will appear here →</strong></div>
 <div class="bscc-panel"><div class="icon">↗</div><h3>Campaign Performance</h3><p>Monitor QR scans, landing-page visits, calls, forms, and attributed leads by campaign.</p><strong>Open analytics →</strong></div>
-<div class="bscc-panel"><div class="icon">▣</div><h3>Device Network</h3><p>Know which BeSeen screens are online, what playlist they are running, and where they are located.</p><strong>Device tracking not connected yet →</strong></div>
+<div class="bscc-panel" id="bsccDevicePanel" style="cursor:pointer"><div class="icon">▣</div><h3>Device Network</h3><p>See which screens are online or offline, whether the ad finished downloading, and the device number from the ad console.</p><strong id="bsccDeviceSummary">Checking screens…</strong></div>
 </div>
 <div class="bscc-demo-note">Live business data will populate here as billing, campaigns, QR tracking, hosts, and device check-ins are connected.</div>
 </section>
@@ -1269,6 +1269,20 @@ body.host-info-open #hostInfo{display:block}
 <section class="bscc-page" data-cc-page="hosts"><div class="bscc-heading"><div><h1>Host Applications</h1><p>Review everyone who wants to host BeSeen screens, ad inventory, or physical placements.</p></div></div><div class="bscc-card"><p class="desc">No sample host applications are shown. Real applications will populate here after the host form is connected to Supabase.</p></div></section>
 
 <section class="bscc-page" data-cc-page="devices">
+  <div class="bscc-card" id="bsccDeviceNetwork" style="margin-bottom:13px">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div><h3>Device Network</h3><p class="desc">Live screens from the ad console. Offline screens are listed first. The console identifies each screen by its device number.</p></div>
+      <button class="bscc-secondary" id="bsccRefreshDevices" type="button">Refresh</button>
+    </div>
+    <div id="bsccDeviceConnect" hidden style="display:none;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 14px">
+      <img id="bsccDeviceCaptcha" alt="Calculation" style="height:54px;border-radius:10px;background:#fff">
+      <button class="bscc-secondary" id="bsccDeviceNewCode" type="button">New calculation</button>
+      <input id="bsccDeviceCode" inputmode="numeric" autocomplete="off" placeholder="Calculation result" style="font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#071a3a;color:#fff;width:180px">
+      <button class="bscc-action" id="bsccDeviceConnectBtn" type="button">Connect screens</button>
+    </div>
+    <div class="bscc-tablewrap" id="bsccDeviceTable"></div>
+    <div class="bscc-message" id="bsccDeviceMessage"></div>
+  </div>
   <div class="bscc-heading"><div><h1>Location Manager</h1><p>Add <strong>Future Teasers</strong> to the Platinum/FOMO section or publish <strong>Live Locations</strong> to the public website — without editing code.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="bscc-secondary" id="bsccPreviewFomo" type="button">Preview Platinum FOMO</button><button class="bscc-action" id="bsccNewLocation" type="button">+ Add Location</button></div></div>
   <div class="bscc-manager-grid">
     <div class="bscc-card">
@@ -2606,7 +2620,7 @@ function openControlCenter(role=currentRole, manual=false){
   const lock=document.getElementById('bsccAdminTeamLock'); if(lock) lock.style.display=role==='owner'?'none':'block';
   accountBar?.classList.remove('show');
   if(role==='owner') loadOwnerAccounts();
-  if(role==='owner'||role==='admin'){ loadOwnerLocations(); loadOwnerMetrics(); loadOwnerAdvertisers(); }
+  if(role==='owner'||role==='admin'){ loadOwnerLocations(); loadOwnerMetrics(); loadOwnerAdvertisers(); loadOwnerDevices(); }
 }
 function enter(role, subscription='none'){
   currentRole=role;
@@ -2944,6 +2958,68 @@ document.getElementById('bsccRefreshAccounts')?.addEventListener('click',loadOwn
 document.getElementById('bsccGoAccounts')?.addEventListener('click',()=>{
   const btn=document.querySelector('.bscc-nav button[data-cc-page="accounts"]'); btn?.click();
 });
+
+
+let adsCaptchaId='';
+function renderOwnerDevices(data){
+  const summary=document.getElementById('bsccDeviceSummary');
+  const message=document.getElementById('bsccDeviceMessage');
+  const table=document.getElementById('bsccDeviceTable');
+  const connect=document.getElementById('bsccDeviceConnect');
+  const img=document.getElementById('bsccDeviceCaptcha');
+  const showConnect=Boolean(data&&data.needsCaptcha);
+  if(connect){ connect.hidden=!showConnect; connect.style.display=showConnect?'flex':'none'; }
+  adsCaptchaId=data&&data.captchaId?String(data.captchaId):'';
+  if(img&&data&&data.captchaImage) img.src=data.captchaImage;
+  if(message) message.textContent=data&&data.message?data.message:'';
+  const devices=(data&&data.devices)||[];
+  if(summary){
+    if(!data||data.configured===false) summary.textContent=data&&data.message?data.message:'Screen console is not configured yet →';
+    else if(showConnect) summary.textContent='Calculation needed to connect screens →';
+    else if(data.online!=null) summary.textContent=`${data.online} online · ${data.offline} offline →`;
+    else summary.textContent='Open the screen list →';
+  }
+  if(!table) return;
+  if(!devices.length){
+    table.innerHTML=showConnect?'':'<div class="bscc-minirow"><div><strong>No screens loaded yet</strong><span>Connect the ad console to see which screens are online.</span></div></div>';
+    return;
+  }
+  const rows=devices.map(device=>{
+    const status=device.online?'<span class="bscc-badge green">Online</span>':'<span class="bscc-badge red">Offline</span>';
+    const ad=device.adReady?'Ready':`Waiting ${Number(device.waiting)||0}`;
+    const expired=device.expired?'<span class="bscc-badge red">Expired</span>':'';
+    const title=device.name?`<strong>${esc(device.name)}</strong><br><span style="color:#7892bd">${esc(device.mac||'—')}</span>`:`<strong>${esc(device.mac||'Unknown screen')}</strong>`;
+    return `<tr><td>${title}</td><td>${status}</td><td>${esc(ad)}</td><td>${esc(device.expires||'—')} ${expired}</td><td>${esc(device.account||'—')}</td></tr>`;
+  }).join('');
+  table.innerHTML=`<table class="bscc-table"><thead><tr><th>Screen</th><th>Status</th><th>Ad</th><th>Expires</th><th>Updated by</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+async function loadOwnerDevices(){
+  if(!['owner','admin'].includes(currentRole)) return;
+  const summary=document.getElementById('bsccDeviceSummary');
+  if(summary&&summary.textContent==='Checking screens…') summary.textContent='Checking screens…';
+  try{ renderOwnerDevices(await ownerApi('/api/devices')); }
+  catch(err){
+    if(summary) summary.textContent=err.message;
+    const message=document.getElementById('bsccDeviceMessage');
+    if(message) message.textContent=err.message;
+  }
+}
+document.getElementById('bsccDevicePanel')?.addEventListener('click',()=>document.querySelector('.bscc-nav button[data-cc-page="devices"]')?.click());
+document.getElementById('bsccRefreshDevices')?.addEventListener('click',loadOwnerDevices);
+document.getElementById('bsccDeviceNewCode')?.addEventListener('click',async()=>{
+  try{ renderOwnerDevices(await ownerApi('/api/devices?captcha=1')); }
+  catch(err){ const message=document.getElementById('bsccDeviceMessage'); if(message) message.textContent=err.message; }
+});
+document.getElementById('bsccDeviceConnectBtn')?.addEventListener('click',async()=>{
+  const code=document.getElementById('bsccDeviceCode')?.value||'';
+  const message=document.getElementById('bsccDeviceMessage');
+  try{
+    const data=await ownerApi('/api/devices',{method:'POST',body:JSON.stringify({captchaId:adsCaptchaId,code})});
+    const input=document.getElementById('bsccDeviceCode'); if(input) input.value='';
+    renderOwnerDevices(data);
+  }catch(err){ if(message) message.textContent=err.message; }
+});
+document.getElementById('bsccDeviceCode')?.addEventListener('keydown',event=>{ if(event.key==='Enter'){ event.preventDefault(); document.getElementById('bsccDeviceConnectBtn')?.click(); } });
 
 let ownerLocations=[];
 function slugify(v){ return String(v||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80); }
@@ -3331,7 +3407,7 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   document.querySelectorAll('.bscc-page').forEach(pg=>pg.classList.toggle('active',pg.dataset.ccPage===p));
   if(p==='accounts') loadOwnerAccounts();
   if(p==='advertisers') loadOwnerAdvertisers();
-  if(p==='devices') loadOwnerLocations();
+  if(p==='devices'){ loadOwnerLocations(); loadOwnerDevices(); }
   if(p==='campaigns') loadOwnerQrLibrary();
 }));
 const navSignIn=document.getElementById('navSignIn');

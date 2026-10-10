@@ -33,6 +33,47 @@ function db() {
   );
 }
 
+async function requireStaff(request, supabase) {
+  const token = (request.headers.get('authorization') || '')
+    .replace(/^Bearer\s+/i, '')
+    .trim();
+  if (!token) return { error: json({ error: 'Sign in first.' }, 401) };
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) return { error: json({ error: 'Invalid sign-in session.' }, 401) };
+  const { data: profile } = await supabase.from('profiles').select('id,role').eq('id', data.user.id).single();
+  if (!['owner', 'admin'].includes(profile?.role)) return { error: json({ error: 'BeSeen staff access required.' }, 403) };
+  return { user: data.user, profile };
+}
+
+function destinationHref(value) {
+  const raw = String(value || '').trim().slice(0, 1500);
+  if (!raw) return { href: null };
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  let url;
+  try { url = new URL(withScheme); } catch { url = null; }
+  if (!url || !['http:', 'https:'].includes(url.protocol) || !url.hostname.includes('.')) {
+    return { error: 'Enter a website link, like https://theirwebsite.com.' };
+  }
+  return { href: url.href };
+}
+
+async function updateQrDestination(request, supabase, body) {
+  const auth = await requireStaff(request, supabase);
+  if (auth.error) return auth.error;
+  const campaignId = String(body.campaignId || '').trim();
+  if (!campaignId) return json({ error: 'Choose a QR code.' }, 400);
+  const destination = destinationHref(body.destinationUrl);
+  if (destination.error) return json({ error: destination.error }, 400);
+  const { data: campaign, error: readError } = await supabase.from('campaigns').select('id').eq('id', campaignId).maybeSingle();
+  if (readError || !campaign) return json({ error: 'That QR code was not found.' }, 404);
+  const { error } = await supabase.from('campaigns').update({
+    landing_url: destination.href,
+    updated_at: new Date().toISOString()
+  }).eq('id', campaignId);
+  if (error) return json({ error: 'Could not save that redirect link.' }, 500);
+  return json({ ok: true, destinationUrl: destination.href || '' });
+}
+
 async function requireOwner(request, supabase) {
   const token = (request.headers.get('authorization') || '')
     .replace(/^Bearer\s+/i, '')
@@ -1510,10 +1551,11 @@ export async function POST(request) {
     return json({ error: 'Supabase server access is not configured.' }, 503);
   }
 
+  const body = await request.json().catch(() => ({}));
+  if (body.action === 'update_qr_destination') return updateQrDestination(request, supabase, body);
+
   const auth = await requireOwner(request, supabase);
   if (auth.error) return auth.error;
-
-  const body = await request.json().catch(() => ({}));
   const email = String(body.email || '').trim().toLowerCase();
   const businessName = String(body.businessName || '').trim().slice(0, 160);
   const destinationUrl = String(body.destinationUrl || '').trim().slice(0, 1500);

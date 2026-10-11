@@ -392,6 +392,18 @@ export async function POST(request){
     return json({ok:true,split_percent:splitPercent});
   }
   if(body.event==='device_connect') return handleDevicePost(request, body);
+  if(body.event==='site_click'){
+    const target=String(body.target||'');
+    const name=String(body.name||'').trim().slice(0,120);
+    if(!['locations_pricings','location','advertisers'].includes(target)) return json({error:'Unknown click.'},400);
+    if(target==='location' && !name) return json({error:'Choose a location.'},400);
+    const {error}=await supabase.from('billing_events').insert({
+      event_type:'site_click',
+      details:{target, name}
+    });
+    if(error) return json({error:'Could not record that click.'},500);
+    return json({ok:true});
+  }
   if(body.event!=='guest_continue') return json({error:'Unknown event.'},400);
   const {error}=await supabase.from('billing_events').insert({
     event_type:'guest_continue',
@@ -399,6 +411,43 @@ export async function POST(request){
   });
   if(error) return json({error:'Could not record that guest visit.'},500);
   return json({ok:true});
+}
+
+async function siteClickCounts(role,supabase){
+  if(!['owner','admin'].includes(role)) return json({error:'Staff access required.'},403);
+  const menu=new Map();
+  const pageSize=1000;
+  for(let from=0; from<=20000; from+=pageSize){
+    const {data,error}=await supabase.from('billing_events').select('details').eq('event_type','site_click').range(from,from+pageSize-1);
+    if(error) return json({error:'Could not load clicks.'},500);
+    for(const row of data||[]){
+      const target=String(row.details?.target||'');
+      const name=String(row.details?.name||'').trim();
+      const key=target==='location'?`location:${name}`:target;
+      menu.set(key,(menu.get(key)||0)+1);
+    }
+    if(!data||data.length<pageSize) break;
+  }
+  const {data:locations,error:locationError}=await supabase.from('locations').select('name,sort_order').order('sort_order',{ascending:true}).order('name',{ascending:true});
+  if(locationError) return json({error:'Could not load locations.'},500);
+  const seen=new Set();
+  const rows=(locations||[]).map(loc=>{
+    const name=String(loc.name||'').trim();
+    seen.add(name);
+    return {name:name||'Location', clicks:menu.get(`location:${name}`)||0};
+  });
+  for(const [key,clicks] of menu){
+    if(!key.startsWith('location:')) continue;
+    const name=key.slice('location:'.length);
+    if(!name||seen.has(name)) continue;
+    rows.push({name, clicks});
+  }
+  rows.sort((a,b)=>b.clicks-a.clicks||a.name.localeCompare(b.name));
+  return json({
+    locationsPricings:menu.get('locations_pricings')||0,
+    advertisers:menu.get('advertisers')||0,
+    locations:rows
+  });
 }
 
 async function qrScanCounts(role,supabase){
@@ -427,6 +476,7 @@ export async function GET(request){
   const scope=(url.searchParams.get('scope')||'user').toLowerCase();
   if(scope==='devices') return handleDeviceGet(request);
   if(scope==='qr-scans') return qrScanCounts(access.role,supabase);
+  if(scope==='site-clicks') return siteClickCounts(access.role,supabase);
   if(scope==='advertisers') return staffAdvertisers(access.role,supabase);
   return scope==='admin' ? staffAnalytics(access.role,supabase) : userAnalytics(user,access,supabase);
 }

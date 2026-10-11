@@ -1192,7 +1192,6 @@ body.host-info-open #hostInfo{display:block}
 <button data-cc-page="hosts" type="button">Host Applications</button>
 <button data-cc-page="devices" type="button">Locations &amp; Devices</button>
 <button data-cc-page="uploads" type="button">Ad Uploads</button>
-<button class="owner-only" data-cc-page="team" type="button">Team &amp; Admins</button>
 </div>
 <div class="bscc-sidebar-foot"><button class="bscc-side-btn" id="bsccViewWebsite" type="button">View Public Website</button><button class="bscc-side-btn" id="bsccLogout" type="button">Sign Out</button></div>
 </aside>
@@ -1298,6 +1297,12 @@ body.host-info-open #hostInfo{display:block}
 <tr><td><strong>BeSeen Advertising | Get Your Business Seen</strong><br><span style="color:#8fa5cb">Times this page was opened</span></td><td><strong>1</strong></td><td class="ga-flat">Same as last week</td></tr>
 <tr><td><strong>Owner Billing | BeSeen</strong><br><span style="color:#8fa5cb">Times this page was opened</span></td><td><strong>0</strong></td><td class="ga-down">Down 100%</td></tr>
 </tbody></table></div>
+<h3 style="margin-top:18px">Locations and Pricings</h3><p class="desc">Clicks on that button. Last week's Google Analytics did not record these, so the number starts from now.</p>
+<div class="bscc-minirow"><div><strong id="bsccClickLocationsMenu">—</strong><span>People who opened the locations and prices menu.</span></div></div>
+<h3 style="margin-top:18px">Clicks on each location</h3><p class="desc">Times someone opened that location.</p>
+<div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Location</th><th>Clicks</th></tr></thead><tbody id="bsccClickLocationsBody"><tr><td colspan="2">Location clicks will appear here.</td></tr></tbody></table></div>
+<h3 style="margin-top:18px">Advertiser section</h3><p class="desc">Clicks on Advertiser Access.</p>
+<div class="bscc-minirow"><div><strong id="bsccClickAdvertisers">—</strong><span>People who opened the advertiser section.</span></div></div>
 <h3 style="margin-top:18px">Active users by city</h3><p class="desc">Which cities people came from.</p>
 <div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>City</th><th>People</th><th>Vs last week</th></tr></thead><tbody>
 <tr><td><strong>Dearborn Heights</strong><br><span style="color:#8fa5cb">People who visited from here</span></td><td><strong>32</strong></td><td class="ga-up">Up 45.5%</td></tr>
@@ -1392,7 +1397,6 @@ body.host-info-open #hostInfo{display:block}
   </div>
 </section>
 <section class="bscc-page" data-cc-page="uploads"><div class="bscc-heading"><div><h1>Ad Uploads</h1><p>Receive creative files, review revisions, approve ads, and assign final assets to campaigns.</p></div></div><div class="bscc-panelgrid"><div class="bscc-panel"><div class="icon">↑</div><h3>New uploads</h3><p>Real advertiser files will appear here after ad storage is connected.</p><strong>—</strong></div><div class="bscc-panel"><div class="icon">✓</div><h3>Approved assets</h3><p>Approved live creative will be counted from actual stored assets.</p><strong>—</strong></div><div class="bscc-panel"><div class="icon">↻</div><h3>Revision requests</h3><p>Open revision requests will come from the real approval workflow.</p><strong>—</strong></div></div></section>
-<section class="bscc-page" data-cc-page="team"><div class="bscc-heading"><div><h1>Team &amp; Admins</h1><p>Owner-only security controls for BeSeen staff.</p></div></div><div class="bscc-card" id="bsccTeamContent"><h3>Manage staff roles from Accounts &amp; Roles</h3><p class="desc">Use the Accounts &amp; Roles page to promote a trusted account to Admin or Owner, or return it to Member access.</p><button class="bscc-action" id="bsccGoAccounts" type="button">Open Accounts &amp; Roles</button></div><div class="bscc-lock" id="bsccAdminTeamLock" style="display:none"><div>🔒</div><strong>Owner only</strong><p>Admins can operate the business, but only an Owner can change account roles.</p></div></section>
 </div>
 </main>
 </section>
@@ -2179,6 +2183,10 @@ body.host-info-open #hostInfo{display:block}
       try{ if(typeof window.startBeseenCheckout==='function') await window.startBeseenCheckout(multiLocationPlan,slugs); else throw new Error('Secure checkout is still loading.'); } finally { setTimeout(()=>{ multiLocationCheckout.disabled=false; renderMultiLocationSummary(); },1200); }
     });
 
+    function recordSiteClick(target, name){
+      const body={event:'site_click', target, name:String(name||'').slice(0,120)};
+      fetch('/api/analytics',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).catch(()=>{});
+    }
     function openLocationPage(key){
       renderLocation(key);
       document.body.classList.remove('portal-open','host-open','host-info-open');
@@ -2186,6 +2194,7 @@ body.host-info-open #hostInfo{display:block}
       if(locationNav) locationNav.classList.remove('open');
       if(locationsView) locationsView.scrollTop = 0;
       history.replaceState(null, '', '#location-' + key);
+      recordSiteClick('location', publicLocations[key]?.name || key);
     }
 
     function closeLocations(goTo){
@@ -2203,6 +2212,7 @@ body.host-info-open #hostInfo{display:block}
       locationTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
         locationNav.classList.toggle('open');
+        recordSiteClick('locations_pricings');
       });
     }
     if(locationMenu){
@@ -2522,7 +2532,7 @@ body.host-info-open #hostInfo{display:block}
     }
 
     if(accessTrigger){
-      accessTrigger.addEventListener('click', e => { e.preventDefault(); openAdvertiserPortal('analytics'); });
+      accessTrigger.addEventListener('click', e => { e.preventDefault(); recordSiteClick('advertisers'); openAdvertiserPortal('analytics'); });
     }
     if(closeAdvertiserPortal) closeAdvertiserPortal.addEventListener('click', () => closePortal('#home'));
     document.querySelectorAll('.portal-nav-item').forEach(btn => btn.addEventListener('click', () => renderPortalPage(btn.dataset.page)));
@@ -3341,6 +3351,24 @@ async function loadMyAnalytics(){
     setText('portalFunnelActions',m.high_intent??0); setText('portalFunnelLeads',m.form_submit??0);
   }catch(err){ console.warn('Live advertiser analytics unavailable',err); }
 }
+async function loadOwnerSiteClicks(){
+  const menu=document.getElementById('bsccClickLocationsMenu');
+  const advertisers=document.getElementById('bsccClickAdvertisers');
+  const body=document.getElementById('bsccClickLocationsBody');
+  if(!menu&&!body) return;
+  if(!['owner','admin'].includes(currentRole)) return;
+  try{
+    const data=await ownerApi('/api/analytics?scope=site-clicks');
+    if(menu) menu.textContent=String(data.locationsPricings??0);
+    if(advertisers) advertisers.textContent=String(data.advertisers??0);
+    const rows=Array.isArray(data.locations)?data.locations:[];
+    if(body){
+      body.innerHTML=rows.length?rows.map(row=>`<tr><td><strong>${esc(row.name||'Location')}</strong><br><span style="color:#8fa5cb">Opened this location</span></td><td><strong>${Number(row.clicks)||0}</strong></td></tr>`).join(''):'<tr><td colspan="2">No locations yet.</td></tr>';
+    }
+  }catch(err){
+    if(body) body.innerHTML='<tr><td colspan="2">Could not load location clicks.</td></tr>';
+  }
+}
 async function loadOwnerAdScans(){
   const body=document.getElementById('bsccAdScansBody');
   if(!body||!['owner','admin'].includes(currentRole)) return;
@@ -3586,6 +3614,7 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   if(p==='devices'){ loadOwnerLocations(); loadOwnerDevices(); }
   if(p==='campaigns') loadOwnerQrLibrary();
   if(p==='analytics') loadOwnerAdScans();
+  if(p==='google') loadOwnerSiteClicks();
 }));
 const navSignIn=document.getElementById('navSignIn');
 navSignIn?.addEventListener('click',()=>{ gate?.classList.remove('hidden'); setTimeout(()=>document.getElementById('bsauthShowLogin')?.click(),0); });

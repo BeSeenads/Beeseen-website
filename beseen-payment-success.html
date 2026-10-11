@@ -1258,7 +1258,7 @@ body.host-info-open #hostInfo{display:block}
 </div>
 <div class="bscc-card"><h3>Scans by advertisement</h3><p class="desc">Each row is one ad. The scan number is only for that ad.</p><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Advertisement</th><th>Location</th><th>Status</th><th>Scans</th></tr></thead><tbody id="bsccAdScansBody"><tr><td colspan="4">Advertisement scans will appear here after this page loads.</td></tr></tbody></table></div></div>
 </section>
-<section class="bscc-page" data-cc-page="google"><div class="bscc-heading"><div><h1>Google Analytics</h1><p>Last 7 days, Oct 4–10. Each line under a number says what it is. The change is versus the week before.</p></div></div>
+<section class="bscc-page" data-cc-page="google"><div class="bscc-heading"><div><h1>Google Analytics</h1><p id="bsccGaRange">Last 7 days, Oct 4–10. Each line under a number says what it is. The change is versus the week before.</p></div></div>
 <div class="bscc-card"><div class="bscc-statgrid">
 <div class="bscc-stat"><div class="lab">Active users</div><strong>118</strong><small>People who used the site</small><small class="ga-down">Down 40.4% from last week</small></div>
 <div class="bscc-stat"><div class="lab">Event count</div><strong>874</strong><small>Taps, loads, and other actions</small><small class="ga-down">Down 46.2% from last week</small></div>
@@ -3653,6 +3653,30 @@ document.getElementById('ownerQrModal')?.addEventListener('click',(e)=>{ if(e.ta
 document.getElementById('bsccPreviewFomo')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); if(typeof window.openAdvertiserPortal==='function') window.openAdvertiserPortal('upcoming'); else { document.body.classList.add('portal-open'); } });
 document.getElementById('bsccLogout')?.addEventListener('click',async()=>{ if(supabase) await supabase.auth.signOut(); else { control?.classList.remove('show'); gate?.classList.remove('hidden'); showMain(); } });
 document.getElementById('bsccSwitchRole')?.addEventListener('click',()=>{ control?.classList.remove('show'); gate?.classList.remove('hidden'); showForm('login'); });
+
+function gaDayLabel(start, end){
+  const month=d=>d.toLocaleDateString('en-US',{month:'short'});
+  if(start.getFullYear()!==end.getFullYear()) return `${month(start)} ${start.getDate()}, ${start.getFullYear()}\u2013${month(end)} ${end.getDate()}, ${end.getFullYear()}`;
+  if(start.getMonth()!==end.getMonth()) return `${month(start)} ${start.getDate()}\u2013${month(end)} ${end.getDate()}`;
+  return `${month(start)} ${start.getDate()}\u2013${end.getDate()}`;
+}
+function updateGaRange(){
+  const el=document.getElementById('bsccGaRange');
+  if(!el) return;
+  const end=new Date();
+  end.setHours(12,0,0,0);
+  end.setDate(end.getDate()-1);
+  const start=new Date(end);
+  start.setDate(end.getDate()-6);
+  const label=gaDayLabel(start, end);
+  const saved='Oct 4\u201310';
+  if(label===saved){
+    el.textContent='Last 7 days, '+label+'. Each line under a number says what it is. The change is versus the week before.';
+  }else{
+    el.textContent='Last 7 days, '+label+'. The counts on this page are still the '+saved+' report.';
+  }
+}
+updateGaRange();
 document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.addEventListener('click',()=>{
   if(btn.disabled) return;
   document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(b=>b.classList.toggle('active',b===btn));
@@ -3662,7 +3686,7 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   if(p==='campaigns') loadOwnerCampaignTable();
   if(p==='devices'){ loadOwnerLocations(); loadOwnerDevices(); }
   if(p==='analytics') loadOwnerAdScans();
-  if(p==='google') loadOwnerSiteClicks();
+  if(p==='google'){ updateGaRange(); loadOwnerSiteClicks(); }
 }));
 const navSignIn=document.getElementById('navSignIn');
 navSignIn?.addEventListener('click',()=>{ gate?.classList.remove('hidden'); setTimeout(()=>document.getElementById('bsauthShowLogin')?.click(),0); });

@@ -891,7 +891,7 @@ body.host-info-open #hostInfo{display:block}
   .bscc-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:21px}.bscc-heading h1{font-size:38px;margin:0;letter-spacing:-.055em}.bscc-heading p{color:#8ca2c9;margin:5px 0 0;max-width:680px;line-height:1.55}.bscc-action{border:0;background:linear-gradient(135deg,#ff3155,#ff5570);color:white;border-radius:999px;padding:12px 16px;font-weight:950;font-size:11px;cursor:pointer;box-shadow:0 10px 26px rgba(255,49,85,.2)}
   .bscc-statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}.bscc-stat{padding:20px;border-radius:18px;background:#0b2149;border:1px solid rgba(255,255,255,.08)}.bscc-stat .lab{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:#7792c2;font-weight:950}.bscc-stat strong{display:block;font-size:29px;margin:9px 0 4px;letter-spacing:-.04em}.bscc-stat small{display:block;color:#91a8ce;font-size:10px;margin-top:2px}.bscc-up{color:#82ddab!important}.ga-down{color:#ff94a6!important}.ga-up{color:#86dca8!important}.ga-flat{color:#8fa5cb!important}
   .bscc-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:13px;margin-bottom:13px}.bscc-card{background:#091f45;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px}.bscc-card h3{font-size:16px;margin:0 0 3px}.bscc-card .desc{color:#7891bc;font-size:10px;margin:0 0 17px}.bscc-minirows{display:grid;gap:9px}.bscc-minirow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.035)}.bscc-minirow strong{font-size:11px}.bscc-minirow span{font-size:10px;color:#8fa5cb}.bscc-badge{padding:5px 7px;border-radius:999px;background:rgba(62,120,255,.12);color:#91b4ff!important;border:1px solid rgba(72,124,255,.18);font-size:9px!important;font-weight:900}.bscc-badge.red{background:rgba(255,60,90,.11);color:#ff94a6!important;border-color:rgba(255,60,90,.18)}.bscc-badge.green{background:rgba(59,198,118,.11);color:#86dca8!important;border-color:rgba(59,198,118,.18)}
-  .bscc-tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.07);border-radius:17px}.bscc-table{width:100%;border-collapse:collapse;min-width:760px}.bscc-table th,.bscc-table td{text-align:left;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px}.bscc-table th{color:#718dbd;text-transform:uppercase;letter-spacing:.11em;font-size:8px;background:rgba(255,255,255,.025)}.bscc-table td{color:#c9d7ef}.bscc-table td strong{color:white}.bscc-table tr:last-child td{border-bottom:0}.bscc-device-groups{display:grid;gap:16px}.bscc-device-user{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;margin:0 0 8px}.bscc-device-user strong{font-size:14px;color:#fff}.bscc-device-user span{font-size:11px;color:#8fa5cb}
+  .bscc-tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.07);border-radius:17px}.bscc-table{width:100%;border-collapse:collapse;min-width:760px}.bscc-table th,.bscc-table td{text-align:left;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px}.bscc-table th{color:#718dbd;text-transform:uppercase;letter-spacing:.11em;font-size:8px;background:rgba(255,255,255,.025)}.bscc-table td{color:#c9d7ef}.bscc-table td strong{color:white}.bscc-table tr:last-child td{border-bottom:0}.bscc-table tr[data-open-campaign]{cursor:pointer}.bscc-table tr[data-open-campaign]:hover td{background:rgba(255,255,255,.05)}.bscc-device-groups{display:grid;gap:16px}.bscc-device-user{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;margin:0 0 8px}.bscc-device-user strong{font-size:14px;color:#fff}.bscc-device-user span{font-size:11px;color:#8fa5cb}
   .bscc-panelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.bscc-panel{min-height:180px;padding:20px;border-radius:19px;background:#091f45;border:1px solid rgba(255,255,255,.08)}.bscc-panel .icon{width:37px;height:37px;border-radius:11px;display:grid;place-items:center;background:rgba(61,112,255,.13);color:#8cacff;margin-bottom:25px}.bscc-panel h3{margin:0 0 7px;font-size:17px}.bscc-panel p{margin:0;color:#8298bf;font-size:10px;line-height:1.55}.bscc-panel strong{display:block;margin-top:16px;font-size:12px;color:#dbe6fb}
   .bscc-lock{padding:34px;border-radius:22px;text-align:center;background:rgba(255,255,255,.035);border:1px dashed rgba(255,255,255,.12);color:#8aa0c8}.bscc-lock strong{display:block;color:white;font-size:20px;margin:8px 0}.bscc-lock p{max-width:520px;margin:0 auto 15px;line-height:1.55}
   .bscc-demo-note{margin-top:15px;padding:11px 13px;border-radius:12px;background:rgba(255,197,72,.07);border:1px solid rgba(255,197,72,.13);color:#c3ad75;font-size:9px;line-height:1.5}
@@ -1182,9 +1182,8 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-rolebox"><small>Signed in as</small><strong id="bsccRoleTitle">Owner</strong><span id="bsccRoleText">Full BeSeen access</span></div>
 <div class="bscc-nav">
 <button class="active" data-cc-page="overview" type="button">Overview</button>
-<button data-cc-page="advertisers" type="button">Advertisers</button>
 <button class="owner-only" data-cc-page="accounts" type="button">Accounts &amp; Roles</button>
-<button data-cc-page="campaigns" type="button">Campaigns</button>
+<button data-cc-page="campaigns" type="button">Campaign and Advertisers</button>
 <button data-cc-page="analytics" type="button">QR &amp; Analytics</button>
 <button data-cc-page="google" type="button">Google Analytics</button>
 <button data-cc-page="hosts" type="button">Host Applications</button>
@@ -1225,10 +1224,17 @@ body.host-info-open #hostInfo{display:block}
 </div>
 <div class="bscc-demo-note">Live business data will populate here as billing, campaigns, QR tracking, hosts, and device check-ins are connected.</div>
 </section>
-<section class="bscc-page" data-cc-page="advertisers">
-<div class="bscc-heading"><div><h1>Advertisers</h1><p>Every paying account, subscription tier, campaign, billing state, and contact record.</p></div><button class="bscc-action" id="bsccAddAdvertiser" type="button">+ Add Advertiser</button></div>
-<div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Subscriber</th><th>Business</th><th>Plan</th><th>Billing</th><th>Payment started</th><th>Location(s)</th><th>Creative</th><th></th></tr></thead><tbody id="bsccAdvertisersBody"><tr><td colspan="8">Live paid subscriber data will appear here from Stripe + Supabase.</td></tr></tbody></table></div></div>
-<div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
+<section class="bscc-page" data-cc-page="accounts">
+  <div class="bscc-heading"><div><h1>Accounts &amp; Roles</h1><p>Owner-only account management. Roles are stored in Supabase; Stripe remains the source for paid subscription status.</p></div><button class="bscc-action" id="bsccRefreshAccounts" type="button">Refresh Accounts</button></div>
+  <div class="bscc-card">
+    <div class="bscc-connected"><span>Supabase roles</span><span>Stripe subscription sync</span><span>Primary owner protected</span></div>
+    <p class="bscc-muted">Change a signed-in account between Member, Admin, or Owner. Your primary BeSeen Owner account cannot be demoted from this screen. Subscription tiers stay read-only here because Stripe controls billing.</p>
+    <div class="bscc-tablewrap" style="margin-top:16px"><table class="bscc-table"><thead><tr><th>Account</th><th>Role</th><th>Subscription</th><th>Billing status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="bsccAccountsBody"><tr><td colspan="6">Sign in as Owner to load live Supabase accounts.</td></tr></tbody></table></div>
+    <div class="bscc-message" id="bsccAccountsMessage"></div>
+  </div>
+</section>
+
+<section class="bscc-page" data-cc-page="campaigns"><div class="bscc-heading"><div><h1>Campaign and Advertisers</h1><p>Every ad in one table. Click a row to open that ad’s QR code, scan count, and redirect link.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="bscc-action" id="bsccAddAdvertiser" type="button">+ Add Advertiser</button><button class="bscc-action" id="bsccRefreshQrLibrary" type="button">Refresh</button></div></div><div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Business</th><th>Location</th><th>Status</th><th>Scans</th><th></th></tr></thead><tbody id="bsccCampaignsBody"><tr><td colspan="5">Paid ads will appear here.</td></tr></tbody></table></div></div><div class="bscc-message" id="bsccQrLibraryMessage"></div><div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
   <h3>Add an advertiser</h3>
   <p class="desc">Business name, monthly amount, payment start date, and at least one location are required. Email and the QR website are optional. A blank email still records the advertiser. A blank website still creates a tracking link, counts scans, and can be filled in later. This does not start a Stripe checkout.</p>
   <div class="bscc-formgrid">
@@ -1241,22 +1247,7 @@ body.host-info-open #hostInfo{display:block}
   </div>
   <div class="bscc-form-actions"><button class="bscc-action" id="bsccSaveAdvertiser" type="button">Save advertiser</button></div>
   <div class="bscc-message" id="bsccAddAdvertiserMessage"></div>
-</div>
-</section>
-
-<section class="bscc-page" data-cc-page="accounts">
-  <div class="bscc-heading"><div><h1>Accounts &amp; Roles</h1><p>Owner-only account management. Roles are stored in Supabase; Stripe remains the source for paid subscription status.</p></div><button class="bscc-action" id="bsccRefreshAccounts" type="button">Refresh Accounts</button></div>
-  <div class="bscc-card">
-    <div class="bscc-connected"><span>Supabase roles</span><span>Stripe subscription sync</span><span>Primary owner protected</span></div>
-    <p class="bscc-muted">Change a signed-in account between Member, Admin, or Owner. Your primary BeSeen Owner account cannot be demoted from this screen. Subscription tiers stay read-only here because Stripe controls billing.</p>
-    <div class="bscc-tablewrap" style="margin-top:16px"><table class="bscc-table"><thead><tr><th>Account</th><th>Role</th><th>Subscription</th><th>Billing status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="bsccAccountsBody"><tr><td colspan="6">Sign in as Owner to load live Supabase accounts.</td></tr></tbody></table></div>
-    <div class="bscc-message" id="bsccAccountsMessage"></div>
-  </div>
-</section>
-
-<section class="bscc-page" data-cc-page="campaigns"><div class="bscc-heading"><div><h1>Campaigns + QR Library</h1><p>Every paid campaign gets its own tracked QR automatically. Download the exact QR here when you are building an advertiser's creative.</p></div><button class="bscc-action" id="bsccRefreshQrLibrary" type="button">Refresh QR Library</button></div><div class="bscc-panelgrid">
-<div class="bscc-panel"><div class="icon">▶</div><h3>Live</h3><p>Campaigns currently playing on the BeSeen network.</p><strong id="bsccCampaignLiveCount">—</strong></div><div class="bscc-panel"><div class="icon">⌁</div><h3>Automatic QR</h3><p>Stripe payment creates one tracked QR per purchased location.</p><strong>No manual QR setup</strong></div><div class="bscc-panel"><div class="icon">↗</div><h3>Redirect</h3><p>The QR records the scan first, then sends the customer to the subscriber's chosen link.</p><strong>Tracked automatically</strong></div></div>
-<div class="bscc-card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap"><div><h3>Advertisers → Locations → QR</h3><p class="desc">Click an advertiser to see each ad. The number on the right is that ad’s own scans, not a combined total. Open an ad for its QR code.</p></div><span class="bscc-pill public">Owner / Admin</span></div><div class="owner-qr-directory" id="bsccQrLibrary"><div class="qr-empty-card">Paid advertisers and their location QR codes will appear here automatically.</div></div><div class="bscc-message" id="bsccQrLibraryMessage"></div></div></section>
+</div></section>
 <div class="owner-qr-modal" id="ownerQrModal" aria-hidden="true"><div class="owner-qr-modal-card" role="dialog" aria-modal="true" aria-labelledby="ownerQrModalTitle"><div class="owner-qr-modal-head"><div><div class="owner-qr-modal-kicker" id="ownerQrModalBusiness">Advertiser QR</div><h3 id="ownerQrModalTitle">Location QR Code</h3><p id="ownerQrModalSubscriber"></p></div><button class="owner-qr-modal-close" id="ownerQrModalClose" type="button" aria-label="Close">×</button></div><div class="owner-qr-modal-body"><div class="owner-qr-modal-code" id="ownerQrModalCode"></div><div><div class="owner-qr-detail"><label>Scans</label><div id="ownerQrModalScans">0</div></div><div class="owner-qr-detail"><label>BeSeen tracking URL</label><div id="ownerQrModalTracking"></div></div><div class="owner-qr-detail"><label>Redirects customer to</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="ownerQrModalDestinationInput" type="url" inputmode="url" autocomplete="off" placeholder="https://theirwebsite.com" style="flex:1;min-width:180px;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid #d5deee;background:#f7f9fd;color:#071631"><button id="ownerQrModalSaveDestination" type="button" style="border:0;border-radius:999px;padding:10px 13px;background:#071b44;color:#fff;font-weight:900;cursor:pointer">Save link</button></div><small style="display:block;margin-top:8px;color:#5c6b86;line-height:1.4">The QR code stays the same. Each scan is counted, then the customer is sent to this website.</small><div id="ownerQrModalDestinationStatus" style="margin-top:8px;color:#15366f;font-weight:800;font-size:12px"></div></div><div class="owner-qr-detail"><label>Campaign</label><div id="ownerQrModalCampaign"></div></div><div class="owner-qr-detail"><label>Status</label><div id="ownerQrModalStatus"></div></div></div></div><div class="owner-qr-modal-actions"><button id="ownerQrModalDownload" type="button">Download QR</button><button class="secondary" id="ownerQrModalCopy" type="button">Copy tracking link</button><button class="secondary" id="ownerQrModalCopyDestination" type="button">Copy destination link</button></div></div></div>
 <section class="bscc-page" data-cc-page="analytics"><div class="bscc-heading"><div><h1>QR &amp; Analytics</h1><p>See what each tracked ad actually generated: scans, visits, calls, lead forms, and campaign attribution.</p></div><button class="bscc-action" type="button">Export Report</button></div>
 <div class="bscc-statgrid">
@@ -2909,6 +2900,64 @@ function advertiserMoney(cents){
   const n=Number(cents)||0;
   return n>0?n/100:0;
 }
+const ownerCampaignRows=new Map();
+async function loadOwnerCampaignTable(){
+  if(!['owner','admin'].includes(currentRole)) return;
+  const body=document.getElementById('bsccCampaignsBody');
+  if(body) body.innerHTML='<tr><td colspan="5">Loading ads…</td></tr>';
+  try{
+    const data=await ownerApi('/api/analytics?scope=advertisers');
+    let scanMap={};
+    try{
+      const scanData=await ownerApi('/api/analytics?scope=qr-scans');
+      scanMap=scanData.scans||{};
+    }catch(err){ console.warn('QR scan counts could not be loaded', err); }
+    ownerCampaignRows.clear();
+    const lines=[];
+    for(const a of (data.advertisers||[])){
+      const business=a.business_name||a.subscriber_name||a.email||'Advertiser';
+      const subscriber=[a.subscriber_name,a.email].filter(Boolean).join(' • ');
+      for(const c of (a.campaigns||[])){
+        const row={...c,scans:Number(scanMap[c.id]||0),business,subscriber,advertiserId:a.id,manual:!!a.manual};
+        ownerCampaignRows.set(c.id,row);
+        lines.push(row);
+      }
+    }
+    lines.sort((a,b)=>String(a.business).localeCompare(String(b.business))||String(a.location_name||'').localeCompare(String(b.location_name||'')));
+    if(!body) return;
+    body.innerHTML=lines.map(c=>{
+      const remove=c.manual?`<button class="bscc-secondary" type="button" data-delete-advertiser="${esc(c.advertiserId)}" data-name="${esc(c.business)}">Delete</button>`:'';
+      return `<tr data-open-campaign="${esc(c.id)}"><td><strong>${esc(c.business)}</strong></td><td>${esc(c.location_name||'BeSeen location')}</td><td>${esc(c.status||'live')}</td><td><strong>${Number(c.scans||0)}</strong></td><td>${remove}<div style="color:#7fa4ff;font-weight:800;margin-top:6px">Open QR</div></td></tr>`;
+    }).join('')||'<tr><td colspan="5">No ads yet.</td></tr>';
+  }catch(err){
+    if(body) body.innerHTML='<tr><td colspan="5">Could not load ads.</td></tr>';
+    console.error(err);
+  }
+}
+document.getElementById('bsccCampaignsBody')?.addEventListener('click',async(e)=>{
+  const del=e.target.closest('[data-delete-advertiser]');
+  if(del){
+    const name=del.dataset.name||'this advertiser';
+    if(!confirm(`Remove ${name}?\n\nThey leave the list, and their monthly amount comes out of revenue.`)) return;
+    del.disabled=true;
+    try{
+      await ownerApi('/api/admin-accounts',{method:'DELETE',body:JSON.stringify({userId:del.dataset.deleteAdvertiser})});
+      cmsMessage('bsccAddAdvertiserMessage',`${name} was removed.`);
+      await loadOwnerCampaignTable();
+      if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
+    }catch(err){
+      cmsMessage('bsccAddAdvertiserMessage',err.message,true);
+      del.disabled=false;
+    }
+    return;
+  }
+  if(e.target.closest('button,input,select,a,label')) return;
+  const row=e.target.closest('tr[data-open-campaign]');
+  if(!row || typeof openOwnerQrCampaign!=='function') return;
+  const c=ownerCampaignRows.get(row.dataset.openCampaign);
+  if(!c) return;
+  openOwnerQrCampaign(c,{businessName:c.business,subscriber:c.subscriber,locationName:c.location_name||'BeSeen location'});
+});
 async function loadOwnerAdvertisers(){
   if(!['owner','admin'].includes(currentRole)) return;
   const body=document.getElementById('bsccAdvertisersBody');
@@ -2987,6 +3036,7 @@ document.getElementById('bsccSaveAdvertiser')?.addEventListener('click',async()=
     }
     await loadOwnerAdvertisers();
     if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
+    if(typeof loadOwnerCampaignTable==='function') await loadOwnerCampaignTable();
     if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
   }catch(err){ cmsMessage('bsccAddAdvertiserMessage',err.message,true); }
   finally{ advertiserSaveInFlight=false; if(btn){ btn.disabled=false; btn.textContent='Save advertiser'; } }
@@ -3040,6 +3090,7 @@ document.getElementById('bsccAdvertisersBody')?.addEventListener('click',async(e
     cmsMessage('bsccAddAdvertiserMessage',`${name} was removed.`);
     await loadOwnerAdvertisers();
     if(typeof loadOwnerMetrics==='function') await loadOwnerMetrics();
+    if(typeof loadOwnerCampaignTable==='function') await loadOwnerCampaignTable();
     if(typeof loadOwnerQrLibrary==='function') await loadOwnerQrLibrary();
   }catch(err){
     cmsMessage('bsccAddAdvertiserMessage',err.message,true);
@@ -3596,7 +3647,7 @@ document.getElementById('bsChangeAccount')?.addEventListener('click',async()=>{
 });
 openControl?.addEventListener('click',()=>openControlCenter(currentRole,true));
 document.getElementById('bsccViewWebsite')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); });
-document.getElementById('bsccRefreshQrLibrary')?.addEventListener('click',loadOwnerQrLibrary);
+document.getElementById('bsccRefreshQrLibrary')?.addEventListener('click',loadOwnerCampaignTable);
 document.getElementById('ownerQrModalClose')?.addEventListener('click',closeOwnerQrModal);
 document.getElementById('ownerQrModal')?.addEventListener('click',(e)=>{ if(e.target?.id==='ownerQrModal') closeOwnerQrModal(); });
 document.getElementById('bsccPreviewFomo')?.addEventListener('click',()=>{ control?.classList.remove('show'); setAccountBar(currentRole); if(typeof window.openAdvertiserPortal==='function') window.openAdvertiserPortal('upcoming'); else { document.body.classList.add('portal-open'); } });
@@ -3608,9 +3659,8 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   const p=btn.dataset.ccPage;
   document.querySelectorAll('.bscc-page').forEach(pg=>pg.classList.toggle('active',pg.dataset.ccPage===p));
   if(p==='accounts') loadOwnerAccounts();
-  if(p==='advertisers') loadOwnerAdvertisers();
+  if(p==='campaigns') loadOwnerCampaignTable();
   if(p==='devices'){ loadOwnerLocations(); loadOwnerDevices(); }
-  if(p==='campaigns') loadOwnerQrLibrary();
   if(p==='analytics') loadOwnerAdScans();
   if(p==='google') loadOwnerSiteClicks();
 }));

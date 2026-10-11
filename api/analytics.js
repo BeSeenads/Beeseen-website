@@ -170,7 +170,7 @@ async function staffAdvertisers(role,supabase){
     const {data:locations}=await supabase.from('locations').select('slug,name').in('slug',allSlugs);
     locationMap=new Map((locations||[]).map(l=>[l.slug,l.name]));
   }
-  const {data:campaignPlaces,error:campaignPlaceError}=await supabase.from('campaigns').select('advertiser_id,location_id').in('advertiser_id',ids);
+  const {data:campaignPlaces,error:campaignPlaceError}=await supabase.from('campaigns').select('id,advertiser_id,location_id,name,tracking_code,landing_url,status').in('advertiser_id',ids);
   if(campaignPlaceError) return json({error:'Could not load subscriber locations.'},500);
   const campaignLocationIds=[...new Set((campaignPlaces||[]).map(row=>row.location_id).filter(Boolean))];
   let campaignLocationNames=new Map();
@@ -182,13 +182,28 @@ async function staffAdvertisers(role,supabase){
   }
   const campaignLocations=new Map();
   const campaignSlugs=new Map();
+  const campaignRecords=new Map();
   for(const row of (campaignPlaces||[])){
-    const name=campaignLocationNames.get(row.location_id);
+    const storedName=campaignLocationNames.get(row.location_id);
+    const namedInCampaign=String(row.name||'').split(' — ').slice(1).join(' — ').trim();
+    const name=storedName||namedInCampaign||'BeSeen location';
     const slug=campaignLocationSlugs?.get(row.location_id);
-    if(!row.advertiser_id||!name) continue;
-    const list=campaignLocations.get(row.advertiser_id)||[];
-    list.push(name);
-    campaignLocations.set(row.advertiser_id,list);
+    if(!row.advertiser_id) continue;
+    if(storedName){
+      const list=campaignLocations.get(row.advertiser_id)||[];
+      list.push(storedName);
+      campaignLocations.set(row.advertiser_id,list);
+    }
+    const records=campaignRecords.get(row.advertiser_id)||[];
+    records.push({
+      id:row.id,
+      name:row.name||'',
+      status:row.status||'draft',
+      tracking_code:row.tracking_code||'',
+      landing_url:row.landing_url||'',
+      location_name:name
+    });
+    campaignRecords.set(row.advertiser_id,records);
     if(slug){
       const slugs=campaignSlugs.get(row.advertiser_id)||[];
       slugs.push(slug);
@@ -217,6 +232,7 @@ async function staffAdvertisers(role,supabase){
       manual:!p.email || String(p.email).toLowerCase().endsWith('@advertisers.beseen.invalid'),
       location_slug:(campaignSlugs.get(p.id)||[])[0] || userSubs[0]?.location_slug || null,
       locations:locationNames,
+      campaigns:campaignRecords.get(p.id)||[],
       subscribed_at:intake?.created_at||p.created_at
     };
   });

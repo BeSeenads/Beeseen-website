@@ -332,8 +332,11 @@ async function staffAnalytics(role,supabase){
     .eq('event_type','guest_continue');
   if(!guestError) guestContinues=guestCount||0;
 
+  const {count:accountCount}=await supabase.from('profiles').select('*',{count:'exact',head:true});
+
   return json({metrics:{
     mrr_cents:mrrCents,
+    accounts:accountCount||0,
     guest_continues:guestContinues,
     active_subscriptions:activeSubscriptions||0,
     live_campaigns:liveCampaigns||0,

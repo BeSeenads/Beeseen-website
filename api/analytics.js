@@ -398,6 +398,22 @@ export async function POST(request){
   return json({ok:true});
 }
 
+async function qrScanCounts(role,supabase){
+  if(!['owner','admin'].includes(role)) return json({error:'Staff access required.'},403);
+  const counts=new Map();
+  const pageSize=1000;
+  for(let from=0; from<=20000; from+=pageSize){
+    const {data,error}=await supabase.from('tracking_events').select('campaign_id').eq('event_type','qr_scan').range(from,from+pageSize-1);
+    if(error) return json({error:'Could not load QR scans.'},500);
+    for(const row of data||[]){
+      if(!row.campaign_id) continue;
+      counts.set(row.campaign_id,(counts.get(row.campaign_id)||0)+1);
+    }
+    if(!data||data.length<pageSize) break;
+  }
+  return json({scans:Object.fromEntries(counts)});
+}
+
 export async function GET(request){
   const supabase=db();
   if(!supabase) return json({error:'Analytics are not configured.'},503);
@@ -407,6 +423,7 @@ export async function GET(request){
   const url=new URL(request.url);
   const scope=(url.searchParams.get('scope')||'user').toLowerCase();
   if(scope==='devices') return handleDeviceGet(request);
+  if(scope==='qr-scans') return qrScanCounts(access.role,supabase);
   if(scope==='advertisers') return staffAdvertisers(access.role,supabase);
   return scope==='admin' ? staffAnalytics(access.role,supabase) : userAnalytics(user,access,supabase);
 }

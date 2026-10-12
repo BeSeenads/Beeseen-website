@@ -135,7 +135,7 @@ async function staffAdvertisers(role,supabase){
       .in('user_id',ids)
       .order('created_at',{ascending:false}),
     supabase.from('subscription_locations')
-      .select('user_id,location_slug,plan,status')
+      .select('user_id,location_slug,plan,status,billed_price_cents')
       .in('user_id',ids),
     supabase.from('billing_overrides')
       .select('user_id,custom_price_cents,custom_price_active,billing_source,stripe_subscription_id,owner_note')
@@ -189,9 +189,9 @@ async function staffAdvertisers(role,supabase){
     const name=storedName||namedInCampaign||'BeSeen location';
     const slug=campaignLocationSlugs?.get(row.location_id);
     if(!row.advertiser_id) continue;
-    if(storedName){
+    if(name){
       const list=campaignLocations.get(row.advertiser_id)||[];
-      list.push(storedName);
+      list.push(name);
       campaignLocations.set(row.advertiser_id,list);
     }
     const records=campaignRecords.get(row.advertiser_id)||[];
@@ -227,7 +227,7 @@ async function staffAdvertisers(role,supabase){
       campaign_details:intake?.campaign_details||null,
       plan:p.subscription||userSubs[0]?.plan||'none',
       billing_status:p.subscription_status||'inactive',
-      monthly_cents:monthlyByUser.get(p.id)||0,
+      monthly_cents:monthlyByUser.get(p.id)||userSubs.reduce((sum,row)=>sum+(Number(row.billed_price_cents)||0),0),
       payment_started:startedByUser.get(p.id)||null,
       manual:!p.email || String(p.email).toLowerCase().endsWith('@advertisers.beseen.invalid'),
       location_slug:(campaignSlugs.get(p.id)||[])[0] || userSubs[0]?.location_slug || null,

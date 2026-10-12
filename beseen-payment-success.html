@@ -1183,6 +1183,7 @@ body.host-info-open #hostInfo{display:block}
 <div class="bscc-nav">
 <button class="active" data-cc-page="overview" type="button">Overview</button>
 <button class="owner-only" data-cc-page="accounts" type="button">Accounts &amp; Roles</button>
+<button data-cc-page="advertisers" type="button">Advertisers</button>
 <button data-cc-page="campaigns" type="button">Campaign and Advertisers</button>
 <button data-cc-page="analytics" type="button">QR &amp; Analytics</button>
 <button data-cc-page="google" type="button">Google Analytics</button>
@@ -1234,6 +1235,7 @@ body.host-info-open #hostInfo{display:block}
   </div>
 </section>
 
+<section class="bscc-page" data-cc-page="advertisers"><div class="bscc-heading"><div><h1>Advertisers</h1><p>Click a location to see who advertises there and how much they pay each month.</p></div></div><div class="owner-qr-directory" id="bsccAdvertisersByLocation"><div class="qr-empty-card">Locations and their advertisers will appear here.</div></div></section>
 <section class="bscc-page" data-cc-page="campaigns"><div class="bscc-heading"><div><h1>Campaign and Advertisers</h1><p>Every ad in one table. Click a row to open that ad’s QR code, scan count, and redirect link.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="bscc-action" id="bsccAddAdvertiser" type="button">+ Add Advertiser</button><button class="bscc-action" id="bsccRefreshQrLibrary" type="button">Refresh</button></div></div><div class="bscc-card"><div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Business</th><th>Location</th><th>Status</th><th>Scans</th><th></th></tr></thead><tbody id="bsccCampaignsBody"><tr><td colspan="5">Paid ads will appear here.</td></tr></tbody></table></div></div><div class="bscc-message" id="bsccQrLibraryMessage"></div><div class="bscc-card" id="bsccAddAdvertiserPanel" hidden>
   <h3>Add an advertiser</h3>
   <p class="desc">Business name, monthly amount, payment start date, and at least one location are required. Email and the QR website are optional. A blank email still records the advertiser. A blank website still creates a tracking link, counts scans, and can be filled in later. This does not start a Stripe checkout.</p>
@@ -2899,6 +2901,64 @@ function advertiserMoney(cents){
   return n>0?n/100:0;
 }
 const ownerCampaignRows=new Map();
+
+function advertiserPayLabel(cents){
+  const n=Number(cents)||0;
+  if(n<=0) return 'No amount saved';
+  return (n/100).toLocaleString('en-US',{style:'currency',currency:'USD'})+'/mo';
+}
+async function loadOwnerAdvertisersByLocation(){
+  if(!['owner','admin'].includes(currentRole)) return;
+  const box=document.getElementById('bsccAdvertisersByLocation');
+  if(!box) return;
+  box.innerHTML='<div class="qr-empty-card">Loading locations…</div>';
+  try{
+    const [people, places]=await Promise.all([
+      ownerApi('/api/analytics?scope=advertisers'),
+      ownerApi('/api/admin-locations')
+    ]);
+    const advertisers=people.advertisers||[];
+    const locations=(places.locations||[]).map(loc=>({name:loc.name||loc.slug||'Location', people:[]}));
+    const byName=new Map(locations.map(loc=>[loc.name, loc]));
+    for(const person of advertisers){
+      const names=[...new Set((person.locations||[]).filter(Boolean))];
+      const targets=names.length?names:['No location'];
+      for(const name of targets){
+        if(!byName.has(name)){
+          const extra={name, people:[]};
+          byName.set(name, extra);
+          locations.push(extra);
+        }
+        byName.get(name).people.push(person);
+      }
+    }
+    if(!locations.length){
+      box.innerHTML='<div class="qr-empty-card">No locations yet.</div>';
+      return;
+    }
+    box.innerHTML=locations.map((loc,index)=>{
+      const rows=loc.people.slice().sort((a,b)=>(Number(b.monthly_cents)||0)-(Number(a.monthly_cents)||0)||String(a.business_name||a.subscriber_name||'').localeCompare(String(b.business_name||b.subscriber_name||'')));
+      const total=rows.reduce((sum,person)=>sum+(Number(person.monthly_cents)||0),0);
+      const list=rows.length?`<div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Advertiser</th><th>Pays</th></tr></thead><tbody>${rows.map(person=>{
+        const shared=(person.locations||[]).filter(Boolean).length>1?'<br><span style="color:#8fa5cb">Their total payment. They are also at another location.</span>':'';
+        return `<tr><td><strong>${esc(person.business_name||person.subscriber_name||person.email||'Advertiser')}</strong></td><td><strong>${esc(advertiserPayLabel(person.monthly_cents))}</strong>${shared}</td></tr>`;
+      }).join('')}</tbody></table></div>`:'<p class="desc" style="margin:8px 18px 14px">No advertisers at this location.</p>';
+      const meta=rows.length?advertiserPayLabel(total):'None';
+      return `<div class="owner-qr-advertiser-group"><button class="owner-qr-advertiser" type="button" data-location-advertisers="${index}"><div><strong>${esc(loc.name)}</strong><small>${rows.length} advertiser${rows.length===1?'':'s'}</small></div><div class="owner-qr-advertiser-meta"><b>${esc(meta)}</b><span>View advertisers ↓</span></div></button><div class="owner-qr-locations" data-location-panel="${index}">${list}</div></div>`;
+    }).join('');
+    box.querySelectorAll('[data-location-advertisers]').forEach(btn=>btn.addEventListener('click',()=>{
+      const id=btn.dataset.locationAdvertisers;
+      const panel=box.querySelector(`[data-location-panel="${CSS.escape(id)}"]`);
+      const opening=!panel?.classList.contains('open');
+      box.querySelectorAll('.owner-qr-locations.open').forEach(el=>el.classList.remove('open'));
+      box.querySelectorAll('.owner-qr-advertiser.open').forEach(el=>el.classList.remove('open'));
+      if(opening&&panel){ panel.classList.add('open'); btn.classList.add('open'); }
+    }));
+  }catch(err){
+    box.innerHTML='<div class="qr-empty-card">Could not load advertisers.</div>';
+    console.error(err);
+  }
+}
 async function loadOwnerCampaignTable(){
   if(!['owner','admin'].includes(currentRole)) return;
   const body=document.getElementById('bsccCampaignsBody');
@@ -3681,6 +3741,7 @@ document.querySelectorAll('.bscc-nav button[data-cc-page]').forEach(btn=>btn.add
   const p=btn.dataset.ccPage;
   document.querySelectorAll('.bscc-page').forEach(pg=>pg.classList.toggle('active',pg.dataset.ccPage===p));
   if(p==='accounts') loadOwnerAccounts();
+  if(p==='advertisers') loadOwnerAdvertisersByLocation();
   if(p==='campaigns') loadOwnerCampaignTable();
   if(p==='devices'){ loadOwnerLocations(); loadOwnerDevices(); }
   if(p==='analytics') loadOwnerAdScans();

@@ -956,7 +956,7 @@ body.host-info-open #hostInfo{display:block}
   .bscc-field .bscc-location-picks input{width:18px;height:18px;min-height:18px;padding:0;flex:0 0 auto;border-radius:4px}
   .bscc-field textarea{min-height:92px;resize:vertical}
   .bscc-field input:focus,.bscc-field select:focus,.bscc-field textarea:focus{border-color:#5d87ff;box-shadow:0 0 0 3px rgba(76,117,255,.12)}
-  .bscc-form-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  .bscc-form-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}.bscc-plain-qr{margin-top:18px;width:280px;height:280px;padding:16px;background:#fff;border-radius:18px;display:none;align-items:center;justify-content:center}.bscc-plain-qr.show{display:flex}.bscc-plain-qr img{width:248px;height:248px;display:block}#bsccPlainQrDownload:disabled{opacity:.45;cursor:not-allowed}
   .bscc-secondary{border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.05);color:#d9e4f8;border-radius:999px;padding:11px 14px;font-weight:900;font-size:10px;cursor:pointer}
   .bscc-danger{border:1px solid rgba(255,77,105,.28);background:rgba(255,49,85,.10);color:#ff9aad;border-radius:999px;padding:9px 11px;font-weight:900;font-size:9px;cursor:pointer}
   .bscc-inline-select{border:1px solid rgba(255,255,255,.12);background:#071a3a;color:white;border-radius:9px;padding:8px 9px;font-size:10px;font-weight:800}
@@ -1185,6 +1185,7 @@ body.host-info-open #hostInfo{display:block}
 <button class="owner-only" data-cc-page="accounts" type="button">Accounts &amp; Roles</button>
 <button data-cc-page="advertisers" type="button">Advertisers</button>
 <button data-cc-page="campaigns" type="button">Campaign and Advertisers</button>
+<button data-cc-page="qr-generator" type="button">QR Generator</button>
 <button data-cc-page="analytics" type="button">QR &amp; Analytics</button>
 <button data-cc-page="google" type="button">Google Analytics</button>
 <button data-cc-page="hosts" type="button">Host Applications</button>
@@ -1251,7 +1252,8 @@ body.host-info-open #hostInfo{display:block}
   <div class="bscc-message" id="bsccAddAdvertiserMessage"></div>
 </div></section>
 <div class="owner-qr-modal" id="ownerQrModal" aria-hidden="true"><div class="owner-qr-modal-card" role="dialog" aria-modal="true" aria-labelledby="ownerQrModalTitle"><div class="owner-qr-modal-head"><div><div class="owner-qr-modal-kicker" id="ownerQrModalBusiness">Advertiser QR</div><h3 id="ownerQrModalTitle">Location QR Code</h3><p id="ownerQrModalSubscriber"></p></div><button class="owner-qr-modal-close" id="ownerQrModalClose" type="button" aria-label="Close">×</button></div><div class="owner-qr-modal-body"><div class="owner-qr-modal-code" id="ownerQrModalCode"></div><div><div class="owner-qr-detail"><label>Scans</label><div id="ownerQrModalScans">0</div></div><div class="owner-qr-detail"><label>BeSeen tracking URL</label><div id="ownerQrModalTracking"></div></div><div class="owner-qr-detail"><label>Redirects customer to</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="ownerQrModalDestinationInput" type="url" inputmode="url" autocomplete="off" placeholder="https://theirwebsite.com" style="flex:1;min-width:180px;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid #d5deee;background:#f7f9fd;color:#071631"><button id="ownerQrModalSaveDestination" type="button" style="border:0;border-radius:999px;padding:10px 13px;background:#071b44;color:#fff;font-weight:900;cursor:pointer">Save link</button></div><small style="display:block;margin-top:8px;color:#5c6b86;line-height:1.4">The QR code stays the same. Each scan is counted, then the customer is sent to this website.</small><div id="ownerQrModalDestinationStatus" style="margin-top:8px;color:#15366f;font-weight:800;font-size:12px"></div></div><div class="owner-qr-detail"><label>Campaign</label><div id="ownerQrModalCampaign"></div></div><div class="owner-qr-detail"><label>Status</label><div id="ownerQrModalStatus"></div></div></div></div><div class="owner-qr-modal-actions"><button id="ownerQrModalDownload" type="button">Download QR</button><button class="secondary" id="ownerQrModalCopy" type="button">Copy tracking link</button><button class="secondary" id="ownerQrModalCopyDestination" type="button">Copy destination link</button></div></div></div>
-<section class="bscc-page" data-cc-page="analytics"><div class="bscc-heading"><div><h1>QR &amp; Analytics</h1><p>See what each tracked ad actually generated: scans, visits, calls, lead forms, and campaign attribution.</p></div><button class="bscc-action" type="button">Export Report</button></div>
+<section class="bscc-page" data-cc-page="qr-generator"><div class="bscc-heading"><div><h1>QR Generator</h1><p>Paste a link and download a black-and-white QR code. This code is only the text you enter. It does not count scans.</p></div></div><div class="bscc-card"><div class="bscc-formgrid"><div class="bscc-field wide"><label for="bsccPlainQrInput">Link or text</label><input id="bsccPlainQrInput" type="text" placeholder="https://example.com" autocomplete="off"/></div></div><div class="bscc-form-actions"><button class="bscc-action" id="bsccPlainQrGenerate" type="button">Generate QR</button><button class="bscc-secondary" id="bsccPlainQrDownload" type="button" disabled>Download PNG</button></div><p class="desc" id="bsccPlainQrMessage"></p><div class="bscc-plain-qr" id="bsccPlainQrPreview"></div></div></section>
+<section class="bscc-page" data-cc-page="analytics"><div class="bscc-heading"><div><h1>QR &amp; Analytics</h1><p>See what each tracked ad actually generated: scans, visits, calls, lead forms, and campaign attribution.</p></div><button class="bscc-action" id="bsccExportReport" type="button">Export Report</button></div>
 <div class="bscc-statgrid">
 <div class="bscc-stat"><div class="lab">QR scans</div><strong id="bsccAnalyticsQr">—</strong><small>Recorded events</small></div>
 <div class="bscc-stat"><div class="lab">Tracked visits</div><strong id="bsccAnalyticsVisits">—</strong><small>Recorded landing visits</small></div>
@@ -2329,7 +2331,7 @@ body.host-info-open #hostInfo{display:block}
           const trackingUrl=`${window.location.origin}/api/qr?c=${encodeURIComponent(c.tracking_code)}`;
           const card=grid.children[i]; const line=card?.querySelector('[data-track-url]'); if(line) line.textContent=trackingUrl;
           const holder=document.getElementById(`campaignQr${i}`);
-          if(holder && window.QRCode){ new QRCode(holder,{text:trackingUrl,width:110,height:110,colorDark:'#071b44',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+          if(holder && window.QRCode){ new QRCode(holder,{text:trackingUrl,width:110,height:110,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
           card?.querySelector('[data-copy-qr]')?.addEventListener('click',async()=>{ try{await navigator.clipboard.writeText(trackingUrl); showPortalToast('Tracking link copied.');}catch{showPortalToast(trackingUrl);} });
           card?.querySelector('[data-download-qr]')?.addEventListener('click',()=>{ const canvas=holder?.querySelector('canvas'); const img=holder?.querySelector('img'); const href=canvas?.toDataURL?.('image/png')||img?.src; if(!href){showPortalToast('QR image is still loading.');return;} const a=document.createElement('a'); a.href=href; a.download=`beseen-${String(c.name||'campaign').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}-qr.png`; a.click(); });
         });
@@ -2356,7 +2358,7 @@ body.host-info-open #hostInfo{display:block}
       document.getElementById('ownerQrModalCampaign').textContent=c.name||'BeSeen campaign';
       document.getElementById('ownerQrModalStatus').textContent=c.status||'draft';
       code.innerHTML='';
-      if(window.QRCode) new QRCode(code,{text:trackingUrl,width:136,height:136,colorDark:'#071b44',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      if(window.QRCode) new QRCode(code,{text:trackingUrl,width:136,height:136,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
       const msg=document.getElementById('bsccQrLibraryMessage');
       document.getElementById('ownerQrModalCopy').onclick=async()=>{ try{await navigator.clipboard.writeText(trackingUrl); if(msg) msg.textContent='Tracking link copied.';}catch{ if(msg) msg.textContent=trackingUrl; } };
       document.getElementById('ownerQrModalCopyDestination').onclick=async()=>{ const url=(document.getElementById('ownerQrModalDestinationInput')?.value||c.landing_url||'').trim(); if(!url) return; try{await navigator.clipboard.writeText(url); if(msg) msg.textContent='Destination link copied.';}catch{ if(msg) msg.textContent=url; } };
@@ -3500,6 +3502,7 @@ async function loadOwnerAdScans(){
       status:c.status||'draft',
       scans:Number(scanMap[c.id]||0)
     })).sort((a,b)=>b.scans-a.scans||a.name.localeCompare(b.name));
+    window.__bsccAdScanRows=ads;
     if(!ads.length){ body.innerHTML='<tr><td colspan="4">No advertisements yet.</td></tr>'; return; }
     body.innerHTML=ads.map(ad=>`<tr><td><strong>${esc(ad.name)}</strong></td><td>${esc(ad.location)}</td><td>${esc(ad.status)}</td><td><strong>${ad.scans}</strong></td></tr>`).join('');
   }catch(err){
@@ -3515,7 +3518,7 @@ async function loadOwnerMetrics(){
     setText('bsccQrScans',m.qr_scans??0); setText('bsccGuestContinues',m.guest_continues??0); setText('bsccAccountsCreated',m.accounts??0); setText('bsccLiveLocations',`${m.live_locations??0} public`);
     setText('bsccFutureLocations',`${m.future_locations??0} private`);
     setText('bsccCampaignLiveCount',`${m.live_campaigns??0} campaigns`);
-    setText('bsccAnalyticsQr',m.qr_scans??0); setText('bsccAnalyticsVisits',m.landing_visits??0);
+    window.__bsccAnalyticsSummary={qr_scans:m.qr_scans??0,landing_visits:m.landing_visits??0,phone_clicks:m.phone_clicks??0,attributed_leads:m.attributed_leads??0}; setText('bsccAnalyticsQr',m.qr_scans??0); setText('bsccAnalyticsVisits',m.landing_visits??0);
     loadOwnerAdScans();
     setText('bsccAnalyticsPhone',m.phone_clicks??0); setText('bsccAnalyticsLeads',m.attributed_leads??0);
     const revenueBody=document.getElementById('bsccLocationRevenueBody');
@@ -3712,6 +3715,107 @@ document.getElementById('bsccPreviewFomo')?.addEventListener('click',()=>{ contr
 document.getElementById('bsccLogout')?.addEventListener('click',async()=>{ if(supabase) await supabase.auth.signOut(); else { control?.classList.remove('show'); gate?.classList.remove('hidden'); showMain(); } });
 document.getElementById('bsccSwitchRole')?.addEventListener('click',()=>{ control?.classList.remove('show'); gate?.classList.remove('hidden'); showForm('login'); });
 
+let bsccPlainQrHref='';
+function bwQrDataUrl(text){
+  const holder=document.createElement('div');
+  holder.setAttribute('aria-hidden','true');
+  holder.style.cssText='position:fixed;left:-10000px;top:0';
+  document.body.appendChild(holder);
+  const size=1024;
+  new QRCode(holder,{text,width:size,height:size,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  const source=holder.querySelector('canvas');
+  const quiet=96;
+  const out=document.createElement('canvas');
+  out.width=size+quiet*2; out.height=size+quiet*2;
+  const ctx=out.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,out.width,out.height);
+  if(source) ctx.drawImage(source,quiet,quiet);
+  const href=out.toDataURL('image/png');
+  holder.remove();
+  return href;
+}
+function renderPlainQr(value){
+  const preview=document.getElementById('bsccPlainQrPreview');
+  const msg=document.getElementById('bsccPlainQrMessage');
+  const download=document.getElementById('bsccPlainQrDownload');
+  if(!window.QRCode){ if(msg) msg.textContent='QR generator is still loading. Try again in a moment.'; return; }
+  bsccPlainQrHref=bwQrDataUrl(value);
+  if(preview){
+    preview.innerHTML='';
+    const img=document.createElement('img');
+    img.alt='Black and white QR code';
+    img.src=bsccPlainQrHref;
+    preview.appendChild(img);
+    preview.classList.add('show');
+  }
+  if(download) download.disabled=!bsccPlainQrHref;
+  if(msg) msg.textContent='Black-and-white QR ready.';
+}
+document.getElementById('bsccPlainQrGenerate')?.addEventListener('click',()=>{
+  const raw=document.getElementById('bsccPlainQrInput')?.value?.trim()||'';
+  const msg=document.getElementById('bsccPlainQrMessage');
+  if(!raw){ if(msg) msg.textContent='Enter a link or some text first.'; return; }
+  try{ renderPlainQr(raw); }catch(err){ if(msg) msg.textContent='Could not build that QR.'; console.warn(err); }
+});
+document.getElementById('bsccPlainQrInput')?.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){ e.preventDefault(); document.getElementById('bsccPlainQrGenerate')?.click(); }
+});
+document.getElementById('bsccPlainQrDownload')?.addEventListener('click',()=>{
+  if(!bsccPlainQrHref) return;
+  const a=document.createElement('a');
+  a.href=bsccPlainQrHref;
+  a.download='beseen-qr.png';
+  a.click();
+});
+function csvCell(value){
+  const s=String(value??'');
+  return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
+}
+function exportAnalyticsReport(){
+  const summary=window.__bsccAnalyticsSummary||{
+    qr_scans:document.getElementById('bsccAnalyticsQr')?.textContent||'',
+    landing_visits:document.getElementById('bsccAnalyticsVisits')?.textContent||'',
+    phone_clicks:document.getElementById('bsccAnalyticsPhone')?.textContent||'',
+    attributed_leads:document.getElementById('bsccAnalyticsLeads')?.textContent||''
+  };
+  let rows=Array.isArray(window.__bsccAdScanRows)?window.__bsccAdScanRows:[];
+  if(!rows.length){
+    rows=[...document.querySelectorAll('#bsccAdScansBody tr')].map(tr=>{
+      const cells=[...tr.children].map(td=>td.textContent.trim());
+      if(cells.length<4) return null;
+      return {name:cells[0],location:cells[1],status:cells[2],scans:cells[3]};
+    }).filter(Boolean);
+  }
+  const lines=[
+    ['BeSeen analytics report'].map(csvCell).join(','),
+    ['Generated',new Date().toLocaleString()].map(csvCell).join(','),
+    '',
+    ['Metric','Count'].map(csvCell).join(','),
+    ['QR scans',summary.qr_scans??''].map(csvCell).join(','),
+    ['Tracked visits',summary.landing_visits??''].map(csvCell).join(','),
+    ['Phone clicks',summary.phone_clicks??''].map(csvCell).join(','),
+    ['Attributed leads',summary.attributed_leads??''].map(csvCell).join(','),
+    '',
+    ['Advertisement','Location','Status','Scans'].map(csvCell).join(',')
+  ];
+  rows.forEach(ad=>lines.push([ad.name,ad.location,ad.status,ad.scans].map(csvCell).join(',')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  const url=URL.createObjectURL(blob);
+  a.href=url;
+  a.download=`beseen-analytics-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('bsccExportReport')?.addEventListener('click',async()=>{
+  const btn=document.getElementById('bsccExportReport');
+  if(btn){ btn.disabled=true; btn.textContent='Exporting…'; }
+  try{ await loadOwnerMetrics(); await loadOwnerAdScans(); }
+  catch(err){ console.warn('Analytics refresh before export failed',err); }
+  exportAnalyticsReport();
+  if(btn){ btn.disabled=false; btn.textContent='Export Report'; }
+});
 function gaDayLabel(start, end){
   const month=d=>d.toLocaleDateString('en-US',{month:'short'});
   if(start.getFullYear()!==end.getFullYear()) return `${month(start)} ${start.getDate()}, ${start.getFullYear()}\u2013${month(end)} ${end.getDate()}, ${end.getFullYear()}`;

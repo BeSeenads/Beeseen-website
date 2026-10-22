@@ -356,28 +356,43 @@ async function syncItemFields(
     const plan =
       cleanPlan(planMap.get(slug));
 
-    let expected =
+    const columnPriceId =
       loc?.[`stripe_price_${plan}`] ||
       null;
 
-    if (slug === 'exclusive') {
-      expected =
-        {
-          gold:
-            process.env.STRIPE_PRICE_GOLD,
-          premium:
-            process.env.STRIPE_PRICE_PREMIUM,
-          platinum:
-            process.env.STRIPE_PRICE_PLATINUM
-        }[plan] || expected;
-    }
+    const envPriceId =
+      slug === 'exclusive'
+        ? {
+            gold:
+              process.env.STRIPE_PRICE_GOLD,
+            premium:
+              process.env.STRIPE_PRICE_PREMIUM,
+            platinum:
+              process.env.STRIPE_PRICE_PLATINUM
+          }[plan] || null
+        : null;
 
     let foundIndex =
       unused.findIndex(
         i =>
-          expected &&
-          i.price?.id === expected
+          columnPriceId &&
+          i.price?.id === columnPriceId
       );
+
+    if (
+      foundIndex < 0 &&
+      envPriceId
+    ) {
+      foundIndex =
+        unused.findIndex(
+          i =>
+            i.price?.id === envPriceId
+        );
+    }
+
+    const expected =
+      columnPriceId ||
+      envPriceId;
 
     if (
       foundIndex < 0 &&

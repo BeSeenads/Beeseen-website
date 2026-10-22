@@ -54,6 +54,177 @@ function cleanText(value, max = 300) {
     .slice(0, max);
 }
 
+const EXCLUSIVE_MONTHLY_CENTS = {
+  gold: 30000,
+  premium: 35000,
+  platinum: 40000
+};
+
+function isMatchingMonthlyPrice(price, cents) {
+  if (!price || price.deleted || price.active === false) {
+    return false;
+  }
+
+  return (
+    price.currency === 'usd' &&
+    price.recurring?.interval === 'month' &&
+    Number(price.unit_amount) === cents
+  );
+}
+
+function productIdFromPrice(price) {
+  if (!price?.product) return null;
+  return typeof price.product === 'string'
+    ? price.product
+    : price.product.id || null;
+}
+
+async function retrievePrice(stripeClient, priceId) {
+  if (!priceId) return null;
+
+  try {
+    return await stripeClient.prices.retrieve(priceId);
+  } catch (error) {
+    if (
+      error?.code === 'resource_missing' ||
+      error?.statusCode === 404
+    ) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function exclusiveMonthlyPriceId(
+  stripeClient,
+  plan,
+  locationPriceId
+) {
+  const cents = EXCLUSIVE_MONTHLY_CENTS[plan];
+
+  if (!cents) return null;
+
+  const envPriceId =
+    {
+      gold: process.env.STRIPE_PRICE_GOLD,
+      premium: process.env.STRIPE_PRICE_PREMIUM,
+      platinum: process.env.STRIPE_PRICE_PLATINUM
+    }[plan] || null;
+
+  let productId = null;
+
+  for (const candidateId of [locationPriceId, envPriceId]) {
+    const price = await retrievePrice(
+      stripeClient,
+      candidateId
+    );
+
+    if (!price) continue;
+
+    if (!productId) {
+      productId = productIdFromPrice(price);
+    }
+
+    if (isMatchingMonthlyPrice(price, cents)) {
+      return {
+        id: price.id,
+        source: candidateId === locationPriceId ? 'location' : 'env'
+      };
+    }
+  }
+
+  const lookupKey = `beseen_exclusive_${plan}_${cents}`;
+  const listed = await stripeClient.prices.list({
+    lookup_keys: [lookupKey],
+    active: true,
+    limit: 1
+  });
+  const reused = (listed.data || []).find(price =>
+    isMatchingMonthlyPrice(price, cents)
+  );
+
+  if (reused) {
+    return { id: reused.id, source: 'lookup' };
+  }
+
+  if (!productId) {
+    const product = await stripeClient.products.create({
+      name: 'BeSeen — Exclusive Hookah Lounge',
+      metadata: {
+        beseen_location_slug: 'exclusive'
+      }
+    });
+    productId = product.id;
+  }
+
+  const created = await stripeClient.prices.create(
+    {
+      product: productId,
+      unit_amount: cents,
+      currency: 'usd',
+      recurring: { interval: 'month' },
+      lookup_key: lookupKey,
+      transfer_lookup_key: true,
+      nickname: `Exclusive Hookah Lounge — ${plan[0].toUpperCase()}${plan.slice(1)}`,
+      metadata: {
+        beseen_location_slug: 'exclusive',
+        beseen_plan: plan
+      }
+    },
+    {
+      idempotencyKey: `beseen-exclusive-${plan}-${cents}`
+    }
+  );
+
+  if (!isMatchingMonthlyPrice(created, cents)) {
+    throw new Error(
+      'Exclusive Stripe price was not created at the package amount.'
+    );
+  }
+
+  return { id: created.id, source: 'created' };
+}
+
+export async function exclusiveCheckoutAmounts(
+  stripeClient,
+  locationPriceIds = {}
+) {
+  const amounts = {};
+
+  for (const plan of ['gold', 'premium', 'platinum']) {
+    const resolved = await exclusiveMonthlyPriceId(
+      stripeClient,
+      plan,
+      locationPriceIds[plan] || null
+    );
+    const price = await stripeClient.prices.retrieve(
+      resolved.id
+    );
+
+    if (
+      !isMatchingMonthlyPrice(
+        price,
+        EXCLUSIVE_MONTHLY_CENTS[plan]
+      )
+    ) {
+      throw new Error(
+        'Exclusive Stripe price amount did not match the package.'
+      );
+    }
+
+    amounts[plan] = {
+      unit_amount: price.unit_amount,
+      currency: price.currency,
+      interval: price.recurring?.interval || null,
+      active: price.active !== false,
+      source: resolved.source
+    };
+  }
+
+  return amounts;
+}
+
 function cleanDestinationUrl(value) {
   let raw = String(value || '')
     .trim()
@@ -79,6 +250,53 @@ function cleanDestinationUrl(value) {
     return parsed.toString();
   } catch {
     return '';
+  }
+}
+
+export async function GET() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return json(
+      { error: 'Stripe is not configured yet.' },
+      503
+    );
+  }
+
+  try {
+    const supabase = getServerSupabase();
+    let locationPriceIds = {};
+
+    if (supabase) {
+      const { data } = await supabase
+        .from('locations')
+        .select(
+          'stripe_price_gold,stripe_price_premium,stripe_price_platinum'
+        )
+        .eq('slug', 'exclusive')
+        .maybeSingle();
+
+      locationPriceIds = {
+        gold: data?.stripe_price_gold || null,
+        premium: data?.stripe_price_premium || null,
+        platinum: data?.stripe_price_platinum || null
+      };
+    }
+
+    return json(
+      await exclusiveCheckoutAmounts(
+        stripe,
+        locationPriceIds
+      )
+    );
+  } catch (error) {
+    console.error(
+      'exclusive price check failed',
+      error
+    );
+
+    return json(
+      { error: 'Exclusive Stripe prices could not be confirmed.' },
+      500
+    );
   }
 }
 
@@ -595,22 +813,72 @@ export async function POST(request) {
         loc[priceColumn] ||
         null;
 
-      if (
-        loc.slug ===
-        'exclusive'
-      ) {
-        priceId =
-          {
-            gold:
-              process.env
-                .STRIPE_PRICE_GOLD,
-            premium:
-              process.env
-                .STRIPE_PRICE_PREMIUM,
-            platinum:
-              process.env
-                .STRIPE_PRICE_PLATINUM
-          }[plan] || priceId;
+      if (loc.slug === 'exclusive') {
+        const cents =
+          EXCLUSIVE_MONTHLY_CENTS[plan];
+        let resolvedId = null;
+
+        try {
+          resolvedId = (
+            await exclusiveMonthlyPriceId(
+              stripe,
+              plan,
+              priceId
+            )
+          )?.id || null;
+        } catch (error) {
+          console.error(
+            'exclusive monthly price resolve failed',
+            error
+          );
+        }
+
+        if (
+          resolvedId &&
+          resolvedId !== priceId
+        ) {
+          const {
+            error: priceSaveError
+          } = await supabase
+            .from('locations')
+            .update({
+              [priceColumn]: resolvedId,
+              updated_at:
+                new Date().toISOString()
+            })
+            .eq('id', loc.id)
+            .eq('slug', 'exclusive');
+
+          if (priceSaveError) {
+            console.error(
+              'exclusive price id save failed',
+              priceSaveError
+            );
+          }
+        }
+
+        if (resolvedId) {
+          lineItems.push({
+            price: resolvedId,
+            quantity: 1
+          });
+        } else {
+          lineItems.push({
+            quantity: 1,
+            price_data: {
+              currency: 'usd',
+              unit_amount: cents,
+              recurring: {
+                interval: 'month'
+              },
+              product_data: {
+                name: `BeSeen — ${loc.name}`
+              }
+            }
+          });
+        }
+
+        continue;
       }
 
       if (!priceId) {

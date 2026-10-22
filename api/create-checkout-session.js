@@ -186,45 +186,6 @@ export async function exclusiveMonthlyPriceId(
   return { id: created.id, source: 'created' };
 }
 
-export async function exclusiveCheckoutAmounts(
-  stripeClient,
-  locationPriceIds = {}
-) {
-  const amounts = {};
-
-  for (const plan of ['gold', 'premium', 'platinum']) {
-    const resolved = await exclusiveMonthlyPriceId(
-      stripeClient,
-      plan,
-      locationPriceIds[plan] || null
-    );
-    const price = await stripeClient.prices.retrieve(
-      resolved.id
-    );
-
-    if (
-      !isMatchingMonthlyPrice(
-        price,
-        EXCLUSIVE_MONTHLY_CENTS[plan]
-      )
-    ) {
-      throw new Error(
-        'Exclusive Stripe price amount did not match the package.'
-      );
-    }
-
-    amounts[plan] = {
-      unit_amount: price.unit_amount,
-      currency: price.currency,
-      interval: price.recurring?.interval || null,
-      active: price.active !== false,
-      source: resolved.source
-    };
-  }
-
-  return amounts;
-}
-
 function cleanDestinationUrl(value) {
   let raw = String(value || '')
     .trim()
@@ -250,53 +211,6 @@ function cleanDestinationUrl(value) {
     return parsed.toString();
   } catch {
     return '';
-  }
-}
-
-export async function GET() {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return json(
-      { error: 'Stripe is not configured yet.' },
-      503
-    );
-  }
-
-  try {
-    const supabase = getServerSupabase();
-    let locationPriceIds = {};
-
-    if (supabase) {
-      const { data } = await supabase
-        .from('locations')
-        .select(
-          'stripe_price_gold,stripe_price_premium,stripe_price_platinum'
-        )
-        .eq('slug', 'exclusive')
-        .maybeSingle();
-
-      locationPriceIds = {
-        gold: data?.stripe_price_gold || null,
-        premium: data?.stripe_price_premium || null,
-        platinum: data?.stripe_price_platinum || null
-      };
-    }
-
-    return json(
-      await exclusiveCheckoutAmounts(
-        stripe,
-        locationPriceIds
-      )
-    );
-  } catch (error) {
-    console.error(
-      'exclusive price check failed',
-      error
-    );
-
-    return json(
-      { error: 'Exclusive Stripe prices could not be confirmed.' },
-      500
-    );
   }
 }
 

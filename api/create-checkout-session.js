@@ -54,6 +54,10 @@ function cleanText(value, max = 300) {
     .slice(0, max);
 }
 
+function personalPhoneDigits(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
 const EXCLUSIVE_MONTHLY_CENTS = {
   gold: 30000,
   premium: 35000,
@@ -334,6 +338,19 @@ export async function POST(request) {
         intake.phone,
         40
       );
+
+    if (
+      personalPhoneDigits(phone).length <
+      10
+    ) {
+      return json(
+        {
+          error:
+            'Enter your personal phone number with at least 10 digits.'
+        },
+        400
+      );
+    }
 
     const campaignDetails =
       cleanText(
@@ -646,7 +663,7 @@ export async function POST(request) {
             websiteOrSocial ||
             null,
           contact_phone:
-            phone || null,
+            phone,
           campaign_details:
             campaignDetails,
           qr_destination_url:
@@ -876,6 +893,7 @@ export async function POST(request) {
               user.user_metadata
                 ?.full_name ||
               undefined,
+            phone,
             metadata: {
               beseen_user_id:
                 user.id
@@ -893,6 +911,13 @@ export async function POST(request) {
             customerId
         })
         .eq('id', user.id);
+    } else {
+      await stripe.customers.update(
+        customerId,
+        {
+          phone
+        }
+      );
     }
 
     const discounts = [];

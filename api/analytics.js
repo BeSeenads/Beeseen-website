@@ -131,7 +131,7 @@ async function staffAdvertisers(role,supabase){
 
   const [{data:intakes,error:intakeError},{data:subs,error:subsError},{data:manualBilling,error:billingListError}]=await Promise.all([
     supabase.from('subscription_intakes')
-      .select('user_id,business_name,business_type,creative_choice,campaign_details,status,location_slugs,created_at')
+      .select('user_id,business_name,business_type,creative_choice,campaign_details,status,location_slugs,created_at,contact_phone')
       .in('user_id',ids)
       .order('created_at',{ascending:false}),
     supabase.from('subscription_locations')
@@ -221,6 +221,7 @@ async function staffAdvertisers(role,supabase){
       id:p.id,
       subscriber_name:p.full_name||null,
       email:p.email||null,
+      contact_phone:intake?.contact_phone||null,
       business_name:intake?.business_name||null,
       business_type:intake?.business_type||null,
       creative_choice:intake?.creative_choice||null,

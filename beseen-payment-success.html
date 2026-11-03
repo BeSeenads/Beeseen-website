@@ -1562,7 +1562,7 @@ body.host-info-open #hostInfo{display:block}
         <div class="subscription-intake-field"><label for="intakeBusinessName">Business name *</label><input id="intakeBusinessName" maxlength="120" autocomplete="organization" placeholder="Your business name" required></div>
         <div class="subscription-intake-field"><label for="intakeBusinessType">What type of business is it? *</label><input id="intakeBusinessType" maxlength="80" placeholder="Real estate, restaurant, auto, salon…" required></div>
         <div class="subscription-intake-field"><label for="intakeWebsite">Business page (optional)</label><input id="intakeWebsite" maxlength="300" placeholder="Website, Instagram, or other business page"></div>
-        <div class="subscription-intake-field"><label for="intakePhone">Best phone number</label><input id="intakePhone" maxlength="40" autocomplete="tel" placeholder="(313) 555-0123"></div>
+        <div class="subscription-intake-field"><label for="intakePhone">Your personal phone number *</label><input id="intakePhone" type="tel" inputmode="tel" maxlength="40" autocomplete="tel" placeholder="(313) 555-0123" required></div>
         <div class="subscription-intake-field wide"><label for="intakeCampaignDetails">What are you promoting? *</label><textarea id="intakeCampaignDetails" maxlength="1500" placeholder="Tell us the offer, service, product, event, property, or message you want customers to see." required></textarea><div class="subscription-intake-help">This gives BeSeen context for your campaign and helps us set up the right creative and tracking.</div></div>
         <div class="subscription-intake-field wide"><label for="intakeQrDestination">Link your QR code should lead to *</label><input id="intakeQrDestination" type="url" maxlength="1000" inputmode="url" autocomplete="url" placeholder="https://yourwebsite.com/page" required><div class="subscription-intake-help">Paste the exact link customers should open after scanning your ad. After payment, BeSeen automatically creates a separate tracked QR code for each location you selected.</div></div>
       </div>
@@ -2843,6 +2843,8 @@ async function submitSubscriptionIntake(event){
   const creativeChoice=intakeChoice();
   if(businessName.length<2) return setIntakeMessage('Enter your business name.');
   if(businessType.length<2) return setIntakeMessage('Tell us what type of business you have.');
+  const phoneDigits=phone.replace(/\D/g,'');
+  if(phoneDigits.length<10) return setIntakeMessage('Enter your personal phone number with at least 10 digits.');
   if(campaignDetails.length<5) return setIntakeMessage('Tell us what you want to promote.');
   if(!qrDestinationUrl) return setIntakeMessage('Paste the link you want your QR code to open.');
   try{ const u=new URL(/^https?:\/\//i.test(qrDestinationUrl)?qrDestinationUrl:`https://${qrDestinationUrl}`); if(!['http:','https:'].includes(u.protocol)) throw new Error(); }catch{ return setIntakeMessage('Enter a valid QR destination link, like https://yourwebsite.com.'); }
@@ -2941,9 +2943,10 @@ async function loadOwnerAdvertisersByLocation(){
     box.innerHTML=locations.map((loc,index)=>{
       const rows=loc.people.slice().sort((a,b)=>(Number(b.monthly_cents)||0)-(Number(a.monthly_cents)||0)||String(a.business_name||a.subscriber_name||'').localeCompare(String(b.business_name||b.subscriber_name||'')));
       const total=rows.reduce((sum,person)=>sum+(Number(person.monthly_cents)||0),0);
-      const list=rows.length?`<div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Advertiser</th><th>Pays</th></tr></thead><tbody>${rows.map(person=>{
+      const list=rows.length?`<div class="bscc-tablewrap"><table class="bscc-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Plan</th><th>Monthly</th></tr></thead><tbody>${rows.map(person=>{
+        const phoneText=String(person.contact_phone||'').trim()||'No phone saved.';
         const shared=(person.locations||[]).filter(Boolean).length>1?'<br><span style="color:#8fa5cb">Their total payment. They are also at another location.</span>':'';
-        return `<tr><td><strong>${esc(person.business_name||person.subscriber_name||person.email||'Advertiser')}</strong></td><td><strong>${esc(advertiserPayLabel(person.monthly_cents))}</strong>${shared}</td></tr>`;
+        return `<tr><td><strong>${esc(person.subscriber_name||person.business_name||'Advertiser')}</strong></td><td>${esc(person.email||'')}</td><td>${esc(phoneText)}</td><td>${esc(String(person.plan||'none').toUpperCase())}</td><td><strong>${esc(advertiserPayLabel(person.monthly_cents))}</strong>${shared}</td></tr>`;
       }).join('')}</tbody></table></div>`:'<p class="desc" style="margin:8px 18px 14px">No advertisers at this location.</p>';
       const meta=rows.length?advertiserPayLabel(total):'None';
       return `<div class="owner-qr-advertiser-group"><button class="owner-qr-advertiser" type="button" data-location-advertisers="${index}"><div><strong>${esc(loc.name)}</strong><small>${rows.length} advertiser${rows.length===1?'':'s'}</small></div><div class="owner-qr-advertiser-meta"><b>${esc(meta)}</b><span>View advertisers ↓</span></div></button><div class="owner-qr-locations" data-location-panel="${index}">${list}</div></div>`;
